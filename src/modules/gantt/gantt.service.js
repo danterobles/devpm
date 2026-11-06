@@ -33,12 +33,9 @@ export function createGanttService({ repository, timezone = 'America/Mexico_City
         end: t.due_date,
         progress: progressOf(t),
         dependencies: deps.get(t.id) ?? [],
-        custom_class: [
-          `gantt-${t.status}`,
-          t.status !== 'done' && t.due_date < today ? 'gantt-late' : '',
-        ]
-          .filter(Boolean)
-          .join(' '),
+        // Frappe Gantt agrega la clase con classList.add: debe ser un único token (sin espacios).
+        custom_class:
+          t.status !== 'done' && t.due_date < today ? 'gantt-late' : `gantt-${t.status}`,
         order: t.id,
         sprintStart: t.sprint_start,
         meta: {
@@ -59,7 +56,7 @@ export function createGanttService({ repository, timezone = 'America/Mexico_City
         end: m.due_date,
         progress: m.status === 'completed' ? 100 : 0,
         dependencies: [],
-        custom_class: `milestone milestone-${m.status}`,
+        custom_class: `milestone-${m.status}`,
         order: m.id,
         meta: { kind: 'milestone', milestoneId: m.id, status: m.status },
       }));

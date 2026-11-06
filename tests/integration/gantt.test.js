@@ -68,8 +68,8 @@ test('formato de Frappe Gantt: id, name, start, end, progress, dependencies y cu
   const b = task(db, {
     project_id: pid,
     title: 'Implementación',
-    start_date: '2026-03-16',
-    due_date: '2026-04-10',
+    start_date: '2026-05-18', // futura: «hoy» es 2026-05-13, así no se marca atrasada
+    due_date: '2026-06-12',
     status: 'in_progress',
   });
   db.prepare('INSERT INTO task_dependencies (task_id, depends_on_task_id) VALUES (?, ?)').run(b, a);
@@ -263,4 +263,36 @@ test('permisos para reprogramar: la respuesta indica si el usuario puede arrastr
   ]) {
     assert.equal((await gantt(await loginAs(app, role), pid)).canReschedule, can, role);
   }
+});
+
+test('custom_class es un único token (Frappe Gantt lo agrega con classList.add): sin espacios', async () => {
+  const { app, db, pid } = setup();
+  task(db, {
+    project_id: pid,
+    title: 'Atrasada',
+    start_date: '2026-03-02',
+    due_date: '2026-03-06',
+    status: 'in_progress',
+  });
+  task(db, {
+    project_id: pid,
+    title: 'Hecha',
+    start_date: '2026-03-02',
+    due_date: '2026-03-06',
+    status: 'done',
+  });
+  db.prepare(
+    "INSERT INTO milestones (project_id, name, due_date, status) VALUES (?, 'H1', '2026-05-15', 'pending')",
+  ).run(pid);
+  db.prepare(
+    "INSERT INTO milestones (project_id, name, due_date, status) VALUES (?, 'H2', '2026-03-02', 'completed')",
+  ).run(pid);
+  const d = await gantt(await loginAs(app, 'viewer'), pid);
+  for (const item of d.tasks)
+    assert.doesNotMatch(item.custom_class, /\s/, `${item.name}: ${item.custom_class}`);
+  const byName = Object.fromEntries(d.tasks.map((t) => [t.name, t.custom_class]));
+  assert.equal(byName.Atrasada, 'gantt-late'); // hoy es 2026-05-13 y no está hecha
+  assert.equal(byName.Hecha, 'gantt-done'); // lo terminado nunca es «atrasado»
+  assert.equal(byName.H1, 'milestone-pending');
+  assert.equal(byName.H2, 'milestone-completed');
 });

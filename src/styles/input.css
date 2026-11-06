@@ -31,11 +31,17 @@
   fill: var(--color-warn);
 }
 .gantt-container .bar-wrapper.gantt-late .bar {
+  fill: oklch(0.78 0.03 255);
   stroke: var(--color-danger);
   stroke-width: 2;
 }
-.gantt-container .bar-wrapper.milestone .bar {
+.gantt-container .bar-wrapper.milestone-pending .bar,
+.gantt-container .bar-wrapper.milestone-missed .bar {
   fill: oklch(0.45 0.12 300);
+}
+.gantt-container .bar-wrapper.milestone-missed .bar {
+  stroke: var(--color-danger);
+  stroke-width: 2;
 }
 .gantt-container .bar-wrapper.milestone-completed .bar {
   fill: var(--color-ok);
