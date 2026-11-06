@@ -1,0 +1,71 @@
+<div class="flex items-center justify-between">
+  <h1 class="text-2xl font-bold"><%= labels.plural %></h1>
+  <% if (canWrite) { %>
+    <a href="/clients/<%= type %>/new" class="rounded bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-700">Nuevo <%= labels.singular %></a>
+  <% } %>
+</div>
+
+<nav class="mt-3 flex gap-4 text-sm" aria-label="Tipo de cliente">
+  <a class="<%= type === 'internal' ? 'font-semibold underline' : 'hover:underline' %>" href="/clients/internal">Internos</a>
+  <a class="<%= type === 'external' ? 'font-semibold underline' : 'hover:underline' %>" href="/clients/external">Externos</a>
+</nav>
+
+<form method="get" action="/clients/<%= type %>" class="mt-4 flex flex-wrap items-end gap-3">
+  <div>
+    <label for="q" class="block text-sm font-medium">Buscar</label>
+    <input id="q" name="q" type="search" value="<%= query.q %>" class="mt-1 rounded border border-slate-300 px-3 py-2" />
+  </div>
+  <div>
+    <label for="status" class="block text-sm font-medium">Estado</label>
+    <select id="status" name="status" class="mt-1 rounded border border-slate-300 px-3 py-2">
+      <% [['all', 'Todos'], ['active', 'Activos'], ['inactive', 'Inactivos']].forEach(([value, label]) => { %>
+        <option value="<%= value %>" <%= query.status === value ? 'selected' : '' %>><%= label %></option>
+      <% }) %>
+    </select>
+  </div>
+  <button type="submit" class="rounded border px-4 py-2 text-sm hover:bg-slate-100">Filtrar</button>
+</form>
+
+<div class="mt-4 overflow-x-auto">
+  <table class="w-full text-left text-sm">
+    <caption class="sr-only"><%= labels.plural %></caption>
+    <thead>
+      <tr class="border-b">
+        <th scope="col" class="py-2 pr-4">Nombre</th>
+        <% if (type === 'internal') { %>
+          <th scope="col" class="py-2 pr-4">Departamento</th>
+          <th scope="col" class="py-2 pr-4">Centro de costos</th>
+        <% } else { %>
+          <th scope="col" class="py-2 pr-4">Razón social</th>
+          <th scope="col" class="py-2 pr-4">RFC / ID fiscal</th>
+          <th scope="col" class="py-2 pr-4">Tarifa / hora</th>
+        <% } %>
+        <th scope="col" class="py-2 pr-4">Contacto</th>
+        <th scope="col" class="py-2 pr-4">Estado</th>
+        <th scope="col" class="py-2"><span class="sr-only">Acciones</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% clients.forEach((c) => { %>
+        <tr class="border-b">
+          <td class="py-2 pr-4"><%= c.name %></td>
+          <% if (type === 'internal') { %>
+            <td class="py-2 pr-4"><%= c.department %></td>
+            <td class="py-2 pr-4"><%= c.costCenter || '—' %></td>
+          <% } else { %>
+            <td class="py-2 pr-4"><%= c.legalName %></td>
+            <td class="py-2 pr-4"><%= c.taxId || '—' %></td>
+            <td class="py-2 pr-4"><%= centsToRate(c.hourlyRateCents) %> <%= c.currency %></td>
+          <% } %>
+          <td class="py-2 pr-4"><%= c.contactName || '—' %></td>
+          <td class="py-2 pr-4"><%= c.isActive ? 'Activo' : 'Inactivo' %></td>
+          <td class="py-2"><a class="underline" href="/clients/<%= type %>/<%= c.id %>"><%= canWrite ? 'Editar' : 'Ver' %></a></td>
+        </tr>
+      <% }) %>
+      <% if (clients.length === 0) { %>
+        <tr><td colspan="7" class="py-4 text-slate-600">No hay clientes que coincidan.</td></tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+<%- include('../../partials/pagination', { meta, baseUrl }) %>

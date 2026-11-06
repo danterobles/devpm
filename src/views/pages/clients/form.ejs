@@ -1,0 +1,79 @@
+<% const action = editing ? `/clients/${type}/${client.id}` : `/clients/${type}`; %>
+<% const field = 'mt-1 w-full rounded border border-slate-300 px-3 py-2'; %>
+<% const ro = canWrite ? '' : 'readonly disabled'; %>
+<% const v = (key) => (client[key] === null || client[key] === undefined ? '' : client[key]); %>
+<section class="mx-auto max-w-lg">
+  <h1 class="text-2xl font-bold"><%= editing ? (canWrite ? 'Editar' : 'Ver') : 'Nuevo' %> <%= labels.singular %></h1>
+  <% if (error) { %>
+    <p role="alert" class="mt-4 rounded border border-danger bg-red-50 px-4 py-3 text-sm text-red-800"><%= error %></p>
+  <% } %>
+  <form method="post" action="<%= action %>" class="mt-4 space-y-4">
+    <div>
+      <label for="name" class="block text-sm font-medium">Nombre visible</label>
+      <input id="name" name="name" required maxlength="120" value="<%= v('name') %>" <%= ro %> class="<%= field %>" />
+    </div>
+    <% if (type === 'internal') { %>
+      <div>
+        <label for="department" class="block text-sm font-medium">Departamento</label>
+        <input id="department" name="department" required maxlength="120" value="<%= v('department') %>" <%= ro %> class="<%= field %>" />
+      </div>
+      <div>
+        <label for="costCenter" class="block text-sm font-medium">Centro de costos</label>
+        <input id="costCenter" name="costCenter" maxlength="60" value="<%= v('costCenter') %>" <%= ro %> class="<%= field %>" />
+      </div>
+    <% } else { %>
+      <div>
+        <label for="legalName" class="block text-sm font-medium">Razón social</label>
+        <input id="legalName" name="legalName" required maxlength="200" value="<%= v('legalName') %>" <%= ro %> class="<%= field %>" />
+      </div>
+      <div>
+        <label for="taxId" class="block text-sm font-medium">RFC / ID fiscal</label>
+        <input id="taxId" name="taxId" maxlength="40" value="<%= v('taxId') %>" <%= ro %> class="<%= field %>" />
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label for="hourlyRate" class="block text-sm font-medium">Tarifa por hora</label>
+          <input id="hourlyRate" name="hourlyRate" required inputmode="decimal" pattern="\d+(\.\d{1,2})?" value="<%= v('hourlyRate') %>" <%= ro %> class="<%= field %>" />
+        </div>
+        <div>
+          <label for="currency" class="block text-sm font-medium">Moneda</label>
+          <input id="currency" name="currency" required maxlength="3" pattern="[A-Za-z]{3}" value="<%= v('currency') %>" <%= ro %> class="<%= field %>" />
+        </div>
+      </div>
+      <div>
+        <label for="address" class="block text-sm font-medium">Domicilio</label>
+        <input id="address" name="address" maxlength="300" value="<%= v('address') %>" <%= ro %> class="<%= field %>" />
+      </div>
+    <% } %>
+    <div>
+      <label for="contactName" class="block text-sm font-medium">Contacto / responsable</label>
+      <input id="contactName" name="contactName" maxlength="120" value="<%= v('contactName') %>" <%= ro %> class="<%= field %>" />
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label for="contactEmail" class="block text-sm font-medium">Correo de contacto</label>
+        <input id="contactEmail" name="contactEmail" type="email" maxlength="254" value="<%= v('contactEmail') %>" <%= ro %> class="<%= field %>" />
+      </div>
+      <div>
+        <label for="contactPhone" class="block text-sm font-medium">Teléfono</label>
+        <input id="contactPhone" name="contactPhone" maxlength="40" value="<%= v('contactPhone') %>" <%= ro %> class="<%= field %>" />
+      </div>
+    </div>
+    <div>
+      <label for="notes" class="block text-sm font-medium">Notas</label>
+      <textarea id="notes" name="notes" rows="3" maxlength="2000" <%= ro %> class="<%= field %>"><%= v('notes') %></textarea>
+    </div>
+    <% if (editing) { %>
+      <div class="flex items-center gap-2">
+        <input id="isActive" name="isActive" type="checkbox" value="1" <%= client.isActive ? 'checked' : '' %> <%= ro %> />
+        <label for="isActive" class="text-sm font-medium">Cliente activo</label>
+      </div>
+    <% } %>
+    <div class="flex gap-3">
+      <% if (canWrite) { %>
+        <button type="submit" class="rounded bg-brand-600 px-4 py-2 font-medium text-white hover:bg-brand-700">Guardar</button>
+      <% } %>
+      <a href="/clients/<%= type %>" class="rounded border px-4 py-2 hover:bg-slate-100"><%= canWrite ? 'Cancelar' : 'Volver' %></a>
+    </div>
+  </form>
+</section>

@@ -19,7 +19,21 @@ export function createClientsRouter({ db }) {
   api.get('/:id', c.get);
   api.patch('/:id', canWrite, c.update);
 
+  // Vistas HTML: un juego de rutas por tipo de cliente.
+  const html = Router();
+  html.use(requireAuth);
+  html.get('/', (_req, res) => res.redirect('/clients/internal'));
+  for (const type of ['internal', 'external']) {
+    const v = c.html(type);
+    html.get(`/${type}`, v.list);
+    html.get(`/${type}/new`, canWrite, v.newForm);
+    html.post(`/${type}`, canWrite, v.create);
+    html.get(`/${type}/:id`, v.edit);
+    html.post(`/${type}/:id`, canWrite, v.update);
+  }
+
   const router = Router();
   router.use('/api/v1/clients', api);
+  router.use('/clients', html);
   return router;
 }

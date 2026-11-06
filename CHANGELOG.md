@@ -81,6 +81,10 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   paginación), detalle, alta y edición/desactivación. Esquemas Zod estrictos por tipo
   (`internal` / `external`), `type` inmutable, tarifa en centavos, moneda ISO-4217 (por defecto
   MXN), RFC único y bitácora. Lectura para cualquier usuario autenticado; escritura solo `admin` y `pm`.
+- Vistas de clientes internos y externos (RF-10, RF-11, RF-15, RF-16): `/clients/internal` y
+  `/clients/external` con listado (búsqueda, filtro de estado, paginación), alta y edición por
+  formulario; la tarifa se captura en pesos y se guarda en centavos; los controles de escritura se
+  ocultan a `developer` y `viewer`. Enlace «Clientes» en la navegación.
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y

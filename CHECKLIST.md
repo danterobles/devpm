@@ -86,8 +86,8 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 ## Etapa 4 — Clientes y equipo
 
 - [x] Módulo `clients`: repository, service, schemas Zod por tipo, rutas API
-- [ ] Vistas de clientes internos: listado con búsqueda/filtro/paginación y formulario (RF-10, RF-11)
-- [ ] Vistas de clientes externos: listado y formulario con tarifa y moneda (RF-15, RF-16)
+- [x] Vistas de clientes internos: listado con búsqueda/filtro/paginación y formulario (RF-10, RF-11)
+- [x] Vistas de clientes externos: listado y formulario con tarifa y moneda (RF-15, RF-16)
 - [ ] Regla: no eliminar cliente con proyectos, solo desactivar (RF-18)
 - [ ] Módulo `team`: CRUD de miembros (RF-20)
 - [ ] Skills y nivel por miembro (RF-21)
