@@ -13,8 +13,8 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 | Etapa | Nombre | Estado |
 |---|---|---|
 | 0 | Documentación y repositorio | ✅ Completada |
-| 1 | Scaffolding del proyecto | ⏳ Siguiente |
-| 2 | Base de datos | Pendiente |
+| 1 | Scaffolding del proyecto | ✅ Completada |
+| 2 | Base de datos | ⏳ Siguiente |
 | 3 | Autenticación y roles | Pendiente |
 | 4 | Clientes y equipo | Pendiente |
 | 5 | Proyectos, hitos y asignaciones | Pendiente |
@@ -41,21 +41,21 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 
 ## Etapa 1 — Scaffolding del proyecto
 
-- [ ] `package.json` con `"type": "module"`, `engines.node >= 22` y scripts de `CLAUDE.md`
-- [ ] Instalar dependencias de producción y desarrollo (ARQUITECTURA §11)
-- [ ] `.env.example` y `src/config/index.js` con validación Zod
-- [ ] `src/lib/logger.js` (pino) y `src/lib/AppError.js`
-- [ ] `src/app.js` (`createApp({ db })`) con helmet, parsers, estáticos y EJS
-- [ ] `src/server.js` con cierre ordenado (SIGINT/SIGTERM)
-- [ ] Middlewares `notFound` y `errorHandler` (JSON en `/api/*`, vista en HTML)
-- [ ] Endpoint `GET /health`
-- [ ] Tailwind CSS 4: `src/styles/input.css` con `@theme`, scripts `build:css` y modo watch
-- [ ] `scripts/copy-vendor.js` (Chart.js y Frappe Gantt → `public/vendor/`) en `postinstall`
-- [ ] Layout base `views/layouts/main.ejs` con navegación y parciales (flash, paginación)
-- [ ] ESLint + Prettier configurados (`npm run lint`, `npm run format`)
-- [ ] Infraestructura de pruebas: `node:test`, `supertest`, prueba de `/health`
+- [x] `package.json` con `"type": "module"`, `engines.node >= 22` y scripts de `CLAUDE.md`
+- [x] Instalar dependencias de producción y desarrollo (ARQUITECTURA §11)
+- [x] `.env.example` y `src/config/index.js` con validación Zod
+- [x] `src/lib/logger.js` (pino) y `src/lib/AppError.js`
+- [x] `src/app.js` (`createApp({ db })`) con helmet, parsers, estáticos y EJS
+- [x] `src/server.js` con cierre ordenado (SIGINT/SIGTERM)
+- [x] Middlewares `notFound` y `errorHandler` (JSON en `/api/*`, vista en HTML)
+- [x] Endpoint `GET /health`
+- [x] Tailwind CSS 4: `src/styles/input.css` con `@theme`, scripts `build:css` y modo watch
+- [x] `scripts/copy-vendor.js` (Chart.js y Frappe Gantt → `public/vendor/`) en `postinstall`
+- [x] Layout base `views/layouts/main.ejs` con navegación y parciales (flash, paginación)
+- [x] ESLint + Prettier configurados (`npm run lint`, `npm run format`)
+- [x] Infraestructura de pruebas: `node:test`, `supertest`, prueba de `/health`
 
-**Criterio de cierre:** `npm run dev` levanta el servidor con estilos; `npm test` y `npm run lint` pasan.
+**Criterio de cierre:** `npm run dev` levanta el servidor con estilos; `npm test` y `npm run lint` pasan. ✅
 
 ## Etapa 2 — Base de datos
 

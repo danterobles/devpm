@@ -26,6 +26,15 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 - `CHECKLIST.md` con 12 etapas (0 a 11), tareas trazables a los requerimientos del PRD y
   criterio de cierre por etapa; Etapa 0 marcada como completada.
 
+### Agregado (Etapa 1 — Scaffolding)
+- `package.json` (ES Modules, Node >= 22) con scripts de desarrollo, build de CSS, pruebas y lint.
+- Configuración validada con Zod (`src/config`), logger pino y `AppError`.
+- App Express 5 (`createApp`) con helmet y CSP estricta, EJS con layout propio, `/health`,
+  manejo central de errores (JSON en `/api`, vista HTML en el resto) y cierre ordenado.
+- Tailwind CSS 4 (CSS-first), layout base con navegación y parciales de flash y paginación.
+- `scripts/copy-vendor.js`: Chart.js y Frappe Gantt servidos localmente desde `public/vendor`.
+- ESLint, Prettier y 11 pruebas iniciales (`node:test` + `supertest`).
+
 ### Cambiado
 - `CLAUDE.md`: nueva regla para preguntar al usuario ante cualquier duda de definición y
   registrar la decisión en `docs/` antes de implementarla.
