@@ -20,11 +20,19 @@ export function createGanttRouter({ db, timezone }) {
   };
 
   const router = Router();
-  router.use(['/api/v1/projects/:id/gantt'], requireAuth);
+  router.use(['/api/v1/projects/:id/gantt', '/projects/:id/gantt'], requireAuth);
   router.get('/api/v1/projects/:id/gantt', (req, res) => {
     const { groupBy } = parseWith(querySchema, req.query);
     res.json({
       data: service.project(projectId(req), { groupBy, canReschedule: canReschedule(req) }),
+    });
+  });
+  router.get('/projects/:id/gantt', (req, res) => {
+    const data = service.project(projectId(req), { canReschedule: canReschedule(req) });
+    res.render('pages/gantt/project', {
+      title: `Gantt · ${data.project.code}`,
+      project: data.project,
+      canReschedule: data.canReschedule,
     });
   });
   return router;

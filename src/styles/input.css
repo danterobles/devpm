@@ -11,3 +11,32 @@
   --color-warn: oklch(0.8 0.16 80);
   --color-danger: oklch(0.63 0.22 25);
 }
+
+/* Gantt (Frappe Gantt): color de las barras por estado de la tarea. */
+.gantt-container .bar-wrapper .bar {
+  fill: oklch(0.7 0.05 255);
+}
+.gantt-container .bar-wrapper.gantt-todo .bar,
+.gantt-container .bar-wrapper.gantt-backlog .bar {
+  fill: oklch(0.78 0.03 255);
+}
+.gantt-container .bar-wrapper.gantt-in_progress .bar,
+.gantt-container .bar-wrapper.gantt-in_review .bar {
+  fill: var(--color-brand-500);
+}
+.gantt-container .bar-wrapper.gantt-done .bar {
+  fill: var(--color-ok);
+}
+.gantt-container .bar-wrapper.gantt-blocked .bar {
+  fill: var(--color-warn);
+}
+.gantt-container .bar-wrapper.gantt-late .bar {
+  stroke: var(--color-danger);
+  stroke-width: 2;
+}
+.gantt-container .bar-wrapper.milestone .bar {
+  fill: oklch(0.45 0.12 300);
+}
+.gantt-container .bar-wrapper.milestone-completed .bar {
+  fill: var(--color-ok);
+}

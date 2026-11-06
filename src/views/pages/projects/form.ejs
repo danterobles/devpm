@@ -5,7 +5,7 @@
 <% const clientLocked = editing && project.status !== 'planning'; %>
 <section class="mx-auto max-w-2xl">
   <h1 class="text-2xl font-bold"><%= title %><% if (editing) { %> <span class="text-slate-500"><%= project.code %></span><% } %></h1>
-  <% if (editing) { %><p class="mt-1 text-sm text-slate-600">Estado: <%= project.status %> · <a class="underline" href="/projects/<%= project.id %>/sprints">Sprints</a> · <a class="underline" href="/projects/<%= project.id %>/backlog">Backlog</a></p><% } %>
+  <% if (editing) { %><p class="mt-1 text-sm text-slate-600">Estado: <%= project.status %> · <a class="underline" href="/projects/<%= project.id %>/sprints">Sprints</a> · <a class="underline" href="/projects/<%= project.id %>/backlog">Backlog</a> · <a class="underline" href="/projects/<%= project.id %>/gantt">Gantt</a></p><% } %>
   <% if (editing && summary) { %>
     <% const hrs = (m) => `${(m / 60).toFixed(1)} h`; %>
     <dl class="mt-4 grid grid-cols-2 gap-3 text-sm sm:grid-cols-4" aria-label="Resumen del proyecto">

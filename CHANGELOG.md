@@ -188,6 +188,11 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   `done`, o horas enviadas+aprobadas ÷ estimadas con tope 95), dependencias solo entre barras dibujadas,
   hitos de un día, tareas sin fechas en `unscheduled`, orden por inicio o `?groupBy=sprint`, fecha de hoy
   y bandera `canReschedule` (admin/pm). Lectura para cualquier usuario autenticado.
+- Vista del Gantt `/projects/:id/gantt` (RF-70 a RF-72) con Frappe Gantt servido localmente
+  (`public/js/pages/gantt.js`): escalas día/semana/mes, agrupación por sprint, dependencias, avance,
+  línea del día actual, colores por estado (atrasadas con borde rojo, hitos en morado), popups con
+  contenido escapado y lista de tareas «sin programar». Solo lectura por ahora. Enlaces desde la ficha
+  del proyecto y los sprints.
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y

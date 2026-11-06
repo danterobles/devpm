@@ -1,0 +1,37 @@
+<link rel="stylesheet" href="/vendor/frappe-gantt.css" />
+<div class="flex flex-wrap items-center justify-between gap-2">
+  <h1 class="text-2xl font-bold">Gantt <span class="text-slate-500"><%= project.code %></span></h1>
+  <p class="text-sm">
+    <a class="underline" href="/projects/<%= project.id %>">Proyecto</a> ·
+    <a class="underline" href="/projects/<%= project.id %>/sprints">Sprints</a> ·
+    <a class="underline" href="/projects/<%= project.id %>/backlog">Backlog</a>
+  </p>
+</div>
+<p class="mt-1 text-sm text-slate-600"><%= project.name %> · <%= project.startDate %> → <%= project.endDate %></p>
+
+<div data-gantt data-project-id="<%= project.id %>" data-can-reschedule="<%= canReschedule ? 'true' : 'false' %>">
+  <div class="mt-4 flex flex-wrap items-center gap-4">
+    <div role="group" aria-label="Escala de tiempo" class="flex gap-1">
+      <button type="button" data-view-mode="Day" aria-pressed="false" class="rounded border px-3 py-1 text-sm hover:bg-slate-100 aria-pressed:bg-brand-600 aria-pressed:text-white">Día</button>
+      <button type="button" data-view-mode="Week" aria-pressed="true" class="rounded border px-3 py-1 text-sm hover:bg-slate-100 aria-pressed:bg-brand-600 aria-pressed:text-white">Semana</button>
+      <button type="button" data-view-mode="Month" aria-pressed="false" class="rounded border px-3 py-1 text-sm hover:bg-slate-100 aria-pressed:bg-brand-600 aria-pressed:text-white">Mes</button>
+    </div>
+    <label class="flex items-center gap-2 text-sm">
+      <input type="checkbox" name="groupBy" value="sprint" /> Agrupar por sprint
+    </label>
+    <p class="text-xs text-slate-600">
+      Leyenda: <span class="font-medium">gris</span> pendiente · <span class="font-medium">azul</span> en curso ·
+      <span class="font-medium">verde</span> hecha · <span class="font-medium">ámbar</span> bloqueada ·
+      <span class="font-medium">borde rojo</span> atrasada · <span class="font-medium">morado</span> hito
+    </p>
+  </div>
+  <p id="gantt-message" class="mt-4 text-sm text-slate-600" role="status" aria-live="polite"></p>
+  <div id="gantt" class="mt-2 overflow-x-auto rounded border bg-white"></div>
+  <section class="mt-6" aria-labelledby="unscheduled-title" hidden>
+    <h2 id="unscheduled-title" class="text-lg font-semibold">Sin programar</h2>
+    <p class="text-sm text-slate-600">Tareas sin fecha de inicio o de fin; no se dibujan en el diagrama.</p>
+    <ul id="gantt-unscheduled" class="mt-2 list-disc pl-5 text-sm"></ul>
+  </section>
+</div>
+<script src="/vendor/frappe-gantt.umd.js"></script>
+<script src="/js/pages/gantt.js" defer></script>
