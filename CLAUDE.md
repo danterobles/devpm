@@ -102,12 +102,39 @@ Detalle completo en `docs/ARQUITECTURA.md`.
 ## Flujo de trabajo obligatorio
 
 1. **Consulta `CHECKLIST.md`** para identificar la siguiente tarea pendiente de la etapa activa.
-2. Lee la sección relevante de `docs/` antes de escribir código.
-3. Implementa el cambio con sus pruebas (las pruebas deben pasar: `npm test`).
-4. **Actualiza `CHECKLIST.md`**: marca `[x]` lo completado y agrega tareas descubiertas.
-5. **Actualiza `CHANGELOG.md`** en la sección `[Sin publicar]` con la categoría adecuada.
-6. **Haz un commit por cambio lógico** con mensaje descriptivo (ver abajo). Un commit no debe
+2. Lee la sección relevante de `docs/` antes de escribir código. Si surge una duda de
+   definición, **pregunta antes de implementar** (ver "Dudas de definición").
+3. Implementa el cambio con sus pruebas.
+4. **Ejecuta la suite completa de pruebas** al terminar la tarea (ver "Pruebas al terminar cada tarea").
+5. **Actualiza `CHECKLIST.md`**: marca `[x]` lo completado y agrega tareas descubiertas.
+6. **Actualiza `CHANGELOG.md`** en la sección `[Sin publicar]` con la categoría adecuada.
+7. **Haz un commit por cambio lógico** con mensaje descriptivo (ver abajo). Un commit no debe
    mezclar funcionalidades no relacionadas.
+
+### Dudas de definición
+
+- Si un requerimiento, regla de negocio, fórmula, nombre, flujo o comportamiento de UI **no está
+  definido o es ambiguo** en `docs/`, **detente y pregunta al usuario** antes de implementarlo.
+  No supongas ni inventes la definición.
+- Formula la pregunta de forma concreta: qué falta definir, dónde se detectó y, si aplica,
+  las opciones posibles con una recomendación.
+- Una vez resuelta, **registra la decisión en el documento correspondiente** (`PRD.md`,
+  `ARQUITECTURA.md` o `DATA.md`) con su commit `docs(...)` antes de escribir el código.
+- Las decisiones puramente técnicas e internas que ya cubren las convenciones de este archivo
+  y de `docs/ARQUITECTURA.md` no requieren consulta.
+
+### Pruebas al terminar cada tarea
+
+- Al terminar **cada tarea** (no solo al cerrar una etapa) ejecuta **todas** las pruebas con
+  `npm test` y también `npm run lint`, para detectar cualquier regresión en otras partes.
+  Filtrar con `--test-name-pattern` sirve durante el desarrollo, pero no reemplaza la suite completa.
+- Si alguna prueba o el lint falla: **analiza la causa, corrige y vuelve a ejecutar la suite
+  completa** hasta que todo pase; después continúa con el flujo. No se marca la tarea como
+  completada ni se hace commit con pruebas en rojo.
+- Nunca se desactiva, omite (`skip`/`todo`) ni se debilita una prueba para que pase; si la prueba
+  era incorrecta, corrígela y explica el motivo en el commit.
+- Si un error no puede resolverse (p. ej. requiere una definición pendiente), detente e informa
+  al usuario con el error exacto en lugar de continuar.
 
 ### Mensajes de commit
 
@@ -128,5 +155,6 @@ Ejemplos: `feat(clients): agrega CRUD de clientes externos`,
 
 - No subir `.env`, archivos `.db` ni `public/css/output.css` (ya están en `.gitignore`).
 - Las migraciones aplicadas **nunca se editan**: crea una nueva migración numerada.
-- Al cerrar una etapa del CHECKLIST, ejecuta `npm test` y `npm run lint` antes del commit final.
+- Toda tarea termina con `npm test` y `npm run lint` en verde antes de su commit.
+- Ante cualquier duda de definición, se pregunta; no se asume.
 - Los KPIs se calculan en `src/modules/dashboard/` y sus fórmulas deben coincidir con `docs/PRD.md`.

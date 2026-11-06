@@ -25,3 +25,9 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   índices, vistas para KPIs, ciclo de vida de datos y datos semilla.
 - `CHECKLIST.md` con 12 etapas (0 a 11), tareas trazables a los requerimientos del PRD y
   criterio de cierre por etapa; Etapa 0 marcada como completada.
+
+### Cambiado
+- `CLAUDE.md`: nueva regla para preguntar al usuario ante cualquier duda de definición y
+  registrar la decisión en `docs/` antes de implementarla.
+- `CLAUDE.md`: obligación de ejecutar la suite completa de pruebas y el lint al terminar cada
+  tarea; si algo falla, corregir y volver a ejecutar antes de continuar o hacer commit.
