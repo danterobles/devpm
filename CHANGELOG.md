@@ -48,6 +48,12 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 ### Corregido
 - CHECK de fechas: `col = date(col)` aceptaba formatos inválidos (daba NULL); ahora `col IS date(col)`.
 
+### Agregado (Etapa 3 — Autenticación)
+- Migración `003_sessions` y `SqliteSessionStore` (store propio de `express-session` sobre
+  better-sqlite3: upsert, expiración, `prune`, `destroyByUser`).
+- Middleware de sesión: cookie `devpm.sid` HttpOnly, SameSite=Strict, Secure en producción,
+  expiración por inactividad de 8 h y sin cookie para visitantes anónimos; limpieza horaria.
+
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y
   todo el estado se conserva en CHECKLIST, CHANGELOG y docs.
