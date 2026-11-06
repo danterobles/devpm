@@ -19,3 +19,7 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 - `docs/ARQUITECTURA.md` con monolito modular por capas, decisiones (ADR-01 a ADR-08),
   estructura de carpetas, convenciones de API, tiempo real con SSE, diseño de Gantt y Burndown,
   seguridad, pruebas, mejores prácticas y despliegue.
+- `docs/DATA.md` con convenciones de esquema, diagrama ER, 19 tablas (usuarios, clientes
+  internos/externos, equipo, skills, ausencias, proyectos, hitos, asignaciones, sprints, tareas,
+  dependencias, historial, registro de tiempo, snapshots de burndown, auditoría y soporte),
+  índices, vistas para KPIs, ciclo de vida de datos y datos semilla.
