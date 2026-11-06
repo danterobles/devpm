@@ -168,6 +168,11 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   (lunes a domingo), totales por día y semana, resumen por estado y navegación entre semanas; alta,
   edición y baja de registros desde la hoja (horas en el formulario, minutos en la BD). Admin y pm pueden
   consultar la hoja de otros miembros en solo lectura (`?memberId=`). Enlace «Tiempo» en la navegación.
+- Envío y aprobación de tiempo (RF-52): `POST /api/v1/time-entries/:id/submit`, `submit-week`,
+  `GET .../pending`, `POST .../:id/approve` y `.../reject` (motivo obligatorio), y vista
+  `/time/approvals`. Aprueba el líder del proyecto o un admin (pm ajeno 403) y nadie revisa sus propios
+  registros (422); el rechazado vuelve al autor con el motivo y puede reenviarse; transiciones
+  registradas como `status_change` en la bitácora. La hoja permite enviar un registro o toda la semana.
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y

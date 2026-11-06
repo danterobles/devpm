@@ -1,6 +1,6 @@
 import { AppError } from '../../lib/AppError.js';
 import { diff, recordAudit } from '../../lib/audit.js';
-import { addDays, today as todayIn, weekday } from '../../lib/dates.js';
+import { addDays, nowIso, today as todayIn, weekday } from '../../lib/dates.js';
 
 export const toDto = (r) => ({
   id: r.id,
@@ -138,6 +138,71 @@ export function createTimeEntriesService({ db, repository, timezone = 'America/M
         projects: repository.assignedProjects(memberId, weekStart, addDays(weekStart, 6)),
         tasks: repository.openTasksFor(memberId),
       };
+    },
+
+    /** RF-52: el autor envía un registro (draft o rejected → submitted). */
+    submit(actor, id) {
+      const before = requireOwn(actor, id);
+      requireEditable(before);
+      db.transaction(() => {
+        repository.setReview(id, { status: 'submitted' });
+        audit(actor.id, id, 'status_change', { status: [before.status, 'submitted'] });
+      })();
+      return toDto(repository.findById(id));
+    },
+
+    /** RF-52: envía todos los registros editables del autor en la semana lunes–domingo de `week`. */
+    submitWeek(actor, week) {
+      const memberId = ownMember(actor);
+      const from = mondayOf(week);
+      const ids = repository.weekEditableIds(memberId, from, addDays(from, 6));
+      db.transaction(() => {
+        for (const id of ids) {
+          const before = repository.findById(id);
+          repository.setReview(id, { status: 'submitted' });
+          audit(actor.id, id, 'status_change', { status: [before.status, 'submitted'] });
+        }
+      })();
+      return { submitted: ids.length, weekStart: from };
+    },
+
+    /** Registros enviados que este usuario puede revisar (admin: todos; líder: los de sus proyectos). */
+    pending(actor) {
+      if (actor.role === 'admin') return repository.submittedAll().map(toDto);
+      const memberId = repository.memberOfUser(actor.id);
+      return memberId === null ? [] : repository.submittedForManager(memberId).map(toDto);
+    },
+
+    /** Aprueba o rechaza: solo el líder del proyecto o un admin, y nunca los propios registros. */
+    review(actor, id, decision, reason = null) {
+      const row = repository.findById(id);
+      if (!row) throw AppError.notFound('Registro de tiempo no encontrado');
+      const memberId = repository.memberOfUser(actor.id);
+      const isLeader = memberId !== null && row.project_manager_id === memberId;
+      if (actor.role !== 'admin' && !isLeader) {
+        throw AppError.forbidden(
+          'Solo el líder del proyecto o un administrador puede revisar este registro',
+        );
+      }
+      if (memberId !== null && row.team_member_id === memberId) {
+        throw AppError.businessRule('No puedes revisar tus propios registros');
+      }
+      if (row.status !== 'submitted') {
+        throw AppError.businessRule('Solo se pueden revisar registros enviados');
+      }
+      const approved = decision === 'approve';
+      db.transaction(() => {
+        repository.setReview(
+          id,
+          approved
+            ? { status: 'approved', approvedBy: actor.id, approvedAt: nowIso() }
+            : { status: 'rejected', rejectionReason: reason },
+        );
+        audit(actor.id, id, 'status_change', {
+          status: ['submitted', approved ? 'approved' : 'rejected'],
+        });
+      })();
+      return toDto(repository.findById(id));
     },
 
     list(actor, query) {

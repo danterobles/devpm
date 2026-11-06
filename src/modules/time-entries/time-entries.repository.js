@@ -81,7 +81,32 @@ export function createTimeEntriesRepository(db) {
     return { clause: where.length ? `WHERE ${where.join(' AND ')}` : '', params };
   }
 
+  const reviewableByManager = db.prepare(
+    `${SELECT} WHERE e.status = 'submitted' AND p.manager_id = ? AND e.team_member_id != ?
+      ORDER BY e.work_date, e.id`,
+  );
+  const allSubmitted = db.prepare(
+    `${SELECT} WHERE e.status = 'submitted' ORDER BY e.work_date, e.id`,
+  );
+  const weekEditable = db.prepare(
+    `SELECT id FROM time_entries
+      WHERE team_member_id = ? AND work_date >= ? AND work_date <= ? AND status IN ('draft','rejected')
+      ORDER BY work_date, id`,
+  );
+
   return {
+    submittedAll: () => allSubmitted.all(),
+    submittedForManager: (managerId) => reviewableByManager.all(managerId, managerId),
+    weekEditableIds: (memberId, from, to) => weekEditable.pluck().all(memberId, from, to),
+    setReview(id, { status, approvedBy = null, approvedAt = null, rejectionReason = null }) {
+      db.prepare(
+        `UPDATE time_entries
+            SET status = @status, approved_by = @approvedBy, approved_at = @approvedAt,
+                rejection_reason = @rejectionReason,
+                updated_at = strftime('%Y-%m-%dT%H:%M:%fZ','now')
+          WHERE id = @id`,
+      ).run({ id, status, approvedBy, approvedAt, rejectionReason });
+    },
     findMember: (id) => memberRow.get(id),
     assignedProjects: (memberId, from, to) => assignedProjects.all(memberId, to, from),
     openTasksFor: (memberId) => openTasks.all(memberId),

@@ -1,0 +1,25 @@
+<h1 class="text-2xl font-bold">Aprobaciones de tiempo</h1>
+<p class="mt-1 text-sm text-slate-600">Registros enviados de los proyectos que lideras (los administradores ven todos). Los registros propios los revisa otra persona.</p>
+<p class="mt-1 text-sm"><a class="underline" href="/time">← Hoja de tiempos</a></p>
+<% if (error) { %>
+  <p role="alert" class="mt-4 rounded border border-danger bg-red-50 px-4 py-3 text-sm text-red-800"><%= error %></p>
+<% } %>
+<ul class="mt-4 divide-y text-sm">
+  <% entries.forEach((e) => { %>
+    <li class="py-3">
+      <p><strong><%= e.memberName %></strong> · <%= e.projectCode %><% if (e.taskTitle) { %> · <%= e.taskTitle %><% } %> · <%= e.workDate %> · <%= minutesToHours(e.minutes) %></p>
+      <p class="text-slate-600"><%= e.description %></p>
+      <div class="mt-2 flex flex-wrap items-end gap-3">
+        <form method="post" action="/time/approvals/<%= e.id %>/approve"><button type="submit" class="rounded bg-brand-600 px-3 py-1 text-white hover:bg-brand-700">Aprobar</button></form>
+        <form method="post" action="/time/approvals/<%= e.id %>/reject" class="flex items-end gap-2">
+          <div>
+            <label for="reason<%= e.id %>" class="block text-xs font-medium">Motivo del rechazo</label>
+            <input id="reason<%= e.id %>" name="reason" required maxlength="500" class="rounded border border-slate-300 px-2 py-1" />
+          </div>
+          <button type="submit" class="rounded border px-3 py-1 hover:bg-slate-100">Rechazar</button>
+        </form>
+      </div>
+    </li>
+  <% }) %>
+  <% if (entries.length === 0) { %><li class="py-3 text-slate-600">No hay registros pendientes de revisión.</li><% } %>
+</ul>

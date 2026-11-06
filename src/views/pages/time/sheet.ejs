@@ -45,13 +45,28 @@
 </p>
 
 <section class="mt-8" aria-labelledby="entries-title">
-  <h2 id="entries-title" class="text-xl font-semibold">Registros de la semana</h2>
+  <div class="flex flex-wrap items-center justify-between gap-2">
+    <h2 id="entries-title" class="text-xl font-semibold">Registros de la semana</h2>
+    <span class="flex items-center gap-4 text-sm">
+      <% if (isOwn) { %>
+        <form method="post" action="/time/submit-week"><input type="hidden" name="week" value="<%= weekStart %>" /><button type="submit" class="rounded border px-3 py-1 hover:bg-slate-100">Enviar semana</button></form>
+      <% } %>
+      <a class="underline" href="/time/approvals">Aprobaciones pendientes</a>
+    </span>
+  </div>
   <ul class="mt-3 divide-y text-sm">
     <% entries.forEach((e) => { %>
       <li class="flex flex-wrap items-center justify-between gap-2 py-2">
         <span><%= e.workDate %> · <%= e.projectCode %><% if (e.taskTitle) { %> · <%= e.taskTitle %><% } %> · <%= minutesToHours(e.minutes) %> — <%= e.description %>
           <span class="text-slate-500">(<%= e.status %><% if (e.status === 'rejected' && e.rejectionReason) { %>: <%= e.rejectionReason %><% } %>)</span></span>
-        <% if (isOwn) { %><a class="underline" href="/time/entries/<%= e.id %>"><%= ['draft', 'rejected'].includes(e.status) ? 'Editar' : 'Ver' %></a><% } %>
+        <% if (isOwn) { %>
+          <span class="flex items-center gap-3">
+            <a class="underline" href="/time/entries/<%= e.id %>"><%= ['draft', 'rejected'].includes(e.status) ? 'Editar' : 'Ver' %></a>
+            <% if (['draft', 'rejected'].includes(e.status)) { %>
+              <form method="post" action="/time/entries/<%= e.id %>/submit"><button type="submit" class="underline" aria-label="Enviar registro del <%= e.workDate %>">Enviar</button></form>
+            <% } %>
+          </span>
+        <% } %>
       </li>
     <% }) %>
     <% if (entries.length === 0) { %><li class="py-2 text-slate-600">Sin registros.</li><% } %>

@@ -6,7 +6,9 @@ import {
   createEntrySchema,
   idSchema,
   listQuerySchema,
+  rejectSchema,
   sheetQuerySchema,
+  submitWeekSchema,
   updateEntrySchema,
 } from './time-entries.schemas.js';
 
@@ -66,6 +68,14 @@ export function createTimeEntriesController({ service }) {
       error,
     });
   }
+  function approvalsPage(req, res, { status = 200, error = null } = {}) {
+    res.status(status).render('pages/time/approvals', {
+      title: 'Aprobaciones de tiempo',
+      entries: service.pending(actor(req)),
+      error,
+      minutesToHours,
+    });
+  }
   const knownError = (err) => err instanceof AppError && err.status < 500 && err.status !== 404;
   const message = (err) => err.details?.[0]?.message ?? err.message;
 
@@ -101,6 +111,45 @@ export function createTimeEntriesController({ service }) {
       } catch (err) {
         if (!knownError(err)) throw err;
         return entryPage(req, res, id, { status: err.status, error: message(err), form: req.body });
+      }
+    },
+    // ---- Envío y aprobación (RF-52) ----
+    apiSubmit: (req, res) => res.json({ data: service.submit(actor(req), parseId(req.params.id)) }),
+    apiSubmitWeek(req, res) {
+      const { week } = parseWith(submitWeekSchema, req.body);
+      res.json({ data: service.submitWeek(actor(req), week) });
+    },
+    apiPending: (req, res) => res.json({ data: service.pending(actor(req)) }),
+    apiApprove: (req, res) =>
+      res.json({ data: service.review(actor(req), parseId(req.params.id), 'approve') }),
+    apiReject(req, res) {
+      const { reason } = parseWith(rejectSchema, req.body);
+      res.json({ data: service.review(actor(req), parseId(req.params.id), 'reject', reason) });
+    },
+    htmlSubmit(req, res) {
+      const id = parseId(req.params.id);
+      const { workDate } = service.get(actor(req), id);
+      service.submit(actor(req), id);
+      res.redirect(`/time?week=${workDate}`);
+    },
+    htmlSubmitWeek(req, res) {
+      const { week } = parseWith(submitWeekSchema, { week: req.body.week });
+      service.submitWeek(actor(req), week);
+      res.redirect(`/time?week=${week}`);
+    },
+    htmlApprovals: (req, res) => approvalsPage(req, res),
+    htmlApprove(req, res) {
+      service.review(actor(req), parseId(req.params.id), 'approve');
+      res.redirect('/time/approvals');
+    },
+    htmlReject(req, res) {
+      try {
+        const { reason } = parseWith(rejectSchema, { reason: req.body.reason });
+        service.review(actor(req), parseId(req.params.id), 'reject', reason);
+        return res.redirect('/time/approvals');
+      } catch (err) {
+        if (!knownError(err)) throw err;
+        return approvalsPage(req, res, { status: err.status, error: message(err) });
       }
     },
     htmlRemove(req, res) {
