@@ -49,6 +49,10 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 - CHECK de fechas: `col = date(col)` aceptaba formatos inválidos (daba NULL); ahora `col IS date(col)`.
 
 ### Cambiado
+- `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y
+  todo el estado se conserva en CHECKLIST, CHANGELOG y docs.
+- Decisión (Etapa 3): el almacén de sesiones es propio sobre `better-sqlite3`, sin dependencia extra
+  (ARQUITECTURA §7, DATA §3.16).
 - `CLAUDE.md`: nueva regla para preguntar al usuario ante cualquier duda de definición y
   registrar la decisión en `docs/` antes de implementarla.
 - `CLAUDE.md`: obligación de ejecutar la suite completa de pruebas y el lint al terminar cada

@@ -301,7 +301,7 @@ res.flushHeaders();
 
 | Tema | Práctica |
 |---|---|
-| Autenticación | `express-session` con *store* en SQLite; `req.session.regenerate()` al iniciar sesión; expiración por inactividad de 8 h |
+| Autenticación | `express-session` con *store* propio sobre `better-sqlite3` (`src/modules/auth/sqliteSessionStore.js`, ~40 líneas, tabla `sessions` de la migración 003, sin dependencia extra); `req.session.regenerate()` al iniciar sesión; expiración por inactividad de 8 h |
 | Contraseñas | `bcrypt` con costo 12; nunca se registran ni se devuelven en la API |
 | Autorización | `requireAuth` global para todo excepto `/login` y estáticos; `requireRole('admin','pm')` por ruta; el service verifica pertenencia (p. ej. un `pm` solo aprueba horas de sus proyectos) |
 | Cookies | `HttpOnly`, `SameSite=Strict`, `Secure` en producción, nombre no predecible |
@@ -355,7 +355,7 @@ res.flushHeaders();
 | `ejs` | vistas SSR | prod |
 | `better-sqlite3` | base de datos | prod |
 | `zod` | validación de entrada y configuración | prod |
-| `express-session` + store SQLite | sesiones | prod |
+| `express-session` | sesiones (store propio sobre better-sqlite3, ver §7) | prod |
 | `bcrypt` | hash de contraseñas | prod |
 | `helmet` | cabeceras de seguridad | prod |
 | `express-rate-limit` | límite de intentos | prod |

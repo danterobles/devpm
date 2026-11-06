@@ -110,6 +110,7 @@ Detalle completo en `docs/ARQUITECTURA.md`.
 6. **Actualiza `CHANGELOG.md`** en la sección `[Sin publicar]` con la categoría adecuada.
 7. **Haz un commit por cambio lógico** con mensaje descriptivo (ver abajo). Un commit no debe
    mezclar funcionalidades no relacionadas.
+8. **Cierra la tarea y limpia el contexto** (ver "Contexto limpio entre tareas").
 
 ### Dudas de definición
 
@@ -122,6 +123,21 @@ Detalle completo en `docs/ARQUITECTURA.md`.
   `ARQUITECTURA.md` o `DATA.md`) con su commit `docs(...)` antes de escribir el código.
 - Las decisiones puramente técnicas e internas que ya cubren las convenciones de este archivo
   y de `docs/ARQUITECTURA.md` no requieren consulta.
+
+### Contexto limpio entre tareas
+
+- Al terminar **cada tarea** del CHECKLIST (ya con pruebas en verde, CHECKLIST y CHANGELOG
+  actualizados y commit hecho), **detén el trabajo** y pide al usuario limpiar el contexto con
+  `/clear` para que la siguiente tarea empiece desde cero y con la atención fresca.
+  Claude no puede ejecutar `/clear` por sí mismo: debe pedirlo explícitamente y no continuar con
+  la siguiente tarea hasta que el usuario lo indique.
+- Por eso **todo el estado vive en el repositorio, no en la conversación**: antes de pedir la
+  limpieza, verifica que `CHECKLIST.md` (qué sigue), `CHANGELOG.md` y `docs/` (decisiones tomadas)
+  estén al día y que `git status` esté limpio.
+- Al arrancar en un contexto limpio: lee `CLAUDE.md`, `CHECKLIST.md` (primera tarea `[ ]` de la
+  etapa activa) y las secciones de `docs/` que esa tarea cita; después sigue el flujo normal.
+- El mensaje de cierre de cada tarea debe incluir: qué se hizo, resultado de `npm test` y
+  `npm run lint`, y cuál es la siguiente tarea del CHECKLIST.
 
 ### Pruebas al terminar cada tarea
 
@@ -157,4 +173,5 @@ Ejemplos: `feat(clients): agrega CRUD de clientes externos`,
 - Las migraciones aplicadas **nunca se editan**: crea una nueva migración numerada.
 - Toda tarea termina con `npm test` y `npm run lint` en verde antes de su commit.
 - Ante cualquier duda de definición, se pregunta; no se asume.
+- Tras cada tarea terminada se pide `/clear` al usuario antes de empezar la siguiente.
 - Los KPIs se calculan en `src/modules/dashboard/` y sus fórmulas deben coincidir con `docs/PRD.md`.

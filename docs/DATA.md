@@ -327,7 +327,7 @@ Cambio de alcance del día (RF-82) = `total_points(d) − total_points(d−1)`.
 | Tabla | Propósito |
 |---|---|
 | `settings` | `key TEXT PK`, `value TEXT` (JSON). Umbrales de KPIs (RF-93), zona horaria, días hábiles |
-| `sessions` | Gestionada por el store de `express-session` (`sid` PK, `sess` JSON, `expire`) |
+| `sessions` | Creada en la migración `003_sessions.sql` y gestionada por el store propio de `express-session` (`sid` PK, `sess` JSON, `expires_at` en ms epoch, índice por `expires_at`) |
 | `schema_migrations` | `version TEXT PK`, `applied_at TEXT` — control del runner de migraciones |
 
 ## 4. Índices
