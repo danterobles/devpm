@@ -16,3 +16,6 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   comandos, convenciones de código y flujo de trabajo (CHECKLIST → código → CHANGELOG → commit).
 - `docs/PRD.md` con visión, roles, requerimientos funcionales (RF-01 a RF-95), 16 KPIs con
   fórmulas y umbrales, requerimientos no funcionales, criterios de aceptación del MVP y roadmap.
+- `docs/ARQUITECTURA.md` con monolito modular por capas, decisiones (ADR-01 a ADR-08),
+  estructura de carpetas, convenciones de API, tiempo real con SSE, diseño de Gantt y Burndown,
+  seguridad, pruebas, mejores prácticas y despliegue.
