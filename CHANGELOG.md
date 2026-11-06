@@ -135,6 +135,12 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   cerrar fija `completed_points` y manda las tareas no terminadas al backlog (con historial de estado)
   o a un sprint planeado (`moveTo`); un sprint cerrado es de solo lectura. Utilidad
   `src/lib/taskHistory.js`.
+- Tareas (RF-61, RF-62, RF-42, RF-65): API `/api/v1/projects/:id/tasks`, `/api/v1/tasks/:id`,
+  `POST .../status` y `GET .../history`. Alta, edición y baja (`admin`/`pm`); responsable asignado al
+  proyecto; sprint e hito del mismo proyecto; entrar a un sprint pasa `backlog → todo` y salir regresa a
+  `backlog` (una tarea `done` no sale); estados libres con historial, `started_at` (primera vez en
+  progreso) y `completed_at`; un `developer` solo cambia el estado de sus tareas; subtareas de un
+  nivel que siguen el sprint del padre; tareas de sprints cerrados en solo lectura; bitácora.
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y

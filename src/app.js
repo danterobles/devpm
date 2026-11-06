@@ -8,6 +8,7 @@ import { createLogger } from './lib/logger.js';
 import { verifyOrigin } from './middlewares/verifyOrigin.js';
 import { layout } from './middlewares/layout.js';
 import { createSession } from './modules/auth/session.js';
+import { createTasksRouter } from './modules/tasks/tasks.routes.js';
 import { createSprintsRouter } from './modules/sprints/sprints.routes.js';
 import { createLoadRouter } from './modules/assignments/load.routes.js';
 import { createClientsRouter } from './modules/clients/clients.routes.js';
@@ -70,6 +71,7 @@ export function createApp({ config, db = null, logger = createLogger(config) }) 
     app.use(createClientsRouter({ db }));
     app.use(createTeamRouter({ db }));
     app.use(createSprintsRouter({ db }));
+    app.use(createTasksRouter({ db }));
     app.use(createLoadRouter({ db, timezone: config.timezone }));
     app.use(createProjectsRouter({ db, timezone: config.timezone }));
     app.use(

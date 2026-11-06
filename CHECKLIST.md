@@ -113,8 +113,8 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 ## Etapa 6 — Planeación: sprints y tareas
 
 - [x] Sprints: CRUD, iniciar (fija `committed_points`) y cerrar; un solo activo (RF-60, RF-66)
-- [ ] Tareas: CRUD con story points, estimación, fechas, responsable asignado al proyecto (RF-61, RF-42)
-- [ ] Historial de estados y `started_at`/`completed_at` (RF-62)
+- [x] Tareas: CRUD con story points, estimación, fechas, responsable asignado al proyecto (RF-61, RF-42)
+- [x] Historial de estados y `started_at`/`completed_at` (RF-62)
 - [ ] Backlog del proyecto con ordenamiento (RF-63)
 - [ ] Tablero Kanban por sprint con arrastrar y soltar (RF-63)
 - [ ] Dependencias fin-a-inicio con detección de ciclos (RF-64)
