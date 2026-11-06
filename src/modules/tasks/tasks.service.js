@@ -27,6 +27,7 @@ export const toDto = (r) => ({
   sortOrder: r.sort_order,
 });
 
+const BOARD_STATUSES = ['backlog', 'todo', 'in_progress', 'in_review', 'blocked', 'done'];
 const DERIVED = ['assignee_name', 'sprint_name', 'subtask_count'];
 
 /** Casos de uso de tareas (RF-61, RF-62, RF-65, RF-42). */
@@ -102,6 +103,40 @@ export function createTasksService({ db, repository }) {
       return { data: rows.map(toDto), meta: { page: query.page, pageSize: query.pageSize, total } };
     },
     get: (id) => toDto(requireTask(id)),
+    /** Tablero Kanban de un sprint (RF-63): una columna por estado. */
+    board(sprintId) {
+      const sprint = repository.sprintFull(sprintId);
+      if (!sprint) throw AppError.notFound('Sprint no encontrado');
+      const tasks = repository.sprintTasks(sprintId).map(toDto);
+      return {
+        sprint: {
+          id: sprint.id,
+          projectId: sprint.project_id,
+          name: sprint.name,
+          status: sprint.status,
+          startDate: sprint.start_date,
+          endDate: sprint.end_date,
+          committedPoints: sprint.committed_points,
+        },
+        columns: BOARD_STATUSES.map((status) => {
+          const cards = tasks.filter((t) => t.status === status);
+          return {
+            status,
+            tasks: cards,
+            points: cards.reduce((acc, t) => acc + (t.storyPoints ?? 0), 0),
+          };
+        }),
+      };
+    },
+
+    /** ¿Puede este usuario cambiar el estado de la tarea? (admin/pm, o developer en las suyas). */
+    canMove(actor) {
+      if (['admin', 'pm'].includes(actor.role)) return () => true;
+      if (actor.role !== 'developer') return () => false;
+      const memberId = repository.memberOfUser(actor.id);
+      return (task) => memberId !== null && task.assigneeId === memberId;
+    },
+
     backlog(projectId) {
       requireProject(projectId);
       return repository.backlog(projectId).map(toDto);

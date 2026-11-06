@@ -116,7 +116,7 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 - [x] Tareas: CRUD con story points, estimación, fechas, responsable asignado al proyecto (RF-61, RF-42)
 - [x] Historial de estados y `started_at`/`completed_at` (RF-62)
 - [x] Backlog del proyecto con ordenamiento (RF-63)
-- [ ] Tablero Kanban por sprint con arrastrar y soltar (RF-63)
+- [x] Tablero Kanban por sprint con arrastrar y soltar (RF-63)
 - [ ] Dependencias fin-a-inicio con detección de ciclos (RF-64)
 - [ ] Subtareas (RF-65)
 - [ ] Pruebas: ciclo de dependencias, cierre de sprint, responsable no asignado

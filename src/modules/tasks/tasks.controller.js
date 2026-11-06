@@ -19,6 +19,16 @@ const parseId = (raw, message = 'Tarea no encontrada') => {
   return parsed.data;
 };
 
+const STATUS_LABELS = {
+  backlog: 'Backlog',
+  todo: 'Por hacer',
+  in_progress: 'En progreso',
+  in_review: 'En revisión',
+  blocked: 'Bloqueada',
+  done: 'Hecha',
+};
+const BOARD_STATUS_LIST = Object.keys(STATUS_LABELS);
+
 const DECIMAL = /^\d+(\.\d{1,2})?$/;
 
 /** Mapea el formulario de alta rápida (backlog) al contrato de la API. */
@@ -48,6 +58,13 @@ export function createTasksController({ service }) {
   const actor = (req) => ({ id: req.session.userId, role: req.session.role });
   const projectId = (req) => parseId(req.params.id, 'Proyecto no encontrado');
   const canWriteRole = (req) => ['admin', 'pm'].includes(req.session.role);
+
+  /** Tablero del sprint indicado en la URL; 404 si el sprint no es del proyecto. */
+  function boardOf(req) {
+    const board = service.board(parseId(req.params.sid, 'Sprint no encontrado'));
+    if (board.sprint.projectId !== projectId(req)) throw AppError.notFound('Sprint no encontrado');
+    return board;
+  }
 
   function backlogPage(req, res, pid, { status = 200, error = null, form = {} } = {}) {
     res.status(status).render('pages/tasks/backlog', {
@@ -88,6 +105,8 @@ export function createTasksController({ service }) {
       const { status } = parseWith(changeStatusSchema, req.body);
       res.json({ data: service.changeStatus(actor(req), parseId(req.params.id), status) });
     },
+    apiBoard: (req, res) =>
+      res.json({ data: service.board(parseId(req.params.id, 'Sprint no encontrado')) }),
     apiReorder(req, res) {
       const { taskIds } = parseWith(reorderSchema, req.body);
       res.json({ data: service.reorder(actorId(req), projectId(req), taskIds) });
@@ -95,6 +114,26 @@ export function createTasksController({ service }) {
     apiRemove(req, res) {
       service.remove(actorId(req), parseId(req.params.id));
       res.status(204).end();
+    },
+
+    // ---- Vistas HTML: tablero Kanban (RF-63) ----
+    htmlBoard(req, res) {
+      const board = boardOf(req);
+      const canMove = service.canMove(actor(req));
+      res.render('pages/tasks/board', {
+        title: `Tablero · ${board.sprint.name}`,
+        project: service.formOptions(board.sprint.projectId).project,
+        ...board,
+        canMove,
+        statusLabels: STATUS_LABELS,
+        statuses: BOARD_STATUS_LIST,
+      });
+    },
+    htmlBoardStatus(req, res) {
+      const board = boardOf(req);
+      const { status } = parseWith(changeStatusSchema, { status: req.body.status });
+      service.changeStatus(actor(req), parseId(req.params.taskId), status);
+      res.redirect(`/projects/${board.sprint.projectId}/sprints/${board.sprint.id}/board`);
     },
 
     // ---- Vistas HTML: backlog (RF-63) ----

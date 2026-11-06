@@ -144,6 +144,10 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 - Backlog del proyecto (RF-63): vista `/projects/:id/backlog` (tareas sin sprint en orden, alta rápida,
   subir/bajar y enviar a un sprint) y `PUT /api/v1/projects/:id/tasks/order` para reordenar; las tareas
   fuera del subconjunto conservan su posición relativa. Enlaces al backlog desde proyecto y sprints.
+- Tablero Kanban por sprint (RF-63): vista `/projects/:id/sprints/:sid/board`, API
+  `GET /api/v1/sprints/:id/board` y `public/js/pages/board.js` (arrastrar y soltar con reversión si el
+  servidor rechaza el cambio). Solo se pueden mover las tarjetas que el usuario puede cambiar (admin/pm
+  todas; developer las suyas) y cada tarjeta incluye un formulario de respaldo sin JavaScript.
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y

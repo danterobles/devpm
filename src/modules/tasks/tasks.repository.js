@@ -65,7 +65,14 @@ export function createTasksRepository(db) {
   );
   const projectInfo = db.prepare('SELECT id, code, name FROM projects WHERE id = ?');
 
+  const sprintFull = db.prepare(
+    'SELECT id, project_id, name, status, start_date, end_date, committed_points FROM sprints WHERE id = ?',
+  );
+  const sprintTasks = db.prepare(`${SELECT} WHERE t.sprint_id = ? ORDER BY t.sort_order, t.id`);
+
   return {
+    sprintFull: (id) => sprintFull.get(id),
+    sprintTasks: (sprintId) => sprintTasks.all(sprintId),
     backlog: (projectId) => backlog.all(projectId),
     projectTasks: (projectId) => projectTasks.all(projectId),
     setSortOrder: (id, order) => setOrder.run(order, id),

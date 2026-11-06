@@ -1,0 +1,48 @@
+<div class="flex flex-wrap items-center justify-between gap-2">
+  <h1 class="text-2xl font-bold">Tablero <span class="text-slate-500"><%= sprint.name %></span></h1>
+  <p class="text-sm">
+    <a class="underline" href="/projects/<%= project.id %>/sprints">Sprints</a> ·
+    <a class="underline" href="/projects/<%= project.id %>/backlog">Backlog</a>
+  </p>
+</div>
+<p class="mt-1 text-sm text-slate-600">
+  <%= project.code %> · <%= sprint.startDate %> → <%= sprint.endDate %> · estado: <%= sprint.status %>
+  <% if (sprint.committedPoints !== null) { %> · comprometidos: <%= sprint.committedPoints %> pts<% } %>
+</p>
+<p id="board-status" class="sr-only" role="status" aria-live="polite"></p>
+
+<div data-board class="mt-4 grid gap-3 md:grid-cols-3 xl:grid-cols-6">
+  <% columns.forEach((col) => { %>
+    <% if (col.status !== 'backlog' || col.tasks.length > 0) { %>
+      <section data-status="<%= col.status %>" data-label="<%= statusLabels[col.status] %>" class="rounded border bg-slate-50 p-2" aria-label="<%= statusLabels[col.status] %>">
+        <h2 class="flex items-center justify-between px-1 text-sm font-semibold">
+          <span><%= statusLabels[col.status] %></span>
+          <span class="text-xs font-normal text-slate-600"><span data-count><%= col.tasks.length %></span> · <span data-points-total><%= col.points %></span> pts</span>
+        </h2>
+        <ul data-cards class="mt-2 min-h-16 space-y-2">
+          <% col.tasks.forEach((t) => { %>
+            <% const movable = canMove(t); %>
+            <li data-task-id="<%= t.id %>" data-points="<%= t.storyPoints ?? 0 %>" data-can-move="<%= movable ? 'true' : 'false' %>" draggable="<%= movable ? 'true' : 'false' %>" class="rounded border bg-white p-2 text-sm shadow-sm <%= movable ? 'cursor-grab' : '' %>">
+              <a class="font-medium underline" href="/tasks/<%= t.id %>"><%= t.title %></a>
+              <p class="mt-1 text-xs text-slate-600">
+                <%= t.type %> · <%= t.priority %><% if (t.storyPoints !== null) { %> · <%= t.storyPoints %> pts<% } %>
+                <% if (t.assigneeName) { %><br /><%= t.assigneeName %><% } %>
+                <% if (t.parentTaskId) { %><br />Subtarea<% } %>
+              </p>
+              <% if (movable) { %>
+                <form method="post" action="/projects/<%= project.id %>/sprints/<%= sprint.id %>/board/<%= t.id %>/status" class="mt-2 flex items-center gap-1">
+                  <label for="mv<%= t.id %>" class="sr-only">Mover <%= t.title %> a</label>
+                  <select id="mv<%= t.id %>" name="status" class="w-full rounded border border-slate-300 px-1 py-0.5 text-xs">
+                    <% statuses.forEach((s) => { %><option value="<%= s %>" <%= s === t.status ? 'selected' : '' %>><%= statusLabels[s] %></option><% }) %>
+                  </select>
+                  <button type="submit" class="rounded border px-2 py-0.5 text-xs hover:bg-slate-100">Mover</button>
+                </form>
+              <% } %>
+            </li>
+          <% }) %>
+        </ul>
+      </section>
+    <% } %>
+  <% }) %>
+</div>
+<script src="/js/pages/board.js" defer></script>
