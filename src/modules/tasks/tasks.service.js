@@ -31,7 +31,7 @@ const BOARD_STATUSES = ['backlog', 'todo', 'in_progress', 'in_review', 'blocked'
 const DERIVED = ['assignee_name', 'sprint_name', 'subtask_count'];
 
 /** Casos de uso de tareas (RF-61, RF-62, RF-65, RF-42). */
-export function createTasksService({ db, repository }) {
+export function createTasksService({ db, repository, snapshots = null }) {
   function requireProject(projectId) {
     if (!repository.projectExists(projectId)) throw AppError.notFound('Proyecto no encontrado');
   }
@@ -345,6 +345,7 @@ export function createTasksService({ db, repository }) {
         audit(actorId, newId, 'create', { title: [null, input.title] });
         return newId;
       })();
+      snapshots?.recalculate([fields.sprintId]);
       return toDto(repository.findById(id));
     },
 
@@ -390,6 +391,7 @@ export function createTasksService({ db, repository }) {
         for (const k of DERIVED) delete changes[k];
         if (Object.keys(changes).length > 0) audit(actorId, id, 'update', changes);
       })();
+      snapshots?.recalculate([before.sprint_id, repository.findById(id).sprint_id]);
       return toDto(repository.findById(id));
     },
 
@@ -421,6 +423,7 @@ export function createTasksService({ db, repository }) {
           applyStatus(task, to, actor.id);
           audit(actor.id, id, 'status_change', { status: [task.status, to] });
         })();
+        snapshots?.recalculate([task.sprint_id]);
       }
       return toDto(repository.findById(id));
     },
@@ -432,6 +435,7 @@ export function createTasksService({ db, repository }) {
         repository.remove(id);
         audit(actorId, id, 'delete', { title: [before.title, null] });
       })();
+      snapshots?.recalculate([before.sprint_id]);
     },
   };
 }

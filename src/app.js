@@ -76,7 +76,7 @@ export function createApp({ config, db = null, logger = createLogger(config) }) 
     app.use(createClientsRouter({ db }));
     app.use(createTeamRouter({ db }));
     app.use(createSprintsRouter({ db, timezone: config.timezone }));
-    app.use(createTasksRouter({ db }));
+    app.use(createTasksRouter({ db, timezone: config.timezone }));
     app.use(createGanttRouter({ db, timezone: config.timezone }));
     app.use(createTimeEntriesRouter({ db, timezone: config.timezone }));
     app.use(createLoadRouter({ db, timezone: config.timezone }));

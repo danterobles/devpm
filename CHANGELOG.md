@@ -215,6 +215,9 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   `captureActive` y `recalculate` con *upsert* idempotente por (sprint, día) de puntos totales,
   completados y restantes, y minutos estimados restantes (padres y subtareas). Iniciar un sprint guarda
   la instantánea del día 0 y cerrarlo guarda la final, antes de devolver las tareas no terminadas.
+- Recalculo en vivo del Burndown (RF-81): crear, editar (puntos, estimación, sprint), cambiar de estado
+  o eliminar una tarea recalcula la instantánea de hoy de los sprints activos afectados, después de
+  confirmar la transacción; los sprints planeados o cerrados no generan instantáneas.
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y

@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { requireAuth } from '../../middlewares/requireAuth.js';
 import { requireRole } from '../../middlewares/requireRole.js';
 import { createTasksRepository } from './tasks.repository.js';
+import { createSnapshotsService } from '../burndown/snapshots.service.js';
 import { createTasksService } from './tasks.service.js';
 import { createTasksController } from './tasks.controller.js';
 
@@ -9,9 +10,13 @@ import { createTasksController } from './tasks.controller.js';
  * Tareas: lectura para todo usuario autenticado; crear/editar/borrar solo `admin` y `pm`.
  * El cambio de estado lo autoriza el service (un developer solo en sus propias tareas).
  */
-export function createTasksRouter({ db }) {
+export function createTasksRouter({ db, timezone }) {
   const c = createTasksController({
-    service: createTasksService({ db, repository: createTasksRepository(db) }),
+    service: createTasksService({
+      db,
+      repository: createTasksRepository(db),
+      snapshots: createSnapshotsService({ db, timezone }),
+    }),
   });
   const canWrite = requireRole('admin', 'pm');
   const canChangeStatus = requireRole('admin', 'pm', 'developer');

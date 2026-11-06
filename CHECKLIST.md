@@ -147,7 +147,7 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 ## Etapa 9 — Burndown Chart
 
 - [x] Servicio de snapshots con upsert idempotente (DATA §3.14)
-- [ ] Recalcular snapshot del día al cambiar tareas de un sprint activo (RF-81)
+- [x] Recalcular snapshot del día al cambiar tareas de un sprint activo (RF-81)
 - [ ] Job diario y relleno de días faltantes al arrancar
 - [ ] Endpoint `GET /api/v1/sprints/:id/burndown` con línea ideal en días hábiles (RF-80)
 - [ ] Vista con Chart.js: real vs. ideal y cambios de alcance (RF-82)
