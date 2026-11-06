@@ -1,0 +1,28 @@
+# Dependencias
+node_modules/
+
+# Variables de entorno
+.env
+.env.*
+!.env.example
+
+# Base de datos SQLite (local)
+data/*.db
+data/*.db-wal
+data/*.db-shm
+data/backups/
+
+# Artefactos generados
+public/css/output.css
+public/vendor/
+coverage/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Sistema / editores
+.DS_Store
+.vscode/
+.idea/
