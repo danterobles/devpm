@@ -8,6 +8,7 @@ export function createUsersRepository(db) {
   const byEmail = db.prepare('SELECT id FROM users WHERE email = ?');
   const byTeamMember = db.prepare('SELECT id FROM users WHERE team_member_id = ?');
   const teamMemberExists = db.prepare('SELECT 1 FROM team_members WHERE id = ?');
+  const hashById = db.prepare('SELECT password_hash FROM users WHERE id = ?');
   const insert = db.prepare(
     `INSERT INTO users (email, password_hash, full_name, role, team_member_id)
      VALUES (@email, @passwordHash, @fullName, @role, @teamMemberId)`,
@@ -15,6 +16,7 @@ export function createUsersRepository(db) {
 
   return {
     findById: (id) => byId.get(id),
+    findPasswordHash: (id) => hashById.pluck().get(id),
     findIdByEmail: (email) => byEmail.get(email)?.id ?? null,
     findIdByTeamMember: (teamMemberId) => byTeamMember.get(teamMemberId)?.id ?? null,
     teamMemberExists: (id) => Boolean(teamMemberExists.get(id)),

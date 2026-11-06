@@ -47,3 +47,8 @@ export const listQuerySchema = z.object({
   q: z.string().trim().max(100).default(''),
   status: z.enum(['all', 'active', 'inactive']).default('all'),
 });
+
+export const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1, 'La contraseña actual es obligatoria').max(200),
+  newPassword: passwordSchema,
+});

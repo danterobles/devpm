@@ -2,6 +2,7 @@ import { AppError } from '../../lib/AppError.js';
 import { parseWith } from '../../lib/parse.js';
 import {
   ROLES,
+  changePasswordSchema,
   createUserSchema,
   idParamSchema,
   listQuerySchema,
@@ -23,7 +24,13 @@ const formView = (res, { status = 200, user, error = null, editing }) =>
     editing,
   });
 
-export function createUsersController({ service }) {
+const call = (fn, target) =>
+  new Promise((resolve, reject) => fn.call(target, (err) => (err ? reject(err) : resolve())));
+
+const passwordView = (res, { status = 200, error = null, done = false } = {}) =>
+  res.status(status).render('pages/account/password', { title: 'Cambiar contraseña', error, done });
+
+export function createUsersController({ service, sessionStore }) {
   const actor = (req) => req.session.userId;
 
   /** Ejecuta `action`; si falla con un error de negocio, vuelve a mostrar el formulario con el mensaje. */
@@ -39,7 +46,41 @@ export function createUsersController({ service }) {
     }
   }
 
+  /** Cambia la contraseña propia y conserva solo la sesión actual (cierra las demás). */
+  async function changeOwnPassword(req, { currentPassword, newPassword }) {
+    await service.changeOwnPassword(actor(req), currentPassword, newPassword);
+    sessionStore?.destroyByUser(actor(req));
+    await call(req.session.save, req.session);
+  }
+
   return {
+    // ---- Cuenta propia (RF-05) ----
+    async apiChangeOwnPassword(req, res) {
+      await changeOwnPassword(req, parseWith(changePasswordSchema, req.body));
+      res.status(204).end();
+    },
+    passwordForm: (req, res) => passwordView(res, { done: req.query.updated === '1' }),
+    async passwordSubmit(req, res) {
+      try {
+        const { confirmPassword, ...body } = req.body;
+        if (body.newPassword !== confirmPassword) {
+          throw AppError.validation('Datos inválidos', [
+            { field: 'confirmPassword', message: 'La confirmación no coincide' },
+          ]);
+        }
+        await changeOwnPassword(req, parseWith(changePasswordSchema, body));
+        return res.redirect('/account/password?updated=1');
+      } catch (err) {
+        if (err instanceof AppError && err.status < 500) {
+          return passwordView(res, {
+            status: err.status,
+            error: err.details?.[0]?.message ?? err.message,
+          });
+        }
+        throw err;
+      }
+    },
+
     // ---- API JSON ----
     apiList: (req, res) => res.json(service.list(parseWith(listQuerySchema, req.query))),
     apiGet: (req, res) => res.json({ data: service.get(parseId(req.params.id)) }),

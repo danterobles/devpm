@@ -14,6 +14,7 @@ export function createUsersRouter({ db, sessionStore, bcryptCost }) {
       sessionStore,
       bcryptCost,
     }),
+    sessionStore,
   });
   const adminOnly = [requireAuth, requireRole('admin')];
 
@@ -33,7 +34,18 @@ export function createUsersRouter({ db, sessionStore, bcryptCost }) {
   html.get('/:id', c.htmlEdit);
   html.post('/:id', c.htmlUpdate);
 
+  // Cuenta propia (RF-05): cualquier usuario autenticado.
+  const me = Router();
+  me.use(requireAuth);
+  me.patch('/password', c.apiChangeOwnPassword);
+  const account = Router();
+  account.use(requireAuth);
+  account.get('/password', c.passwordForm);
+  account.post('/password', c.passwordSubmit);
+
   const router = Router();
+  router.use('/api/v1/me', me);
+  router.use('/account', account);
   router.use('/api/v1/users', api);
   router.use('/admin/users', html);
   return router;

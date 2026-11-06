@@ -69,6 +69,9 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   caracteres; vinculación opcional con miembro del equipo; desactivar o cambiar rol/contraseña
   cierra las sesiones del usuario; un admin no puede desactivarse ni quitarse el rol. Con bitácora.
 - Enlace «Usuarios» en la navegación para administradores.
+- Cambio de contraseña propio (RF-05): vista `/account/password` y `PATCH /api/v1/me/password`;
+  exige la contraseña actual, cierra las demás sesiones del usuario y deja bitácora. El nombre del
+  usuario en la navegación enlaza a esa vista.
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y

@@ -78,7 +78,7 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 - [x] Middlewares `requireAuth` y `requireRole` (RF-02)
 - [x] Verificación de `Origin` en métodos que modifican estado (CSRF)
 - [x] CRUD de usuarios para `admin` y vinculación con miembro del equipo (RF-03, RF-04)
-- [ ] Cambio de contraseña propio (RF-05)
+- [x] Cambio de contraseña propio (RF-05)
 - [ ] Pruebas: login correcto/incorrecto, 401 sin sesión, 403 por rol
 
 **Criterio de cierre:** criterio de aceptación PRD §8.6 cubierto por pruebas.

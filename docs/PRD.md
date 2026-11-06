@@ -68,6 +68,9 @@ Prioridad: **Alta** = MVP, **Media** = siguiente iteración, **Baja** = deseable
 - Un admin no puede desactivarse a sí mismo ni quitarse el rol `admin`.
 - La vinculación (RF-04) es opcional y acepta el `team_member_id` de un miembro existente; un
   miembro solo puede estar vinculado a un usuario. El CRUD de miembros llega en la Etapa 4.
+- RF-05: el usuario cambia su contraseña indicando la actual (y confirmando la nueva en la vista);
+  la nueva debe ser distinta de la actual. Se cierran sus demás sesiones y se conserva la actual.
+  Disponible para cualquier rol en `/account/password` y `PATCH /api/v1/me/password`.
 - Se ofrece API JSON (`/api/v1/users`) y vistas de administración (`/admin/users`), solo para `admin`.
 
 ### 5.2 Clientes internos

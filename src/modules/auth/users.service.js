@@ -122,6 +122,28 @@ export function createUsersService({ db, repository, sessionStore = null, bcrypt
       return toDto(after);
     },
 
+    /** RF-05: el propio usuario cambia su contraseña; se cierran sus demás sesiones. */
+    async changeOwnPassword(userId, currentPassword, newPassword) {
+      const currentHash = repository.findPasswordHash(userId);
+      if (!currentHash || !(await bcrypt.compare(currentPassword, currentHash))) {
+        throw AppError.businessRule('La contraseña actual es incorrecta');
+      }
+      if (currentPassword === newPassword) {
+        throw AppError.businessRule('La nueva contraseña debe ser distinta de la actual');
+      }
+      const passwordHash = await hash(newPassword);
+      db.transaction(() => {
+        repository.update(userId, { passwordHash });
+        recordAudit(db, {
+          userId,
+          entity: 'user',
+          entityId: userId,
+          action: 'update',
+          changes: { password: [null, '(cambiada)'] },
+        });
+      })();
+    },
+
     /** La baja es lógica: desactiva al usuario (los usuarios no se eliminan). */
     deactivate: (actorId, id) => service.update(actorId, id, { isActive: false }),
   };
