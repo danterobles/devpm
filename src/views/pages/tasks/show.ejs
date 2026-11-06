@@ -1,0 +1,182 @@
+<% const field = 'mt-1 w-full rounded border border-slate-300 px-3 py-2'; %>
+<% const ro = canWrite ? '' : 'readonly disabled'; %>
+<% const v = (key) => (task[key] === null || task[key] === undefined ? '' : task[key]); %>
+<% const isSub = task.parentTaskId !== null; %>
+<section class="mx-auto max-w-3xl">
+  <p class="text-sm"><a class="underline" href="/projects/<%= task.projectId %>/backlog">Backlog</a>
+    <% if (task.sprintId) { %> · <a class="underline" href="/projects/<%= task.projectId %>/sprints/<%= task.sprintId %>/board">Tablero</a><% } %></p>
+  <h1 class="mt-2 text-2xl font-bold"><%= task.title %></h1>
+  <% if (parent) { %><p class="text-sm text-slate-600">Subtarea de <a class="underline" href="/tasks/<%= parent.id %>"><%= parent.title %></a></p><% } %>
+  <p class="mt-1 text-sm text-slate-600">Estado: <%= statusLabels[task.status] %><% if (task.sprintName) { %> · Sprint: <%= task.sprintName %><% } %></p>
+  <% if (error) { %>
+    <p role="alert" class="mt-4 rounded border border-danger bg-red-50 px-4 py-3 text-sm text-red-800"><%= error %></p>
+  <% } %>
+
+  <% if (canMoveTask) { %>
+    <form method="post" action="/tasks/<%= task.id %>/status" class="mt-4 flex items-end gap-2">
+      <div>
+        <label for="status" class="block text-sm font-medium">Cambiar estado</label>
+        <select id="status" name="status" class="mt-1 rounded border border-slate-300 px-3 py-2">
+          <% statuses.forEach((s) => { %><option value="<%= s %>" <%= s === task.status ? 'selected' : '' %>><%= statusLabels[s] %></option><% }) %>
+        </select>
+      </div>
+      <button type="submit" class="rounded border px-4 py-2 text-sm hover:bg-slate-100">Cambiar</button>
+    </form>
+  <% } %>
+
+  <form method="post" action="/tasks/<%= task.id %>" class="mt-6 space-y-4">
+    <div>
+      <label for="title" class="block text-sm font-medium">Título</label>
+      <input id="title" name="title" required maxlength="200" value="<%= v('title') %>" <%= ro %> class="<%= field %>" />
+    </div>
+    <div>
+      <label for="description" class="block text-sm font-medium">Descripción</label>
+      <textarea id="description" name="description" rows="3" maxlength="4000" <%= ro %> class="<%= field %>"><%= v('description') %></textarea>
+    </div>
+    <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
+      <div>
+        <label for="type" class="block text-sm font-medium">Tipo</label>
+        <select id="type" name="type" <%= ro %> class="<%= field %>"><% types.forEach((t) => { %><option value="<%= t %>" <%= task.type === t ? 'selected' : '' %>><%= t %></option><% }) %></select>
+      </div>
+      <div>
+        <label for="priority" class="block text-sm font-medium">Prioridad</label>
+        <select id="priority" name="priority" <%= ro %> class="<%= field %>"><% priorities.forEach((p) => { %><option value="<%= p %>" <%= task.priority === p ? 'selected' : '' %>><%= p %></option><% }) %></select>
+      </div>
+      <div>
+        <label for="storyPoints" class="block text-sm font-medium">Puntos</label>
+        <select id="storyPoints" name="storyPoints" <%= ro %> class="<%= field %>">
+          <option value="">—</option>
+          <% points.forEach((p) => { %><option value="<%= p %>" <%= String(task.storyPoints) === String(p) ? 'selected' : '' %>><%= p %></option><% }) %>
+        </select>
+      </div>
+      <div>
+        <label for="estimatedHours" class="block text-sm font-medium">Estimación (h)</label>
+        <input id="estimatedHours" name="estimatedHours" inputmode="decimal" value="<%= task.estimatedHours ?? hours %>" <%= ro %> class="<%= field %>" />
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label for="startDate" class="block text-sm font-medium">Inicio</label>
+        <input id="startDate" name="startDate" type="date" value="<%= v('startDate') %>" <%= ro %> class="<%= field %>" />
+      </div>
+      <div>
+        <label for="dueDate" class="block text-sm font-medium">Fin</label>
+        <input id="dueDate" name="dueDate" type="date" value="<%= v('dueDate') %>" <%= ro %> class="<%= field %>" />
+      </div>
+    </div>
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div>
+        <label for="assigneeId" class="block text-sm font-medium">Responsable</label>
+        <select id="assigneeId" name="assigneeId" <%= ro %> class="<%= field %>">
+          <option value="">Sin responsable</option>
+          <% options.members.forEach((m) => { %><option value="<%= m.id %>" <%= String(task.assigneeId) === String(m.id) ? 'selected' : '' %>><%= m.name %></option><% }) %>
+        </select>
+      </div>
+      <div>
+        <label for="milestoneId" class="block text-sm font-medium">Hito</label>
+        <select id="milestoneId" name="milestoneId" <%= ro %> class="<%= field %>">
+          <option value="">Sin hito</option>
+          <% options.milestones.forEach((m) => { %><option value="<%= m.id %>" <%= String(task.milestoneId) === String(m.id) ? 'selected' : '' %>><%= m.name %></option><% }) %>
+        </select>
+      </div>
+      <div>
+        <label for="sprintId" class="block text-sm font-medium">Sprint</label>
+        <select id="sprintId" name="sprintId" <%= (isSub || !canWrite) ? 'disabled' : '' %> class="<%= field %>">
+          <option value="">Backlog</option>
+          <% options.sprints.forEach((s) => { %><option value="<%= s.id %>" <%= String(task.sprintId) === String(s.id) ? 'selected' : '' %>><%= s.name %></option><% }) %>
+        </select>
+      </div>
+    </div>
+    <% if (canWrite) { %>
+      <div class="flex gap-3">
+        <button type="submit" class="rounded bg-brand-600 px-4 py-2 font-medium text-white hover:bg-brand-700">Guardar</button>
+      </div>
+    <% } %>
+  </form>
+  <% if (canWrite) { %>
+    <form method="post" action="/tasks/<%= task.id %>/delete" class="mt-2">
+      <button type="submit" class="text-sm text-danger underline">Eliminar tarea</button>
+    </form>
+  <% } %>
+
+  <section class="mt-10" aria-labelledby="subtasks-title">
+    <h2 id="subtasks-title" class="text-xl font-semibold">Subtareas</h2>
+    <ul class="mt-3 divide-y text-sm">
+      <% subtasks.forEach((s) => { %>
+        <li class="py-2"><a class="underline" href="/tasks/<%= s.id %>"><%= s.title %></a> <span class="text-slate-500">(<%= statusLabels[s.status] %><% if (s.storyPoints !== null) { %> · <%= s.storyPoints %> pts<% } %>)</span></li>
+      <% }) %>
+      <% if (subtasks.length === 0) { %><li class="py-2 text-slate-600">Sin subtareas.</li><% } %>
+    </ul>
+    <% if (canWrite && !isSub) { %>
+      <form method="post" action="/tasks/<%= task.id %>/subtasks" class="mt-3 flex flex-wrap items-end gap-3">
+        <div>
+          <label for="subTitle" class="block text-sm font-medium">Título</label>
+          <input id="subTitle" name="title" required maxlength="200" class="mt-1 rounded border border-slate-300 px-3 py-2" />
+        </div>
+        <div>
+          <label for="subPoints" class="block text-sm font-medium">Puntos</label>
+          <select id="subPoints" name="storyPoints" class="mt-1 rounded border border-slate-300 px-3 py-2">
+            <option value="">—</option>
+            <% points.forEach((p) => { %><option value="<%= p %>"><%= p %></option><% }) %>
+          </select>
+        </div>
+        <div>
+          <label for="subHours" class="block text-sm font-medium">Estimación (h)</label>
+          <input id="subHours" name="estimatedHours" inputmode="decimal" class="mt-1 w-24 rounded border border-slate-300 px-3 py-2" />
+        </div>
+        <div>
+          <label for="subAssignee" class="block text-sm font-medium">Responsable</label>
+          <select id="subAssignee" name="assigneeId" class="mt-1 rounded border border-slate-300 px-3 py-2">
+            <option value="">—</option>
+            <% options.members.forEach((m) => { %><option value="<%= m.id %>"><%= m.name %></option><% }) %>
+          </select>
+        </div>
+        <button type="submit" class="rounded border px-4 py-2 text-sm hover:bg-slate-100">Agregar subtarea</button>
+      </form>
+    <% } %>
+  </section>
+
+  <section class="mt-10" aria-labelledby="deps-title">
+    <h2 id="deps-title" class="text-xl font-semibold">Dependencias (fin a inicio)</h2>
+    <h3 class="mt-3 text-sm font-medium">Depende de</h3>
+    <ul class="divide-y text-sm">
+      <% dependencies.predecessors.forEach((d) => { %>
+        <li class="flex items-center justify-between py-2">
+          <span><a class="underline" href="/tasks/<%= d.id %>"><%= d.title %></a> <span class="text-slate-500">(<%= statusLabels[d.status] %>)</span></span>
+          <% if (canWrite) { %>
+            <form method="post" action="/tasks/<%= task.id %>/dependencies/<%= d.id %>/delete"><button type="submit" class="underline" aria-label="Quitar dependencia de <%= d.title %>">Quitar</button></form>
+          <% } %>
+        </li>
+      <% }) %>
+      <% if (dependencies.predecessors.length === 0) { %><li class="py-2 text-slate-600">Sin predecesoras.</li><% } %>
+    </ul>
+    <h3 class="mt-3 text-sm font-medium">Bloquea a</h3>
+    <ul class="divide-y text-sm">
+      <% dependencies.successors.forEach((d) => { %>
+        <li class="py-2"><a class="underline" href="/tasks/<%= d.id %>"><%= d.title %></a> <span class="text-slate-500">(<%= statusLabels[d.status] %>)</span></li>
+      <% }) %>
+      <% if (dependencies.successors.length === 0) { %><li class="py-2 text-slate-600">Ninguna tarea depende de esta.</li><% } %>
+    </ul>
+    <% if (canWrite && options.tasks.length > 0) { %>
+      <form method="post" action="/tasks/<%= task.id %>/dependencies" class="mt-3 flex items-end gap-3">
+        <div>
+          <label for="dependsOnTaskId" class="block text-sm font-medium">Depende de</label>
+          <select id="dependsOnTaskId" name="dependsOnTaskId" required class="mt-1 rounded border border-slate-300 px-3 py-2">
+            <% options.tasks.forEach((o) => { %><option value="<%= o.id %>"><%= o.title %></option><% }) %>
+          </select>
+        </div>
+        <button type="submit" class="rounded border px-4 py-2 text-sm hover:bg-slate-100">Agregar dependencia</button>
+      </form>
+    <% } %>
+  </section>
+
+  <section class="mt-10" aria-labelledby="history-title">
+    <h2 id="history-title" class="text-xl font-semibold">Historial de estados</h2>
+    <ol class="mt-3 divide-y text-sm">
+      <% history.forEach((h) => { %>
+        <li class="py-2"><%= h.changedAt %> — <%= h.fromStatus ? `${h.fromStatus} → ` : '' %><%= h.toStatus %><% if (h.changedByName) { %> <span class="text-slate-500">(<%= h.changedByName %>)</span><% } %></li>
+      <% }) %>
+      <% if (history.length === 0) { %><li class="py-2 text-slate-600">Sin cambios registrados.</li><% } %>
+    </ol>
+  </section>
+</section>

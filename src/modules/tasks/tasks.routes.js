@@ -23,6 +23,7 @@ export function createTasksRouter({ db }) {
       '/api/v1/tasks',
       '/projects/:id/backlog',
       '/projects/:id/sprints/:sid/board',
+      '/tasks',
     ],
     requireAuth,
   );
@@ -39,6 +40,13 @@ export function createTasksRouter({ db }) {
   router.post('/api/v1/tasks/:id/status', canChangeStatus, c.apiChangeStatus);
   router.delete('/api/v1/tasks/:id', canWrite, c.apiRemove);
   // Vistas
+  router.get('/tasks/:id', c.htmlTask);
+  router.post('/tasks/:id', canWrite, c.htmlTaskUpdate);
+  router.post('/tasks/:id/status', canChangeStatus, c.htmlTaskStatus);
+  router.post('/tasks/:id/subtasks', canWrite, c.htmlSubtaskCreate);
+  router.post('/tasks/:id/dependencies', canWrite, c.htmlDependencyAdd);
+  router.post('/tasks/:id/dependencies/:depId/delete', canWrite, c.htmlDependencyRemove);
+  router.post('/tasks/:id/delete', canWrite, c.htmlTaskDelete);
   router.get('/projects/:id/sprints/:sid/board', c.htmlBoard);
   router.post(
     '/projects/:id/sprints/:sid/board/:taskId/status',

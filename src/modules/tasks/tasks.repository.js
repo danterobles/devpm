@@ -92,7 +92,20 @@ export function createTasksRepository(db) {
      SELECT 1 FROM chain WHERE id = @target LIMIT 1`,
   );
 
+  const subtaskRows = db.prepare(
+    `${SELECT} WHERE t.parent_task_id = ? ORDER BY t.sort_order, t.id`,
+  );
+  const milestoneRows = db.prepare(
+    'SELECT id, name FROM milestones WHERE project_id = ? ORDER BY due_date, id',
+  );
+  const taskChoices = db.prepare(
+    'SELECT id, title FROM tasks WHERE project_id = ? AND id != ? ORDER BY sort_order, id',
+  );
+
   return {
+    subtaskRows: (id) => subtaskRows.all(id),
+    milestonesOf: (projectId) => milestoneRows.all(projectId),
+    taskChoices: (projectId, exceptId) => taskChoices.all(projectId, exceptId),
     predecessorsOf: (id) => predecessors.all(id),
     successorsOf: (id) => successors.all(id),
     dependencyExists: (taskId, dependsOn) => Boolean(depExists.get(taskId, dependsOn)),

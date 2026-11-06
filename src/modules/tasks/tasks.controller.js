@@ -54,6 +54,34 @@ function formToInput(body) {
   return input;
 }
 
+const toNumberOrNull = (v) => (v === undefined || v === '' ? null : Number(v));
+const textOrNull = (v) => (v === undefined || v === '' ? null : v);
+
+/** Formulario completo de edición de tarea → contrato de la API (los vacíos se vuelven null). */
+function editFormToInput(body) {
+  const hours = textOrNull(body.estimatedHours);
+  if (hours !== null && !DECIMAL.test(String(hours).trim())) {
+    throw AppError.validation('Datos inválidos', [
+      { field: 'estimatedHours', message: 'Estimación en horas inválida' },
+    ]);
+  }
+  const input = {
+    title: body.title,
+    description: textOrNull(body.description),
+    type: body.type,
+    priority: body.priority,
+    storyPoints: toNumberOrNull(body.storyPoints),
+    estimatedMinutes: hours === null ? null : Math.round(Number(hours) * 60),
+    startDate: textOrNull(body.startDate),
+    dueDate: textOrNull(body.dueDate),
+    assigneeId: toNumberOrNull(body.assigneeId),
+    milestoneId: toNumberOrNull(body.milestoneId),
+  };
+  // Las subtareas siguen el sprint del padre: su selector no se envía.
+  if (body.sprintId !== undefined) input.sprintId = toNumberOrNull(body.sprintId);
+  return input;
+}
+
 export function createTasksController({ service }) {
   const actorId = (req) => req.session.userId;
   const actor = (req) => ({ id: req.session.userId, role: req.session.role });
@@ -66,6 +94,44 @@ export function createTasksController({ service }) {
     if (board.sprint.projectId !== projectId(req)) throw AppError.notFound('Sprint no encontrado');
     return board;
   }
+
+  /** Página de una tarea: datos, estado, historial, subtareas y dependencias. */
+  function taskPage(req, res, id, { status = 200, error = null, form = null } = {}) {
+    const task = service.get(id);
+    const canMove = service.canMove(actor(req));
+    const parent = task.parentTaskId ? service.get(task.parentTaskId) : null;
+    res.status(status).render('pages/tasks/show', {
+      title: task.title,
+      task: form ? { ...task, ...form } : task,
+      parent,
+      history: service.history(id),
+      subtasks: service.subtasks(id),
+      dependencies: service.dependencies(id),
+      options: service.taskOptions(task.projectId, id),
+      canWrite: canWriteRole(req),
+      canMoveTask: canMove(task),
+      error,
+      types: TYPES,
+      priorities: PRIORITIES,
+      points: POINTS,
+      statuses: BOARD_STATUS_LIST,
+      statusLabels: STATUS_LABELS,
+      hours: task.estimatedMinutes === null ? '' : String(task.estimatedMinutes / 60),
+    });
+  }
+  /** Ejecuta la acción de la página; ante un error de regla vuelve a mostrarla con el mensaje. */
+  const taskAction = (handler) => (req, res) => {
+    try {
+      return handler(req, res);
+    } catch (err) {
+      if (!(err instanceof AppError) || err.status >= 500 || err.status === 404) throw err;
+      return taskPage(req, res, parseId(req.params.id), {
+        status: err.status,
+        error: err.details?.[0]?.message ?? err.message,
+        form: req.route.path.endsWith('/:id') ? req.body : null,
+      });
+    }
+  };
 
   function backlogPage(req, res, pid, { status = 200, error = null, form = {} } = {}) {
     res.status(status).render('pages/tasks/backlog', {
@@ -127,6 +193,49 @@ export function createTasksController({ service }) {
       service.remove(actorId(req), parseId(req.params.id));
       res.status(204).end();
     },
+
+    // ---- Vistas HTML: página de la tarea ----
+    htmlTask: (req, res) => taskPage(req, res, parseId(req.params.id)),
+    htmlTaskUpdate: taskAction((req, res) => {
+      const id = parseId(req.params.id);
+      service.update(actorId(req), id, parseWith(updateTaskSchema, editFormToInput(req.body)));
+      res.redirect(`/tasks/${id}`);
+    }),
+    htmlTaskStatus: taskAction((req, res) => {
+      const id = parseId(req.params.id);
+      const { status } = parseWith(changeStatusSchema, { status: req.body.status });
+      service.changeStatus(actor(req), id, status);
+      res.redirect(`/tasks/${id}`);
+    }),
+    htmlSubtaskCreate: taskAction((req, res) => {
+      const id = parseId(req.params.id);
+      const parent = service.get(id);
+      const input = parseWith(createTaskSchema, { ...formToInput(req.body), parentTaskId: id });
+      service.create(actorId(req), parent.projectId, input);
+      res.redirect(`/tasks/${id}`);
+    }),
+    htmlDependencyAdd: taskAction((req, res) => {
+      const id = parseId(req.params.id);
+      const { dependsOnTaskId } = parseWith(addDependencySchema, {
+        dependsOnTaskId: Number(req.body.dependsOnTaskId),
+      });
+      service.addDependency(actorId(req), id, dependsOnTaskId);
+      res.redirect(`/tasks/${id}`);
+    }),
+    htmlDependencyRemove: taskAction((req, res) => {
+      const id = parseId(req.params.id);
+      service.removeDependency(
+        actorId(req),
+        id,
+        parseId(req.params.depId, 'Dependencia no encontrada'),
+      );
+      res.redirect(`/tasks/${id}`);
+    }),
+    htmlTaskDelete: taskAction((req, res) => {
+      const task = service.get(parseId(req.params.id));
+      service.remove(actorId(req), task.id);
+      res.redirect(`/projects/${task.projectId}/backlog`);
+    }),
 
     // ---- Vistas HTML: tablero Kanban (RF-63) ----
     htmlBoard(req, res) {

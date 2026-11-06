@@ -118,7 +118,7 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 - [x] Backlog del proyecto con ordenamiento (RF-63)
 - [x] Tablero Kanban por sprint con arrastrar y soltar (RF-63)
 - [x] Dependencias fin-a-inicio con detección de ciclos (RF-64)
-- [ ] Subtareas (RF-65)
+- [x] Subtareas (RF-65)
 - [ ] Pruebas: ciclo de dependencias, cierre de sprint, responsable no asignado
 
 **Criterio de cierre:** un sprint se planea, ejecuta en Kanban y cierra correctamente.

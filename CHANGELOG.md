@@ -151,6 +151,10 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 - Dependencias entre tareas (RF-64): `GET/POST /api/v1/tasks/:id/dependencies` y
   `DELETE .../dependencies/:depId`. Fin-a-inicio, mismo proyecto, sin duplicados y sin ciclos
   (detección con `WITH RECURSIVE`, 422); se eliminan en cascada con la tarea; bitácora.
+- Página de la tarea `/tasks/:id` y subtareas (RF-65): edición por formulario, cambio de estado,
+  historial, subtareas (un nivel; siguen al padre al cambiar de sprint; el padre no pasa a `done` con
+  subtareas abiertas) y gestión de dependencias, con controles según el rol. Enlaces desde backlog y
+  tablero.
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y

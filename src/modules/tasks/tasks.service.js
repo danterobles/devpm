@@ -187,6 +187,19 @@ export function createTasksService({ db, repository }) {
       this.reorder(actorId, projectId, ids);
     },
 
+    subtasks(id) {
+      requireTask(id);
+      return repository.subtaskRows(id).map(toDto);
+    },
+    /** Opciones para los selectores de la página de la tarea. */
+    taskOptions(projectId, exceptTaskId) {
+      return {
+        ...this.formOptions(projectId),
+        milestones: repository.milestonesOf(projectId),
+        tasks: repository.taskChoices(projectId, exceptTaskId),
+      };
+    },
+
     /** RF-64: predecesoras y sucesoras (fin-a-inicio) de una tarea. */
     dependencies(id) {
       requireTask(id);
