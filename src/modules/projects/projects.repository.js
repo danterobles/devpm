@@ -40,7 +40,28 @@ export function createProjectsRepository(db) {
     "SELECT count(*) FROM tasks WHERE project_id = ? AND status != 'done'",
   );
 
+  const hours = db.prepare(
+    `SELECT COALESCE(SUM(minutes), 0) AS consumed,
+            COALESCE(SUM(CASE WHEN is_billable = 1 THEN minutes END), 0) AS billable
+       FROM time_entries
+      WHERE project_id = ? AND status IN ('submitted','approved')`,
+  );
+  const members = db.prepare(
+    'SELECT count(DISTINCT team_member_id) FROM assignments WHERE project_id = ?',
+  );
+  const milestoneCounts = db.prepare(
+    `SELECT count(*) AS total, COALESCE(SUM(status = 'completed'), 0) AS completed
+       FROM milestones WHERE project_id = ?`,
+  );
+
   return {
+    summary(id) {
+      return {
+        ...hours.get(id),
+        members: members.pluck().get(id),
+        milestones: milestoneCounts.get(id),
+      };
+    },
     countOpenTasks: (id) => openTasks.pluck().get(id),
     updateStatus(id, { status, actualStartDate, actualEndDate }) {
       db.prepare(

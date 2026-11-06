@@ -117,6 +117,9 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   `PATCH/DELETE .../:aId` y sección «Equipo asignado» en la ficha. Rol en el proyecto, dedicación 1–100 %
   y periodo dentro del rango del proyecto (422); solo miembros activos; la sobreasignación (> 100 % en
   periodos traslapados, inclusivos) se guarda con la advertencia `OVER_ALLOCATION`; bitácora.
+- Ficha del proyecto (RF-33): panel de resumen (cliente, líder, horas consumidas frente al presupuesto,
+  horas facturables, miembros asignados, avance de hitos y fechas reales) y `GET /api/v1/projects/:id/summary`.
+  Las horas cuentan registros enviados y aprobadas (decisión en `docs/PRD.md`).
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y

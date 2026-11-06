@@ -6,6 +6,19 @@
 <section class="mx-auto max-w-2xl">
   <h1 class="text-2xl font-bold"><%= title %><% if (editing) { %> <span class="text-slate-500"><%= project.code %></span><% } %></h1>
   <% if (editing) { %><p class="mt-1 text-sm text-slate-600">Estado: <%= project.status %></p><% } %>
+  <% if (editing && summary) { %>
+    <% const hrs = (m) => `${(m / 60).toFixed(1)} h`; %>
+    <dl class="mt-4 grid grid-cols-2 gap-3 text-sm sm:grid-cols-4" aria-label="Resumen del proyecto">
+      <div class="rounded border p-3"><dt class="text-slate-600">Cliente</dt><dd class="font-medium"><%= project.clientName %></dd></div>
+      <div class="rounded border p-3"><dt class="text-slate-600">Líder</dt><dd class="font-medium"><%= project.managerName || '—' %></dd></div>
+      <div class="rounded border p-3"><dt class="text-slate-600">Horas consumidas</dt><dd class="font-medium"><%= hrs(summary.consumedMinutes) %> de <%= hrs(summary.budgetMinutes) %><% if (summary.budgetUsedPercent !== null) { %> (<%= summary.budgetUsedPercent %> %)<% } %></dd></div>
+      <div class="rounded border p-3"><dt class="text-slate-600">Horas facturables</dt><dd class="font-medium"><%= hrs(summary.billableMinutes) %></dd></div>
+      <div class="rounded border p-3"><dt class="text-slate-600">Miembros asignados</dt><dd class="font-medium"><%= summary.assignedMembers %></dd></div>
+      <div class="rounded border p-3"><dt class="text-slate-600">Hitos completados</dt><dd class="font-medium"><%= summary.milestonesCompleted %> de <%= summary.milestonesTotal %></dd></div>
+      <div class="rounded border p-3"><dt class="text-slate-600">Inicio real</dt><dd class="font-medium"><%= project.actualStartDate || '—' %></dd></div>
+      <div class="rounded border p-3"><dt class="text-slate-600">Fin real</dt><dd class="font-medium"><%= project.actualEndDate || '—' %></dd></div>
+    </dl>
+  <% } %>
   <% if (error) { %>
     <p role="alert" class="mt-4 rounded border border-danger bg-red-50 px-4 py-3 text-sm text-red-800"><%= error %></p>
   <% } %>

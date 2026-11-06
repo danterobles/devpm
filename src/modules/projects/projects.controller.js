@@ -89,6 +89,7 @@ export function createProjectsController({ service, milestones, assignments }) {
       statusError = null,
       milestoneList = [],
       milestoneError = null,
+      summary = null,
       assignmentList = [],
       assignmentError = null,
       warning = null,
@@ -103,6 +104,7 @@ export function createProjectsController({ service, milestones, assignments }) {
       statusError,
       milestones: milestoneList,
       milestoneError,
+      summary,
       assignments: assignmentList,
       assignmentError,
       warning,
@@ -134,6 +136,7 @@ export function createProjectsController({ service, milestones, assignments }) {
       statusError: error,
       milestoneList: milestones.list(id),
       milestoneError,
+      summary: service.summary(id),
       assignmentList: assignments.list(id),
       assignmentError,
       warning: req.query.warning === 'over-allocation' ? 'over-allocation' : null,
@@ -286,6 +289,7 @@ export function createProjectsController({ service, milestones, assignments }) {
       res.redirect(`/projects/${id}`);
     },
 
+    apiSummary: (req, res) => res.json({ data: service.summary(parseId(req.params.id)) }),
     apiChangeStatus(req, res) {
       const id = parseId(req.params.id);
       const input = parseWith(changeStatusSchema, req.body);

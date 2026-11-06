@@ -62,6 +62,23 @@ export function createProjectsService({ db, repository, timezone = 'America/Mexi
     },
     get: (id) => toDto(requireProject(id)),
     options: () => repository.options(),
+    /** RF-33: horas (enviadas + aprobadas), presupuesto, miembros e hitos. */
+    summary(id) {
+      const project = requireProject(id);
+      const raw = repository.summary(id);
+      return {
+        consumedMinutes: raw.consumed,
+        billableMinutes: raw.billable,
+        budgetMinutes: project.budget_minutes,
+        budgetUsedPercent:
+          project.budget_minutes > 0
+            ? Math.round((raw.consumed / project.budget_minutes) * 100)
+            : null,
+        assignedMembers: raw.members,
+        milestonesTotal: raw.milestones.total,
+        milestonesCompleted: raw.milestones.completed,
+      };
+    },
     allowedTransitions: (status) => TRANSITIONS[status] ?? [],
 
     /** RF-31: cambia el estado respetando las transiciones válidas. */

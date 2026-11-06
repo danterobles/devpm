@@ -24,6 +24,7 @@ export function createProjectsRouter({ db, timezone }) {
   api.post('/', canWrite, c.apiCreate);
   api.get('/:id', c.apiGet);
   api.patch('/:id', canWrite, c.apiUpdate);
+  api.get('/:id/summary', c.apiSummary);
   api.post('/:id/status', canWrite, c.apiChangeStatus);
   api.get('/:id/assignments', c.apiAssignmentsList);
   api.post('/:id/assignments', canWrite, c.apiAssignmentCreate);
