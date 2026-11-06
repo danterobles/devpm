@@ -14,7 +14,6 @@ import {
   sprint,
   task,
   assignment,
-  timeEntry,
 } from '../helpers/factories.js';
 
 // ARQUITECTURA §4: cada service que modifica datos que alimentan KPIs emite un evento de dominio
