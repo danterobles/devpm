@@ -1,4 +1,4 @@
-import { today as todayIn } from '../../lib/dates.js';
+import { addDays, today as todayIn } from '../../lib/dates.js';
 
 /**
  * Instantáneas diarias del sprint para el Burndown (RF-81, DATA §3.14).
@@ -22,6 +22,16 @@ export function createSnapshotsService({ db, timezone = 'America/Mexico_City' })
        remaining_minutes = excluded.remaining_minutes,
        captured_at = excluded.captured_at`,
   );
+  const history = db.prepare(
+    `SELECT snapshot_date, total_points, completed_points, remaining_points, remaining_minutes
+       FROM sprint_daily_snapshots WHERE sprint_id = ? AND snapshot_date < ? ORDER BY snapshot_date`,
+  );
+  const insertMissing = db.prepare(
+    `INSERT OR IGNORE INTO sprint_daily_snapshots
+       (sprint_id, snapshot_date, total_points, completed_points, remaining_points, remaining_minutes)
+     VALUES (@sprintId, @date, @total_points, @completed_points, @remaining_points, @remaining_minutes)`,
+  );
+  const MAX_FILL_DAYS = 400;
   const sprintStatus = db.prepare('SELECT status FROM sprints WHERE id = ?').pluck();
   const activeIds = db.prepare("SELECT id FROM sprints WHERE status = 'active'").pluck();
 
@@ -44,6 +54,35 @@ export function createSnapshotsService({ db, timezone = 'America/Mexico_City' })
       const ids = activeIds.all();
       db.transaction(() => ids.forEach((id) => service.capture(id, date)))();
       return ids.length;
+    },
+
+    /**
+     * Al arrancar el servidor: rellena los días pasados sin instantánea de cada sprint activo
+     * arrastrando el último valor conocido (exacto: todo cambio recalcula el día) y captura hoy.
+     * Idempotente. Devuelve cuántas filas se agregaron o recalcularon.
+     */
+    backfillActive(today = todayIn(timezone)) {
+      let written = 0;
+      db.transaction(() => {
+        for (const sprintId of activeIds.all()) {
+          const past = history.all(sprintId, today);
+          if (past.length > 0) {
+            const byDate = new Map(past.map((r) => [r.snapshot_date, r]));
+            let previous = past[0];
+            let date = past[0].snapshot_date;
+            for (let i = 0; date < today && i < MAX_FILL_DAYS; i += 1, date = addDays(date, 1)) {
+              if (byDate.has(date)) {
+                previous = byDate.get(date);
+              } else {
+                written += insertMissing.run({ sprintId, date, ...previous }).changes;
+              }
+            }
+          }
+          service.capture(sprintId, today);
+          written += 1;
+        }
+      })();
+      return written;
     },
 
     /** Recalcula la instantánea de hoy solo de los sprints activos de la lista; devuelve cuántos. */

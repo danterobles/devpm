@@ -218,6 +218,10 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 - Recalculo en vivo del Burndown (RF-81): crear, editar (puntos, estimación, sprint), cambiar de estado
   o eliminar una tarea recalcula la instantánea de hoy de los sprints activos afectados, después de
   confirmar la transacción; los sprints planeados o cerrados no generan instantáneas.
+- Job diario del Burndown (`src/jobs/burndownSnapshot.js`): `setTimeout` recalculado que guarda la
+  instantánea de cada sprint activo a las 23:55 de la zona de la aplicación, y relleno al arrancar el
+  servidor de los días pasados sin instantánea (arrastrando el último valor conocido) más la captura de
+  hoy; idempotente y con cierre ordenado (`SIGINT`/`SIGTERM`).
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y
