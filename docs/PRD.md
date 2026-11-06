@@ -348,22 +348,28 @@ Los umbrales son valores iniciales y deben poder ajustarse en configuración (RF
 ### 6.1 Decisiones de definición del tablero (Etapa 10)
 
 - **Periodo:** por defecto los **últimos 30 días** (de hoy − 29 a hoy, zona horaria de la aplicación),
-  editable con `from` y `to`. Usan el periodo K4, K5, K6, K12, K13 y K14; K16 usa siempre la semana
-  actual (lunes a domingo); K1, K10, K11 y K15 son al día de hoy; K8 y K9 usan los últimos 3 sprints
-  cerrados (por fecha de cierre) de los proyectos filtrados.
+  editable con `from` y `to`. Usan el periodo K6, K7, K12, K13 y K14; K16 usa siempre la semana actual
+  (lunes a domingo); K1 a K5, K10, K11 y K15 son **acumulados al día de hoy** (K4 y K5 comparan contra
+  las horas registradas en todo el proyecto, porque el avance es acumulado); K8 y K9 usan los últimos 3
+  sprints cerrados (por fecha de fin) de los proyectos filtrados.
 - **Agregación (portafolio):** K3 a K5 se calculan sobre los proyectos `active` filtrados con
   presupuesto de horas > 0: K3 = Σ EV ÷ Σ PV, K4 = Σ EV ÷ Σ horas, K5 = Σ horas ÷ Σ presupuesto × 100.
-  K2 = puntos `done` ÷ puntos totales de los proyectos filtrados. Además cada proyecto activo aparece
+  K2 = puntos `done` ÷ puntos totales de esos mismos proyectos (los puntos incluyen subtareas). Además cada proyecto activo aparece
   con sus propios K2 a K5 en una tabla. Si un denominador es 0 el KPI vale `null` y se muestra «—».
   El semáforo de K5 se compara con el avance (K2) del mismo conjunto.
 - **Horas:** los KPIs operativos usan registros `submitted` y `approved`; K14 (ingreso estimado) solo
   `approved`. El % transcurrido del plan (PV) = días entre el inicio y hoy ÷ días del plan, entre 0 y 1.
+- **Alcance de miembros (K6, K16):** sin filtros de proyecto, cliente ni líder cuentan todos los miembros
+  activos; con alguno de esos filtros, solo los miembros asignados (en el periodo) a los proyectos
+  filtrados, y las horas son las de esos proyectos.
 - **Capacidad (K6, K16):** por miembro activo = capacidad semanal ÷ 5 por cada día hábil (lunes a
   viernes) del periodo, menos los días hábiles de ausencia (unión de `time_off`, cualquier tipo).
 - **K7:** cuenta los miembros que en algún día del periodo suman más de 100 % de dedicación entre sus
-  asignaciones de proyectos `planning` y `active`, evaluado día por día.
+  asignaciones de proyectos `planning` y `active` (de cualquier proyecto), evaluado día por día en días
+  hábiles; solo se consideran los miembros asignados a los proyectos filtrados.
 - **K8/K9:** K8 = puntos `done` del último sprint cerrado y su promedio móvil de los 3 últimos; K9 =
   Σ completados ÷ Σ comprometidos de los 3 últimos sprints cerrados.
+- **K10, K11 y K15:** consideran los proyectos filtrados en estado `planning`, `active` u `on_hold`.
 - **K12:** promedio en días entre `started_at` y `completed_at` de las tareas terminadas dentro del periodo.
 - **K14:** Σ horas facturables aprobadas × tarifa del cliente externo, **por moneda** (sin convertir);
   solo lo ven `admin` y `pm` (para los demás el campo se omite).
