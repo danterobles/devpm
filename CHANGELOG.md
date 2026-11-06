@@ -76,6 +76,12 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   vistas de usuarios, sin sesión 401/redirección, enlace «Usuarios» solo para `admin` y usuario
   desactivado sin acceso.
 
+### Agregado (Etapa 4 — Clientes y equipo)
+- Módulo `clients` (RF-10, RF-15): API `/api/v1/clients` con listado (búsqueda, tipo, estado,
+  paginación), detalle, alta y edición/desactivación. Esquemas Zod estrictos por tipo
+  (`internal` / `external`), `type` inmutable, tarifa en centavos, moneda ISO-4217 (por defecto
+  MXN), RFC único y bitácora. Lectura para cualquier usuario autenticado; escritura solo `admin` y `pm`.
+
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y
   todo el estado se conserva en CHECKLIST, CHANGELOG y docs.
