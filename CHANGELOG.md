@@ -106,6 +106,10 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   `is_billable` por defecto según el tipo de cliente, presupuesto en minutos y centavos (formulario en
   horas y pesos), cliente activo obligatorio, cliente solo editable en planeación, fechas coherentes con
   las asignaciones existentes y bitácora. Escritura solo `admin` y `pm`. Enlace «Proyectos» en la navegación.
+- Transiciones de estado del proyecto (RF-31): `POST /api/v1/projects/:id/status` y sección «Cambiar
+  estado» en la ficha. Máquina de estados de `docs/DATA.md` §3.6 (422 en transiciones inválidas),
+  `actual_start_date` al activar, `actual_end_date` al completar y confirmación explícita
+  (`confirmOpenTasks`) si quedan tareas abiertas; se registra como `status_change` en la bitácora.
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y

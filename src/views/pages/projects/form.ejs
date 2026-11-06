@@ -90,4 +90,26 @@
       <a href="/projects" class="rounded border px-4 py-2 hover:bg-slate-100"><%= canWrite ? 'Cancelar' : 'Volver' %></a>
     </div>
   </form>
+
+  <% if (editing && canWrite && transitions.length > 0) { %>
+    <section class="mt-10" aria-labelledby="status-title">
+      <h2 id="status-title" class="text-xl font-semibold">Cambiar estado</h2>
+      <% if (statusError) { %>
+        <p role="alert" class="mt-3 rounded border border-danger bg-red-50 px-4 py-3 text-sm text-red-800"><%= statusError %></p>
+      <% } %>
+      <form method="post" action="/projects/<%= project.id %>/status" class="mt-3 space-y-3">
+        <% if (transitions.includes('completed')) { %>
+          <div class="flex items-center gap-2">
+            <input id="confirmOpenTasks" name="confirmOpenTasks" type="checkbox" value="1" />
+            <label for="confirmOpenTasks" class="text-sm">Completar aunque queden tareas abiertas</label>
+          </div>
+        <% } %>
+        <div class="flex flex-wrap gap-3">
+          <% transitions.forEach((t) => { %>
+            <button type="submit" name="status" value="<%= t %>" class="rounded border px-4 py-2 text-sm hover:bg-slate-100">Pasar a <%= t %></button>
+          <% }) %>
+        </div>
+      </form>
+    </section>
+  <% } %>
 </section>

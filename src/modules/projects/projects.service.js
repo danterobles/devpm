@@ -1,5 +1,6 @@
 import { AppError } from '../../lib/AppError.js';
 import { diff, recordAudit } from '../../lib/audit.js';
+import { today as todayIn } from '../../lib/dates.js';
 
 export const toDto = (r) => ({
   id: r.id,
@@ -25,8 +26,17 @@ export const toDto = (r) => ({
   updatedAt: r.updated_at,
 });
 
-/** Casos de uso de proyectos (RF-30, RF-34). */
-export function createProjectsService({ db, repository }) {
+/** Transiciones de estado válidas (DATA §3.6). `completed` y `cancelled` son finales. */
+export const TRANSITIONS = {
+  planning: ['active', 'cancelled'],
+  active: ['on_hold', 'completed', 'cancelled'],
+  on_hold: ['active', 'cancelled'],
+  completed: [],
+  cancelled: [],
+};
+
+/** Casos de uso de proyectos (RF-30, RF-31, RF-34). */
+export function createProjectsService({ db, repository, timezone = 'America/Mexico_City' }) {
   function requireProject(id) {
     const row = repository.findById(id);
     if (!row) throw AppError.notFound('Proyecto no encontrado');
@@ -52,6 +62,41 @@ export function createProjectsService({ db, repository }) {
     },
     get: (id) => toDto(requireProject(id)),
     options: () => repository.options(),
+    allowedTransitions: (status) => TRANSITIONS[status] ?? [],
+
+    /** RF-31: cambia el estado respetando las transiciones válidas. */
+    changeStatus(actorId, id, { status: to, confirmOpenTasks = false }) {
+      const before = requireProject(id);
+      const from = before.status;
+      if (!TRANSITIONS[from].includes(to)) {
+        throw AppError.businessRule(`Transición no permitida: ${from} → ${to}`);
+      }
+      const today = todayIn(timezone);
+      if (to === 'completed' && !confirmOpenTasks) {
+        const openTasks = repository.countOpenTasks(id);
+        if (openTasks > 0) {
+          throw AppError.businessRule(
+            `El proyecto tiene ${openTasks} tareas abiertas; confirma para completarlo de todos modos`,
+            { openTasks },
+          );
+        }
+      }
+      db.transaction(() => {
+        repository.updateStatus(id, {
+          status: to,
+          actualStartDate: from === 'planning' && to === 'active' ? today : null,
+          actualEndDate: to === 'completed' ? today : null,
+        });
+        recordAudit(db, {
+          userId: actorId,
+          entity: 'project',
+          entityId: id,
+          action: 'status_change',
+          changes: { status: [from, to] },
+        });
+      })();
+      return toDto(repository.findById(id));
+    },
 
     create(actorId, input) {
       const client = requireActiveClient(input.clientId);

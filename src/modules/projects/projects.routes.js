@@ -6,9 +6,9 @@ import { createProjectsService } from './projects.service.js';
 import { createProjectsController } from './projects.controller.js';
 
 /** Proyectos: lectura para todo usuario autenticado; escritura solo `admin` y `pm`. */
-export function createProjectsRouter({ db }) {
+export function createProjectsRouter({ db, timezone }) {
   const c = createProjectsController({
-    service: createProjectsService({ db, repository: createProjectsRepository(db) }),
+    service: createProjectsService({ db, repository: createProjectsRepository(db), timezone }),
   });
   const canWrite = requireRole('admin', 'pm');
 
@@ -18,6 +18,7 @@ export function createProjectsRouter({ db }) {
   api.post('/', canWrite, c.apiCreate);
   api.get('/:id', c.apiGet);
   api.patch('/:id', canWrite, c.apiUpdate);
+  api.post('/:id/status', canWrite, c.apiChangeStatus);
 
   const html = Router();
   html.use(requireAuth);
@@ -26,6 +27,7 @@ export function createProjectsRouter({ db }) {
   html.post('/', canWrite, c.htmlCreate);
   html.get('/:id', c.htmlEdit);
   html.post('/:id', canWrite, c.htmlUpdate);
+  html.post('/:id/status', canWrite, c.htmlChangeStatus);
 
   const router = Router();
   router.use('/api/v1/projects', api);

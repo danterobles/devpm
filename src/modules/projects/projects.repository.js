@@ -36,7 +36,27 @@ export function createProjectsRepository(db) {
       WHERE project_id = ? AND (start_date < ? OR end_date > ?)`,
   );
 
+  const openTasks = db.prepare(
+    "SELECT count(*) FROM tasks WHERE project_id = ? AND status != 'done'",
+  );
+
   return {
+    countOpenTasks: (id) => openTasks.pluck().get(id),
+    updateStatus(id, { status, actualStartDate, actualEndDate }) {
+      db.prepare(
+        `UPDATE projects
+            SET status = @status,
+                actual_start_date = coalesce(actual_start_date, @actualStartDate),
+                actual_end_date = coalesce(@actualEndDate, actual_end_date),
+                updated_at = strftime('%Y-%m-%dT%H:%M:%fZ','now')
+          WHERE id = @id`,
+      ).run({
+        id,
+        status,
+        actualStartDate: actualStartDate ?? null,
+        actualEndDate: actualEndDate ?? null,
+      });
+    },
     findById: (id) => byId.get(id),
     findClient: (id) => client.get(id),
     findMember: (id) => member.get(id),

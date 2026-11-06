@@ -59,3 +59,8 @@ export const listQuerySchema = z.object({
   clientId: z.coerce.number().int().positive().optional(),
   managerId: z.coerce.number().int().positive().optional(),
 });
+
+export const changeStatusSchema = z.strictObject({
+  status: z.enum(STATUSES, { error: 'Estado inválido' }),
+  confirmOpenTasks: z.boolean().optional(),
+});

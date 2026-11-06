@@ -4,6 +4,7 @@ import {
   METHODOLOGIES,
   PRIORITIES,
   STATUSES,
+  changeStatusSchema,
   createProjectSchema,
   idParamSchema,
   listQuerySchema,
@@ -53,17 +54,39 @@ function formToInput(body) {
 export function createProjectsController({ service }) {
   const actor = (req) => req.session.userId;
 
-  const formView = (res, { status = 200, project, error = null, editing, canWrite }) =>
+  const formView = (
+    res,
+    { status = 200, project, error = null, editing, canWrite, statusError = null },
+  ) =>
     res.status(status).render('pages/projects/form', {
       title: editing ? (canWrite ? 'Editar proyecto' : 'Ficha del proyecto') : 'Nuevo proyecto',
       project,
       error,
       editing,
       canWrite,
+      statusError,
+      transitions: editing ? service.allowedTransitions(project.status) : [],
       options: service.options(),
       priorities: PRIORITIES,
       methodologies: METHODOLOGIES,
     });
+
+  /** Ficha del proyecto (formulario de edición + transiciones de estado). */
+  function fichaView(req, res, id, { status = 200, error = null } = {}) {
+    const project = service.get(id);
+    formView(res, {
+      status,
+      project: {
+        ...project,
+        budgetHours: minutesToHours(project.budgetMinutes),
+        budgetAmount: centsToPesos(project.budgetCents),
+        isBillable: project.isBillable ? '1' : '0',
+      },
+      editing: true,
+      canWrite: canWriteRole(req),
+      statusError: error,
+    });
+  }
 
   async function withForm(res, view, action) {
     try {
@@ -121,17 +144,29 @@ export function createProjectsController({ service }) {
         canWrite: true,
       }),
     htmlEdit(req, res) {
-      const project = service.get(parseId(req.params.id));
-      formView(res, {
-        project: {
-          ...project,
-          budgetHours: minutesToHours(project.budgetMinutes),
-          budgetAmount: centsToPesos(project.budgetCents),
-          isBillable: project.isBillable ? '1' : '0',
-        },
-        editing: true,
-        canWrite: canWriteRole(req),
-      });
+      fichaView(req, res, parseId(req.params.id));
+    },
+    apiChangeStatus(req, res) {
+      const id = parseId(req.params.id);
+      const input = parseWith(changeStatusSchema, req.body);
+      res.json({ data: service.changeStatus(actor(req), id, input) });
+    },
+    htmlChangeStatus(req, res) {
+      const id = parseId(req.params.id);
+      try {
+        const input = parseWith(changeStatusSchema, {
+          status: req.body.status,
+          confirmOpenTasks: req.body.confirmOpenTasks === '1',
+        });
+        service.changeStatus(actor(req), id, input);
+        return res.redirect(`/projects/${id}`);
+      } catch (err) {
+        if (!(err instanceof AppError) || err.status >= 500 || err.status === 404) throw err;
+        return fichaView(req, res, id, {
+          status: err.status,
+          error: err.details?.[0]?.message ?? err.message,
+        });
+      }
     },
     htmlCreate(req, res) {
       const view = { project: { ...req.body }, editing: false, canWrite: true };

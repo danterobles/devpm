@@ -67,7 +67,7 @@ export function createApp({ config, db = null, logger = createLogger(config) }) 
   if (db) {
     app.use(createClientsRouter({ db }));
     app.use(createTeamRouter({ db }));
-    app.use(createProjectsRouter({ db }));
+    app.use(createProjectsRouter({ db, timezone: config.timezone }));
     app.use(
       createUsersRouter({
         db,
