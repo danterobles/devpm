@@ -34,6 +34,22 @@ export function createTimeEntriesRepository(db) {
   );
   const userMember = db.prepare('SELECT team_member_id FROM users WHERE id = ?');
 
+  const memberRow = db.prepare(
+    "SELECT id, trim(first_name || ' ' || last_name) AS name FROM team_members WHERE id = ?",
+  );
+  const assignedProjects = db.prepare(
+    `SELECT DISTINCT p.id, p.code, p.name
+       FROM assignments a JOIN projects p ON p.id = a.project_id
+      WHERE a.team_member_id = ? AND a.start_date <= ? AND a.end_date >= ?
+      ORDER BY p.code`,
+  );
+  const openTasks = db.prepare(
+    `SELECT t.id, t.title, t.project_id FROM tasks t
+      WHERE t.project_id IN (SELECT project_id FROM assignments WHERE team_member_id = ?)
+        AND t.status != 'done'
+      ORDER BY t.project_id, t.sort_order, t.id LIMIT 300`,
+  );
+
   /** Cláusula WHERE reutilizable por el listado y la exportación. */
   function buildWhere({ from, to, projectId, memberId, clientId, status }) {
     const where = [];
@@ -66,6 +82,9 @@ export function createTimeEntriesRepository(db) {
   }
 
   return {
+    findMember: (id) => memberRow.get(id),
+    assignedProjects: (memberId, from, to) => assignedProjects.all(memberId, to, from),
+    openTasksFor: (memberId) => openTasks.all(memberId),
     findById: (id) => byId.get(id),
     findProject: (id) => project.get(id),
     findTask: (id) => task.get(id),

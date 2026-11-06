@@ -164,6 +164,10 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   futuras (zona horaria de la aplicación), máximo 24 h por miembro y día, asignación vigente en la fecha y
   tarea del mismo proyecto. `is_billable` se hereda del proyecto. Solo `draft` y `rejected` se editan o
   eliminan; editar un rechazado lo regresa a borrador. Bitácora.
+- Hoja de tiempos semanal (RF-51): vista `/time` y `GET /api/v1/time-sheet` con cuadrícula día × proyecto
+  (lunes a domingo), totales por día y semana, resumen por estado y navegación entre semanas; alta,
+  edición y baja de registros desde la hoja (horas en el formulario, minutos en la BD). Admin y pm pueden
+  consultar la hoja de otros miembros en solo lectura (`?memberId=`). Enlace «Tiempo» en la navegación.
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y

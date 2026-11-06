@@ -1,0 +1,55 @@
+<section class="mx-auto max-w-xl">
+  <p class="text-sm"><a class="underline" href="/time?week=<%= entry.workDate %>">← Hoja de tiempos</a></p>
+  <h1 class="mt-2 text-2xl font-bold">Registro de tiempo</h1>
+  <p class="mt-1 text-sm text-slate-600"><%= entry.memberName %> · estado: <%= entry.status %><% if (entry.status === 'rejected' && entry.rejectionReason) { %> · motivo: <%= entry.rejectionReason %><% } %></p>
+  <% if (error) { %>
+    <p role="alert" class="mt-4 rounded border border-danger bg-red-50 px-4 py-3 text-sm text-red-800"><%= error %></p>
+  <% } %>
+  <% if (isOwn && editable) { %>
+    <form method="post" action="/time/entries/<%= entry.id %>" class="mt-4 space-y-4">
+      <div>
+        <label for="projectId" class="block text-sm font-medium">Proyecto</label>
+        <select id="projectId" name="projectId" required class="mt-1 w-full rounded border border-slate-300 px-3 py-2">
+          <% options.projects.forEach((p) => { %><option value="<%= p.id %>" <%= String(entry.projectId) === String(p.id) ? 'selected' : '' %>><%= p.code %> · <%= p.name %></option><% }) %>
+          <% if (!options.projects.some((p) => p.id === entry.projectId)) { %><option value="<%= entry.projectId %>" selected><%= entry.projectCode %> · <%= entry.projectName %></option><% } %>
+        </select>
+      </div>
+      <div>
+        <label for="taskId" class="block text-sm font-medium">Tarea (opcional)</label>
+        <select id="taskId" name="taskId" class="mt-1 w-full rounded border border-slate-300 px-3 py-2">
+          <option value="">—</option>
+          <% options.tasks.forEach((t) => { %><option value="<%= t.id %>" <%= String(entry.taskId) === String(t.id) ? 'selected' : '' %>><%= t.title %></option><% }) %>
+        </select>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label for="workDate" class="block text-sm font-medium">Fecha</label>
+          <input id="workDate" name="workDate" type="date" required value="<%= entry.workDate %>" class="mt-1 w-full rounded border border-slate-300 px-3 py-2" />
+        </div>
+        <div>
+          <label for="hours" class="block text-sm font-medium">Horas</label>
+          <input id="hours" name="hours" required inputmode="decimal" value="<%= entry.hours ?? hours %>" class="mt-1 w-full rounded border border-slate-300 px-3 py-2" />
+        </div>
+      </div>
+      <div>
+        <label for="description" class="block text-sm font-medium">Descripción</label>
+        <input id="description" name="description" required maxlength="500" value="<%= entry.description %>" class="mt-1 w-full rounded border border-slate-300 px-3 py-2" />
+      </div>
+      <div class="flex gap-3">
+        <button type="submit" class="rounded bg-brand-600 px-4 py-2 font-medium text-white hover:bg-brand-700">Guardar</button>
+      </div>
+    </form>
+    <form method="post" action="/time/entries/<%= entry.id %>/delete" class="mt-2">
+      <button type="submit" class="text-sm text-danger underline">Eliminar registro</button>
+    </form>
+  <% } else { %>
+    <dl class="mt-4 space-y-2 text-sm">
+      <div><dt class="font-medium">Proyecto</dt><dd><%= entry.projectCode %> · <%= entry.projectName %></dd></div>
+      <% if (entry.taskTitle) { %><div><dt class="font-medium">Tarea</dt><dd><%= entry.taskTitle %></dd></div><% } %>
+      <div><dt class="font-medium">Fecha</dt><dd><%= entry.workDate %></dd></div>
+      <div><dt class="font-medium">Duración</dt><dd><%= entry.minutes / 60 %> h</dd></div>
+      <div><dt class="font-medium">Descripción</dt><dd><%= entry.description %></dd></div>
+    </dl>
+    <p class="mt-4 text-sm text-slate-600">Este registro es de solo lectura.</p>
+  <% } %>
+</section>

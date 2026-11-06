@@ -1,6 +1,6 @@
 import { AppError } from '../../lib/AppError.js';
 import { diff, recordAudit } from '../../lib/audit.js';
-import { today as todayIn } from '../../lib/dates.js';
+import { addDays, today as todayIn, weekday } from '../../lib/dates.js';
 
 export const toDto = (r) => ({
   id: r.id,
@@ -21,6 +21,7 @@ export const toDto = (r) => ({
   rejectionReason: r.rejection_reason,
 });
 
+export const mondayOf = (date) => addDays(date, -((weekday(date) + 6) % 7));
 const DERIVED = ['member_name', 'project_code', 'project_name', 'project_manager_id', 'task_title'];
 const EDITABLE = ['draft', 'rejected'];
 
@@ -77,10 +78,67 @@ export function createTimeEntriesService({ db, repository, timezone = 'America/M
 
   return {
     ownMember,
+    isOwn: (actor, entry) => entry.teamMemberId === repository.memberOfUser(actor.id),
     requireOwn,
     requireEditable,
     audit,
     timezone,
+
+    /** RF-51: hoja semanal (día × proyecto) de un miembro. */
+    sheet(actor, { week, memberId } = {}) {
+      const own = repository.memberOfUser(actor.id);
+      let target = own;
+      if (['admin', 'pm'].includes(actor.role) && memberId !== undefined) target = memberId;
+      if (target === null) ownMember(actor); // lanza 403: sin miembro vinculado
+      const member = repository.findMember(target);
+      if (!member) throw AppError.notFound('Miembro no encontrado');
+      const weekStart = mondayOf(week ?? todayIn(timezone));
+      const weekEnd = addDays(weekStart, 6);
+      const days = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
+      const entries = repository.all({ memberId: target, from: weekStart, to: weekEnd });
+      const rowsByProject = new Map();
+      const dayTotals = {};
+      const statusSummary = { draft: 0, submitted: 0, approved: 0, rejected: 0 };
+      for (const e of entries) {
+        if (!rowsByProject.has(e.project_id)) {
+          rowsByProject.set(e.project_id, {
+            projectId: e.project_id,
+            projectCode: e.project_code,
+            projectName: e.project_name,
+            cells: {},
+            total: 0,
+          });
+        }
+        const row = rowsByProject.get(e.project_id);
+        row.cells[e.work_date] = (row.cells[e.work_date] ?? 0) + e.minutes;
+        row.total += e.minutes;
+        dayTotals[e.work_date] = (dayTotals[e.work_date] ?? 0) + e.minutes;
+        statusSummary[e.status] += 1;
+      }
+      return {
+        member: { id: member.id, name: member.name },
+        isOwn: target === own,
+        weekStart,
+        weekEnd,
+        days,
+        rows: [...rowsByProject.values()].sort((a, b) =>
+          a.projectCode.localeCompare(b.projectCode),
+        ),
+        dayTotals,
+        total: entries.reduce((acc, e) => acc + e.minutes, 0),
+        statusSummary,
+        entries: entries.map(toDto),
+      };
+    },
+
+    /** Proyectos y tareas disponibles para registrar tiempo en una semana. */
+    formOptions(actor, weekStart) {
+      const memberId = ownMember(actor);
+      return {
+        projects: repository.assignedProjects(memberId, weekStart, addDays(weekStart, 6)),
+        tasks: repository.openTasksFor(memberId),
+      };
+    },
 
     list(actor, query) {
       const filters = { ...query };

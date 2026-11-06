@@ -41,3 +41,8 @@ export const listQuerySchema = z.object({
   clientId: z.coerce.number().int().positive().optional(),
   status: z.enum(['all', ...STATUSES]).default('all'),
 });
+
+export const sheetQuerySchema = z.object({
+  week: date.optional(),
+  memberId: z.coerce.number().int().positive().optional(),
+});

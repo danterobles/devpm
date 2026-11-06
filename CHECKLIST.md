@@ -126,7 +126,7 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 ## Etapa 7 — Registro de tiempo
 
 - [x] Módulo `time-entries`: CRUD con validaciones RF-53 y asignación vigente
-- [ ] Hoja de tiempos semanal (cuadrícula día × proyecto) (RF-51)
+- [x] Hoja de tiempos semanal (cuadrícula día × proyecto) (RF-51)
 - [ ] Flujo de envío y aprobación/rechazo por el líder del proyecto (RF-52)
 - [ ] Bandera facturable heredada y editable por el líder (RF-54)
 - [ ] Exportación CSV (RF-55)

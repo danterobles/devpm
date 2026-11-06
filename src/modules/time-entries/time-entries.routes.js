@@ -16,8 +16,14 @@ export function createTimeEntriesRouter({ db, timezone }) {
   const access = requireRole('admin', 'pm', 'developer');
 
   const router = Router();
-  router.use(['/api/v1/time-entries'], requireAuth);
-  router.use('/api/v1/time-entries', access);
+  router.use(['/api/v1/time-entries', '/api/v1/time-sheet', '/time'], requireAuth);
+  router.use(['/api/v1/time-entries', '/api/v1/time-sheet', '/time'], access);
+  router.get('/api/v1/time-sheet', c.sheetApi);
+  router.get('/time', c.htmlSheet);
+  router.post('/time/entries', c.htmlCreate);
+  router.get('/time/entries/:id', c.htmlEntry);
+  router.post('/time/entries/:id', c.htmlUpdate);
+  router.post('/time/entries/:id/delete', c.htmlRemove);
   router.get('/api/v1/time-entries', c.apiList);
   router.post('/api/v1/time-entries', c.apiCreate);
   router.get('/api/v1/time-entries/:id', c.apiGet);
