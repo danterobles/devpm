@@ -70,7 +70,44 @@ export function createTasksRepository(db) {
   );
   const sprintTasks = db.prepare(`${SELECT} WHERE t.sprint_id = ? ORDER BY t.sort_order, t.id`);
 
+  const predecessors = db.prepare(
+    `SELECT t.id, t.title, t.status, t.start_date, t.due_date
+       FROM task_dependencies d JOIN tasks t ON t.id = d.depends_on_task_id
+      WHERE d.task_id = ? ORDER BY t.sort_order, t.id`,
+  );
+  const successors = db.prepare(
+    `SELECT t.id, t.title, t.status, t.start_date, t.due_date
+       FROM task_dependencies d JOIN tasks t ON t.id = d.task_id
+      WHERE d.depends_on_task_id = ? ORDER BY t.sort_order, t.id`,
+  );
+  const depExists = db.prepare(
+    'SELECT 1 FROM task_dependencies WHERE task_id = ? AND depends_on_task_id = ?',
+  );
+  const reaches = db.prepare(
+    `WITH RECURSIVE chain(id) AS (
+       SELECT depends_on_task_id FROM task_dependencies WHERE task_id = @start
+       UNION
+       SELECT d.depends_on_task_id FROM task_dependencies d JOIN chain c ON d.task_id = c.id
+     )
+     SELECT 1 FROM chain WHERE id = @target LIMIT 1`,
+  );
+
   return {
+    predecessorsOf: (id) => predecessors.all(id),
+    successorsOf: (id) => successors.all(id),
+    dependencyExists: (taskId, dependsOn) => Boolean(depExists.get(taskId, dependsOn)),
+    /** ¿`start` depende, directa o indirectamente, de `target`? */
+    dependsTransitively: (start, target) => Boolean(reaches.get({ start, target })),
+    insertDependency: (taskId, dependsOn) =>
+      db
+        .prepare(
+          "INSERT INTO task_dependencies (task_id, depends_on_task_id, type) VALUES (?, ?, 'FS')",
+        )
+        .run(taskId, dependsOn),
+    removeDependency: (taskId, dependsOn) =>
+      db
+        .prepare('DELETE FROM task_dependencies WHERE task_id = ? AND depends_on_task_id = ?')
+        .run(taskId, dependsOn).changes,
     sprintFull: (id) => sprintFull.get(id),
     sprintTasks: (sprintId) => sprintTasks.all(sprintId),
     backlog: (projectId) => backlog.all(projectId),

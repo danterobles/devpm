@@ -187,6 +187,70 @@ export function createTasksService({ db, repository }) {
       this.reorder(actorId, projectId, ids);
     },
 
+    /** RF-64: predecesoras y sucesoras (fin-a-inicio) de una tarea. */
+    dependencies(id) {
+      requireTask(id);
+      const dto = (t) => ({
+        id: t.id,
+        title: t.title,
+        status: t.status,
+        startDate: t.start_date,
+        dueDate: t.due_date,
+      });
+      return {
+        predecessors: repository.predecessorsOf(id).map(dto),
+        successors: repository.successorsOf(id).map(dto),
+      };
+    },
+
+    /** Agrega "taskId depende de dependsOnId"; ambas del mismo proyecto y sin ciclos. */
+    addDependency(actorId, taskId, dependsOnId) {
+      const task = requireTask(taskId);
+      assertEditable(task);
+      if (dependsOnId === taskId)
+        throw AppError.businessRule('Una tarea no puede depender de sí misma');
+      const dep = repository.findById(dependsOnId);
+      if (!dep) throw AppError.businessRule('La tarea predecesora no existe');
+      if (dep.project_id !== task.project_id) {
+        throw AppError.businessRule('Las dos tareas deben pertenecer al mismo proyecto');
+      }
+      if (repository.dependencyExists(taskId, dependsOnId)) {
+        throw AppError.conflict('La dependencia ya existe');
+      }
+      if (repository.dependsTransitively(dependsOnId, taskId)) {
+        throw AppError.businessRule('La dependencia crearía un ciclo entre tareas');
+      }
+      db.transaction(() => {
+        repository.insertDependency(taskId, dependsOnId);
+        recordAudit(db, {
+          userId: actorId,
+          entity: 'task_dependency',
+          entityId: taskId,
+          action: 'create',
+          changes: { dependsOn: [null, dependsOnId] },
+        });
+      })();
+      return { taskId, dependsOnTaskId: dependsOnId, type: 'FS' };
+    },
+
+    removeDependency(actorId, taskId, dependsOnId) {
+      const task = requireTask(taskId);
+      assertEditable(task);
+      if (!repository.dependencyExists(taskId, dependsOnId)) {
+        throw AppError.notFound('Dependencia no encontrada');
+      }
+      db.transaction(() => {
+        repository.removeDependency(taskId, dependsOnId);
+        recordAudit(db, {
+          userId: actorId,
+          entity: 'task_dependency',
+          entityId: taskId,
+          action: 'delete',
+          changes: { dependsOn: [dependsOnId, null] },
+        });
+      })();
+    },
+
     history(id) {
       requireTask(id);
       return repository.historyOf(id).map((h) => ({

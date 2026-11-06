@@ -83,3 +83,8 @@ export const reorderSchema = z.strictObject({
 });
 
 export const moveSchema = z.strictObject({ direction: z.enum(['up', 'down']) });
+
+export const addDependencySchema = z.strictObject({
+  dependsOnTaskId: z.number({ error: 'Tarea predecesora inválida' }).int().positive(),
+  type: z.literal('FS').optional(), // fin-a-inicio (extensible)
+});

@@ -31,6 +31,9 @@ export function createTasksRouter({ db }) {
   router.get('/api/v1/sprints/:id/board', c.apiBoard);
   router.get('/api/v1/tasks/:id', c.apiGet);
   router.get('/api/v1/tasks/:id/history', c.apiHistory);
+  router.get('/api/v1/tasks/:id/dependencies', c.apiDependencies);
+  router.post('/api/v1/tasks/:id/dependencies', canWrite, c.apiAddDependency);
+  router.delete('/api/v1/tasks/:id/dependencies/:depId', canWrite, c.apiRemoveDependency);
   router.put('/api/v1/projects/:id/tasks/order', canWrite, c.apiReorder);
   router.patch('/api/v1/tasks/:id', canWrite, c.apiUpdate);
   router.post('/api/v1/tasks/:id/status', canChangeStatus, c.apiChangeStatus);

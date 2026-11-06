@@ -148,6 +148,9 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   `GET /api/v1/sprints/:id/board` y `public/js/pages/board.js` (arrastrar y soltar con reversión si el
   servidor rechaza el cambio). Solo se pueden mover las tarjetas que el usuario puede cambiar (admin/pm
   todas; developer las suyas) y cada tarjeta incluye un formulario de respaldo sin JavaScript.
+- Dependencias entre tareas (RF-64): `GET/POST /api/v1/tasks/:id/dependencies` y
+  `DELETE .../dependencies/:depId`. Fin-a-inicio, mismo proyecto, sin duplicados y sin ciclos
+  (detección con `WITH RECURSIVE`, 422); se eliminan en cascada con la tarea; bitácora.
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y

@@ -1,6 +1,7 @@
 import { AppError } from '../../lib/AppError.js';
 import { parseWith } from '../../lib/parse.js';
 import {
+  addDependencySchema,
   changeStatusSchema,
   createTaskSchema,
   idSchema,
@@ -107,6 +108,17 @@ export function createTasksController({ service }) {
     },
     apiBoard: (req, res) =>
       res.json({ data: service.board(parseId(req.params.id, 'Sprint no encontrado')) }),
+    apiDependencies: (req, res) => res.json({ data: service.dependencies(parseId(req.params.id)) }),
+    apiAddDependency(req, res) {
+      const { dependsOnTaskId } = parseWith(addDependencySchema, req.body);
+      const data = service.addDependency(actorId(req), parseId(req.params.id), dependsOnTaskId);
+      res.status(201).json({ data });
+    },
+    apiRemoveDependency(req, res) {
+      const dependsOn = parseId(req.params.depId, 'Dependencia no encontrada');
+      service.removeDependency(actorId(req), parseId(req.params.id), dependsOn);
+      res.status(204).end();
+    },
     apiReorder(req, res) {
       const { taskIds } = parseWith(reorderSchema, req.body);
       res.json({ data: service.reorder(actorId(req), projectId(req), taskIds) });
