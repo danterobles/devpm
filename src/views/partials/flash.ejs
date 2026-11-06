@@ -1,0 +1,5 @@
+<% if (typeof flash !== 'undefined' && flash) { %>
+  <div role="status" class="mb-4 rounded border px-4 py-3 text-sm <%= flash.type === 'error' ? 'border-danger bg-red-50 text-red-800' : 'border-ok bg-green-50 text-green-800' %>">
+    <%= flash.message %>
+  </div>
+<% } %>

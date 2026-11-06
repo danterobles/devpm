@@ -1,0 +1,12 @@
+<%# Uso: include('../partials/pagination', { meta: { page, pageSize, total }, baseUrl: '/clients?status=active' }) %>
+<% const totalPages = Math.max(1, Math.ceil(meta.total / meta.pageSize)); %>
+<% if (totalPages > 1) { %>
+  <% const sep = baseUrl.includes('?') ? '&' : '?'; %>
+  <nav class="mt-4 flex items-center justify-between text-sm" aria-label="Paginación">
+    <span>Página <%= meta.page %> de <%= totalPages %> (<%= meta.total %> registros)</span>
+    <span class="flex gap-2">
+      <% if (meta.page > 1) { %><a class="rounded border px-3 py-1 hover:bg-slate-100" href="<%= baseUrl %><%= sep %>page=<%= meta.page - 1 %>">Anterior</a><% } %>
+      <% if (meta.page < totalPages) { %><a class="rounded border px-3 py-1 hover:bg-slate-100" href="<%= baseUrl %><%= sep %>page=<%= meta.page + 1 %>">Siguiente</a><% } %>
+    </span>
+  </nav>
+<% } %>
