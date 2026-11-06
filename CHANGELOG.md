@@ -194,6 +194,14 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   contenido escapado y lista de tareas «sin programar». Solo lectura por ahora. Enlaces desde la ficha
   del proyecto y los sprints.
 
+### Corregido
+- Login rechazado con 403 en navegadores reales: `Referrer-Policy: no-referrer` (valor por defecto de
+  helmet) hace que los navegadores envíen `Origin: null` en los formularios y `verifyOrigin` los
+  bloqueaba. Ahora la política es `same-origin`. Las pruebas con supertest no lo detectaban; se
+  encontró al probar el Gantt en un navegador.
+- Gantt: `custom_class` con espacios hacía fallar a Frappe Gantt (`classList.add`) y no se dibujaba
+  ninguna barra; ahora es un único token (`gantt-<estado>`, `gantt-late`, `milestone-<estado>`).
+
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y
   todo el estado se conserva en CHECKLIST, CHANGELOG y docs.
