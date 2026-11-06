@@ -15,8 +15,8 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 | 0 | Documentación y repositorio | ✅ Completada |
 | 1 | Scaffolding del proyecto | ✅ Completada |
 | 2 | Base de datos | ✅ Completada |
-| 3 | Autenticación y roles | ⏳ Siguiente |
-| 4 | Clientes y equipo | Pendiente |
+| 3 | Autenticación y roles | ✅ Completada |
+| 4 | Clientes y equipo | ⏳ Siguiente |
 | 5 | Proyectos, hitos y asignaciones | Pendiente |
 | 6 | Planeación: sprints y tareas | Pendiente |
 | 7 | Registro de tiempo | Pendiente |
@@ -79,9 +79,9 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 - [x] Verificación de `Origin` en métodos que modifican estado (CSRF)
 - [x] CRUD de usuarios para `admin` y vinculación con miembro del equipo (RF-03, RF-04)
 - [x] Cambio de contraseña propio (RF-05)
-- [ ] Pruebas: login correcto/incorrecto, 401 sin sesión, 403 por rol
+- [x] Pruebas: login correcto/incorrecto, 401 sin sesión, 403 por rol
 
-**Criterio de cierre:** criterio de aceptación PRD §8.6 cubierto por pruebas.
+**Criterio de cierre:** criterio de aceptación PRD §8.6 cubierto por pruebas. ✅
 
 ## Etapa 4 — Clientes y equipo
 

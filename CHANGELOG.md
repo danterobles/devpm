@@ -72,6 +72,9 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 - Cambio de contraseña propio (RF-05): vista `/account/password` y `PATCH /api/v1/me/password`;
   exige la contraseña actual, cierra las demás sesiones del usuario y deja bitácora. El nombre del
   usuario en la navegación enlaza a esa vista.
+- Pruebas de la matriz de roles (PRD §8.6): `pm`, `developer` y `viewer` reciben 403 en la API y las
+  vistas de usuarios, sin sesión 401/redirección, enlace «Usuarios» solo para `admin` y usuario
+  desactivado sin acceso.
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y
