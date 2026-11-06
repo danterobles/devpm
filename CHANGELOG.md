@@ -91,6 +91,9 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   estado y paginación; alta, edición y desactivación). Capacidad semanal en minutos (formulario en
   horas), costo por hora en centavos visible solo para `admin` y `pm`; correo único; sin eliminación.
   Escritura solo `admin` y `pm`. Enlace «Equipo» en la navegación.
+- Habilidades por miembro (RF-21): `GET/POST /api/v1/team-members/:id/skills` y
+  `DELETE .../skills/:skillId`, y sección en la ficha `/team/:id`. Se asignan por nombre con nivel
+  1–5; el catálogo `skills` se crea al asignar (sin distinguir mayúsculas); reasignar actualiza el nivel.
 - Utilidad `isIsoDate` en `src/lib/dates.js`.
 
 ### Cambiado

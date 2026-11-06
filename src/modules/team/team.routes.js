@@ -3,12 +3,15 @@ import { requireAuth } from '../../middlewares/requireAuth.js';
 import { requireRole } from '../../middlewares/requireRole.js';
 import { createTeamRepository } from './team.repository.js';
 import { createTeamService } from './team.service.js';
+import { createSkillsRepository } from './skills.repository.js';
+import { createSkillsService } from './skills.service.js';
 import { createTeamController } from './team.controller.js';
 
 /** Equipo: lectura para todo usuario autenticado; escritura solo `admin` y `pm`. */
 export function createTeamRouter({ db }) {
   const c = createTeamController({
     service: createTeamService({ db, repository: createTeamRepository(db) }),
+    skills: createSkillsService({ db, repository: createSkillsRepository(db) }),
   });
   const canWrite = requireRole('admin', 'pm');
 
@@ -18,6 +21,9 @@ export function createTeamRouter({ db }) {
   api.post('/', canWrite, c.apiCreate);
   api.get('/:id', c.apiGet);
   api.patch('/:id', canWrite, c.apiUpdate);
+  api.get('/:id/skills', c.apiSkillsList);
+  api.post('/:id/skills', canWrite, c.apiSkillAssign);
+  api.delete('/:id/skills/:skillId', canWrite, c.apiSkillRemove);
 
   const html = Router();
   html.use(requireAuth);
@@ -26,6 +32,8 @@ export function createTeamRouter({ db }) {
   html.post('/', canWrite, c.htmlCreate);
   html.get('/:id', c.htmlEdit);
   html.post('/:id', canWrite, c.htmlUpdate);
+  html.post('/:id/skills', canWrite, c.htmlSkillAssign);
+  html.post('/:id/skills/:skillId/delete', canWrite, c.htmlSkillRemove);
 
   const router = Router();
   router.use('/api/v1/team-members', api);

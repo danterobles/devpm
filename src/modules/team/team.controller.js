@@ -1,5 +1,6 @@
 import { AppError } from '../../lib/AppError.js';
 import { parseWith } from '../../lib/parse.js';
+import { SKILL_CATEGORIES, assignSkillSchema, skillIdSchema } from './skills.schemas.js';
 import {
   POSITIONS,
   SENIORITIES,
@@ -15,6 +16,12 @@ const isPrivileged = (req) => PRIVILEGED.includes(req.session.role);
 const parseId = (raw) => {
   const parsed = idParamSchema.safeParse(raw);
   if (!parsed.success) throw AppError.notFound('Miembro no encontrado');
+  return parsed.data;
+};
+
+const parseSkillId = (raw) => {
+  const parsed = skillIdSchema.safeParse(raw);
+  if (!parsed.success) throw AppError.notFound('Habilidad no encontrada');
   return parsed.data;
 };
 
@@ -42,7 +49,10 @@ function formToInput(body) {
   return { ...input, weeklyCapacityMinutes: minutes, hourlyCostCents: cents };
 }
 
-const formView = (res, { status = 200, member, error = null, editing, canWrite }) =>
+const formView = (
+  res,
+  { status = 200, member, error = null, editing, canWrite, skills = [], skillError = null },
+) =>
   res.status(status).render('pages/team/form', {
     title: editing ? (canWrite ? 'Editar miembro' : 'Ficha del miembro') : 'Nuevo miembro',
     positions: POSITIONS,
@@ -51,9 +61,12 @@ const formView = (res, { status = 200, member, error = null, editing, canWrite }
     error,
     editing,
     canWrite,
+    skills,
+    skillError,
+    skillCategories: SKILL_CATEGORIES,
   });
 
-export function createTeamController({ service }) {
+export function createTeamController({ service, skills }) {
   const actor = (req) => req.session.userId;
   const opts = (req) => ({ includeCost: isPrivileged(req) });
 
@@ -84,6 +97,45 @@ export function createTeamController({ service }) {
       const id = parseId(req.params.id);
       const input = parseWith(updateMemberSchema, req.body);
       res.json({ data: service.update(actor(req), id, input) });
+    },
+
+    // ---- Habilidades (RF-21) ----
+    apiSkillsList: (req, res) => res.json({ data: skills.list(parseId(req.params.id)) }),
+    apiSkillAssign(req, res) {
+      const input = parseWith(assignSkillSchema, req.body);
+      const { created, skill } = skills.assign(actor(req), parseId(req.params.id), input);
+      res.status(created ? 201 : 200).json({ data: skill });
+    },
+    apiSkillRemove(req, res) {
+      skills.unassign(actor(req), parseId(req.params.id), parseSkillId(req.params.skillId));
+      res.status(204).end();
+    },
+    async htmlSkillAssign(req, res) {
+      const id = parseId(req.params.id);
+      try {
+        skills.assign(actor(req), id, parseWith(assignSkillSchema, req.body));
+        return res.redirect(`/team/${id}`);
+      } catch (err) {
+        if (!(err instanceof AppError) || err.status >= 500 || err.status === 404) throw err;
+        const member = service.get(id, opts(req));
+        return formView(res, {
+          status: err.status,
+          member: {
+            ...member,
+            weeklyHours: minutesToHours(member.weeklyCapacityMinutes),
+            hourlyCost: centsToPesos(member.hourlyCostCents),
+          },
+          editing: true,
+          canWrite: true,
+          skills: skills.list(id),
+          skillError: err.details?.[0]?.message ?? err.message,
+        });
+      }
+    },
+    htmlSkillRemove(req, res) {
+      const id = parseId(req.params.id);
+      skills.unassign(actor(req), id, parseSkillId(req.params.skillId));
+      res.redirect(`/team/${id}`);
     },
 
     // ---- Vistas HTML ----
@@ -123,6 +175,7 @@ export function createTeamController({ service }) {
         },
         editing: true,
         canWrite: isPrivileged(req),
+        skills: skills.list(member.id),
       });
     },
     htmlCreate(req, res) {
@@ -139,6 +192,7 @@ export function createTeamController({ service }) {
         member: { ...req.body, id, isActive: req.body.isActive === '1' },
         editing: true,
         canWrite: true,
+        skills: skills.list(id),
       };
       return withForm(res, view, async () => {
         const input = { ...formToInput(req.body), isActive: req.body.isActive === '1' };
