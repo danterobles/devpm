@@ -5,6 +5,16 @@ export function createKpiRepository(db) {
   const all = (sql, params = []) => db.prepare(sql).all(...params);
 
   return {
+    /** Opciones de los filtros del tablero. */
+    filterOptions: () => ({
+      clients: all('SELECT id, name, type FROM clients ORDER BY name COLLATE NOCASE'),
+      projects: all('SELECT id, code, name FROM projects ORDER BY code'),
+      managers: all(
+        `SELECT DISTINCT m.id, trim(m.first_name || ' ' || m.last_name) AS name
+           FROM team_members m JOIN projects p ON p.manager_id = m.id ORDER BY name COLLATE NOCASE`,
+      ),
+    }),
+
     /** Proyectos que cumplen los filtros del tablero (cualquier estado). */
     projects({ clientType, clientId, projectId, managerId }) {
       const where = [];
@@ -89,9 +99,10 @@ export function createKpiRepository(db) {
     closedSprints(ids, limit = 3) {
       if (ids.length === 0) return [];
       return all(
-        `SELECT id, name, end_date, committed_points, completed_points FROM sprints
-          WHERE status = 'closed' AND project_id IN (${marks(ids)})
-          ORDER BY end_date DESC, id DESC LIMIT ?`,
+        `SELECT s.id, s.name, s.end_date, s.committed_points, s.completed_points, p.code AS project_code
+           FROM sprints s JOIN projects p ON p.id = s.project_id
+          WHERE s.status = 'closed' AND s.project_id IN (${marks(ids)})
+          ORDER BY s.end_date DESC, s.id DESC LIMIT ?`,
         [...ids, limit],
       );
     },

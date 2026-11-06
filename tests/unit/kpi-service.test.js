@@ -291,6 +291,7 @@ test('K8 y K9: velocidad del último sprint cerrado, promedio de los 3 últimos 
     ],
   );
   assert.equal(k8.average, 23); // (20 + 25 + 24) / 3
+  assert.ok(k8.history.every((h) => h.projectCode)); // para distinguir sprints con el mismo nombre
   assert.equal(k9.completedPoints, 69);
   assert.equal(k9.committedPoints, 95);
   assert.equal(k9.value, 72.6); // 69 / 95

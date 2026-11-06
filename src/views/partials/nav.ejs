@@ -4,6 +4,9 @@
     <ul class="flex gap-4 text-sm">
       <li><a class="hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-white" href="/">Inicio</a></li>
       <% if (typeof currentUser !== 'undefined' && currentUser) { %>
+        <li><a class="hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-white" href="/dashboard">Tablero</a></li>
+      <% } %>
+      <% if (typeof currentUser !== 'undefined' && currentUser) { %>
         <li><a class="hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-white" href="/clients">Clientes</a></li>
         <li><a class="hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-white" href="/team">Equipo</a></li>
         <li><a class="hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-white" href="/projects">Proyectos</a></li>

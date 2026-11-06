@@ -151,6 +151,7 @@ export function createKpiService({
       const velocity = closed.map((s) => ({
         sprintId: s.id,
         name: s.name,
+        projectCode: s.project_code,
         points: s.completed_points ?? 0,
       }));
       const committed = closed.reduce((acc, s) => acc + (s.committed_points ?? 0), 0);

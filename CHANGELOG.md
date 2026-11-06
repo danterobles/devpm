@@ -257,6 +257,11 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   `projectId` y `managerId` validados con Zod (400 con fechas inválidas, rango invertido o mayor a 366
   días); lectura para cualquier usuario autenticado; el ingreso estimado (K14) solo se entrega a
   `admin` y `pm`.
+- Vista del tablero `/dashboard` (RF-90, RF-94): tarjetas K1 a K16 con semáforo (color y texto
+  «Verde/Ámbar/Rojo»), listado «Proyectos en riesgo» con su causa, tabla de proyectos activos y tres
+  gráficas (Chart.js local: horas facturables, velocidad de sprints y avance frente a consumo) con filtros
+  de periodo, tipo de cliente, cliente, proyecto y líder. Enlaces «Tablero» en la navegación y el inicio.
+  Verificada en un navegador real con los datos de ejemplo.
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y
