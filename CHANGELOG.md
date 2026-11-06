@@ -157,6 +157,14 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   tablero.
 - Prueba de extremo a extremo del flujo de un sprint (planear, iniciar, ejecutar en el tablero y cerrar).
 
+### Agregado (Etapa 7 — Registro de tiempo)
+- Módulo `time-entries` (RF-50, RF-53): API `/api/v1/time-entries` (listado con filtros y paginación,
+  detalle, alta, edición y baja). Cada usuario registra solo su tiempo (miembro vinculado); un developer
+  solo ve el suyo y admin/pm ven todo; el viewer no accede. Validaciones: duración 1–1440 min, sin fechas
+  futuras (zona horaria de la aplicación), máximo 24 h por miembro y día, asignación vigente en la fecha y
+  tarea del mismo proyecto. `is_billable` se hereda del proyecto. Solo `draft` y `rejected` se editan o
+  eliminan; editar un rechazado lo regresa a borrador. Bitácora.
+
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y
   todo el estado se conserva en CHECKLIST, CHANGELOG y docs.
