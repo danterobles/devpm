@@ -299,7 +299,9 @@ Empresas con relación comercial; su trabajo es facturable.
   tareas no terminadas; su ideal parte de las horas restantes de la primera instantánea.
 - Burnup de proyecto (RF-84): por día, alcance = suma del `total_points` y completado = suma del
   `completed_points` de la última instantánea de cada uno de sus sprints; no incluye tareas que nunca
-  estuvieron en un sprint.
+  estuvieron en un sprint. Como al cerrar un sprint sus tareas no terminadas salen de él (al backlog o
+  a otro sprint), a partir del día siguiente al cierre un sprint cerrado aporta al alcance solo sus
+  puntos completados, para no contar dos veces las tareas que continúan en otro sprint.
 
 ### 5.11 Tablero de KPIs en tiempo real
 
