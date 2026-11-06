@@ -94,6 +94,16 @@ Empresas con relación comercial; su trabajo es facturable.
 | RF-17 | Ficha del cliente con proyectos, horas facturables y monto estimado (horas × tarifa). | Media |
 | RF-18 | No se permite eliminar un cliente con proyectos; solo desactivarlo. | Alta |
 
+**Decisiones de definición (clientes, RF-10 a RF-18):**
+
+- Permisos: cualquier usuario autenticado puede **leer** clientes; solo `admin` y `pm` pueden crear
+  y editar (403 para `developer` y `viewer`).
+- API: un solo recurso `/api/v1/clients` con discriminador `type` (`internal` | `external`); el
+  esquema de validación depende del tipo y el `type` no se puede cambiar después de crear.
+  El listado admite `?type=`, `?status=`, `?q=` y paginación.
+- La tarifa viaja como `hourlyRateCents` (centavos) y la moneda como código de 3 letras mayúsculas
+  (formato ISO-4217, sin catálogo cerrado).
+
 ### 5.4 Equipo de desarrollo
 
 | ID | Requerimiento | Prioridad |
