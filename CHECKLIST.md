@@ -104,7 +104,7 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 - [x] Ficha del proyecto (resumen, equipo, hitos) (RF-33); enlaces a Gantt y Burndown pendientes de las Etapas 8 y 9
 - [x] Módulo `assignments` con validación de periodo dentro del proyecto (RF-40)
 - [x] Advertencia de sobreasignación > 100 % (RF-41)
-- [ ] Vista de carga del equipo por semana (RF-23) y matriz de asignaciones (RF-43)
+- [x] Vista de carga del equipo por semana (RF-23) y matriz de asignaciones (RF-43)
 - [x] Fichas de cliente con proyectos y horas (RF-12, RF-17)
 - [ ] Pruebas: transiciones inválidas (422), sobreasignación, permisos
 

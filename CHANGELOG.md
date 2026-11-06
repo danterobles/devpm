@@ -123,6 +123,10 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 - Fichas de cliente (RF-12, RF-17): sección «Proyectos y horas» en `/clients/:type/:id` y
   `GET /api/v1/clients/:id/summary` con proyectos, horas consumidas y facturables, y monto estimado
   (horas facturables × tarifa) para clientes externos.
+- Carga semanal del equipo (RF-23) y matriz de asignaciones (RF-43): vistas `/assignments/load` y
+  `/assignments/matrix` y API `/api/v1/assignments/load|matrix` (lectura para cualquier usuario
+  autenticado). Semanas lunes–domingo (8 por defecto, máximo 26), % por suma de dedicación con alerta
+  de sobreasignación (> 100 %), días hábiles de ausencia informativos y filtro `?from=&to=`.
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y

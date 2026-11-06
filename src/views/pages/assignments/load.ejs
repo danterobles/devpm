@@ -1,0 +1,41 @@
+<h1 class="text-2xl font-bold">Carga del equipo</h1>
+<p class="mt-1 text-sm text-slate-600">Dedicación por semana (lunes a domingo). Los días de ausencia son informativos y no modifican el porcentaje.</p>
+
+<form method="get" action="/assignments/load" class="mt-4 flex flex-wrap items-end gap-3">
+  <div>
+    <label for="from" class="block text-sm font-medium">Desde</label>
+    <input id="from" name="from" type="date" value="<%= range.from %>" class="mt-1 rounded border border-slate-300 px-3 py-2" />
+  </div>
+  <div>
+    <label for="to" class="block text-sm font-medium">Hasta</label>
+    <input id="to" name="to" type="date" value="<%= range.to %>" class="mt-1 rounded border border-slate-300 px-3 py-2" />
+  </div>
+  <button type="submit" class="rounded border px-4 py-2 text-sm hover:bg-slate-100">Aplicar</button>
+  <a href="/assignments/matrix?from=<%= range.from %>&to=<%= range.to %>" class="text-sm underline">Ver matriz de asignaciones</a>
+</form>
+
+<div class="mt-4 overflow-x-auto">
+  <table class="w-full text-left text-sm">
+    <caption class="sr-only">Carga semanal por miembro</caption>
+    <thead>
+      <tr class="border-b">
+        <th scope="col" class="py-2 pr-4">Miembro</th>
+        <% weeks.forEach((w) => { %><th scope="col" class="py-2 pr-4 whitespace-nowrap"><%= w.start.slice(5) %></th><% }) %>
+      </tr>
+    </thead>
+    <tbody>
+      <% members.forEach((m) => { %>
+        <tr class="border-b">
+          <th scope="row" class="py-2 pr-4 font-medium"><%= m.name %></th>
+          <% m.weeks.forEach((w) => { %>
+            <td class="py-2 pr-4 whitespace-nowrap <%= w.over ? 'font-bold text-danger' : '' %>">
+              <%= w.percent %> %<% if (w.over) { %> <span class="text-xs">(sobreasignado)</span><% } %>
+              <% if (w.absenceDays > 0) { %><span class="block text-xs text-slate-500"><%= w.absenceDays %> d ausente</span><% } %>
+            </td>
+          <% }) %>
+        </tr>
+      <% }) %>
+      <% if (members.length === 0) { %><tr><td colspan="<%= weeks.length + 1 %>" class="py-3 text-slate-600">No hay miembros activos.</td></tr><% } %>
+    </tbody>
+  </table>
+</div>
