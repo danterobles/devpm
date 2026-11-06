@@ -236,6 +236,7 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   (Chart.js) con alcance total frente a completado por día, sumando las instantáneas de sus sprints;
   un sprint cerrado aporta solo lo completado tras su cierre (decisión en `docs/PRD.md` §5.10). Enlace
   «Burnup» en la ficha del proyecto.
+- Pruebas del Burndown: línea ideal (unitarias), instantáneas con fecha inyectada y verificación día a día con los sprints activos del seed.
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y

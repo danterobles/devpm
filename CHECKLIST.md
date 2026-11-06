@@ -21,8 +21,8 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 | 6 | Planeación: sprints y tareas | ✅ Completada |
 | 7 | Registro de tiempo | ✅ Completada |
 | 8 | Diagrama de Gantt | ✅ Completada |
-| 9 | Burndown Chart | ⏳ Siguiente |
-| 10 | Tablero de KPIs en tiempo real | Pendiente |
+| 9 | Burndown Chart | ✅ Completada |
+| 10 | Tablero de KPIs en tiempo real | ⏳ Siguiente |
 | 11 | Calidad, seguridad y despliegue | Pendiente |
 
 ---
@@ -152,9 +152,9 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 - [x] Endpoint `GET /api/v1/sprints/:id/burndown` con línea ideal en días hábiles (RF-80)
 - [x] Vista con Chart.js: real vs. ideal y cambios de alcance (RF-82)
 - [x] Burndown por horas (RF-83) y Burnup de proyecto (RF-84)
-- [ ] Pruebas unitarias de línea ideal y de snapshots con fecha inyectada
+- [x] Pruebas unitarias de línea ideal y de snapshots con fecha inyectada
 
-**Criterio de cierre:** el burndown del sprint activo del seed es correcto día a día.
+**Criterio de cierre:** el burndown del sprint activo del seed es correcto día a día. ✅
 
 ## Etapa 10 — Tablero de KPIs en tiempo real
 
