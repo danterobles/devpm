@@ -210,6 +210,12 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 - Gantt: `custom_class` con espacios hacía fallar a Frappe Gantt (`classList.add`) y no se dibujaba
   ninguna barra; ahora es un único token (`gantt-<estado>`, `gantt-late`, `milestone-<estado>`).
 
+### Agregado (Etapa 9 — Burndown)
+- Servicio de instantáneas diarias (RF-81, `src/modules/burndown/snapshots.service.js`): `capture`,
+  `captureActive` y `recalculate` con *upsert* idempotente por (sprint, día) de puntos totales,
+  completados y restantes, y minutos estimados restantes (padres y subtareas). Iniciar un sprint guarda
+  la instantánea del día 0 y cerrarlo guarda la final, antes de devolver las tareas no terminadas.
+
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y
   todo el estado se conserva en CHECKLIST, CHANGELOG y docs.

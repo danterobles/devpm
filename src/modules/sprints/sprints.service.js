@@ -18,7 +18,7 @@ export const toDto = (r) => ({
 });
 
 /** Casos de uso de sprints (RF-60, RF-66). */
-export function createSprintsService({ db, repository }) {
+export function createSprintsService({ db, repository, snapshots = null }) {
   function requireProject(projectId) {
     const p = repository.findProject(projectId);
     if (!p) throw AppError.notFound('Proyecto no encontrado');
@@ -96,6 +96,7 @@ export function createSprintsService({ db, repository }) {
       db.transaction(() => {
         const committedPoints = repository.sumPoints(id, false);
         repository.setStatus(id, 'active', { committedPoints });
+        snapshots?.capture(id); // instantánea del día 0 del Burndown (RF-81)
         audit(actorId, id, 'status_change', {
           status: ['planned', 'active'],
           committed_points: [null, committedPoints],
@@ -119,6 +120,7 @@ export function createSprintsService({ db, repository }) {
       }
       db.transaction(() => {
         const completedPoints = repository.sumPoints(id, true);
+        snapshots?.capture(id); // instantánea final, antes de devolver tareas al backlog
         for (const t of repository.unfinishedTasks(id)) {
           if (moveTo !== null) {
             repository.moveTaskToSprint(t.id, moveTo);

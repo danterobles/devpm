@@ -2,13 +2,18 @@ import { Router } from 'express';
 import { requireAuth } from '../../middlewares/requireAuth.js';
 import { requireRole } from '../../middlewares/requireRole.js';
 import { createSprintsRepository } from './sprints.repository.js';
+import { createSnapshotsService } from '../burndown/snapshots.service.js';
 import { createSprintsService } from './sprints.service.js';
 import { createSprintsController } from './sprints.controller.js';
 
 /** Sprints: lectura para todo usuario autenticado; escritura solo `admin` y `pm`. */
-export function createSprintsRouter({ db }) {
+export function createSprintsRouter({ db, timezone }) {
   const c = createSprintsController({
-    service: createSprintsService({ db, repository: createSprintsRepository(db) }),
+    service: createSprintsService({
+      db,
+      repository: createSprintsRepository(db),
+      snapshots: createSnapshotsService({ db, timezone }),
+    }),
   });
   const canWrite = requireRole('admin', 'pm');
 
