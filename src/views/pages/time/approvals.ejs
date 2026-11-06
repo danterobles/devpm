@@ -9,6 +9,14 @@
     <li class="py-3">
       <p><strong><%= e.memberName %></strong> · <%= e.projectCode %><% if (e.taskTitle) { %> · <%= e.taskTitle %><% } %> · <%= e.workDate %> · <%= minutesToHours(e.minutes) %></p>
       <p class="text-slate-600"><%= e.description %></p>
+      <form method="post" action="/time/approvals/<%= e.id %>/billable" class="mt-2 flex items-center gap-2">
+        <label for="billable<%= e.id %>" class="text-xs font-medium">Facturable</label>
+        <select id="billable<%= e.id %>" name="isBillable" class="rounded border border-slate-300 px-2 py-1 text-xs">
+          <option value="1" <%= e.isBillable ? 'selected' : '' %>>Sí</option>
+          <option value="0" <%= e.isBillable ? '' : 'selected' %>>No</option>
+        </select>
+        <button type="submit" class="rounded border px-2 py-1 text-xs hover:bg-slate-100">Guardar</button>
+      </form>
       <div class="mt-2 flex flex-wrap items-end gap-3">
         <form method="post" action="/time/approvals/<%= e.id %>/approve"><button type="submit" class="rounded bg-brand-600 px-3 py-1 text-white hover:bg-brand-700">Aprobar</button></form>
         <form method="post" action="/time/approvals/<%= e.id %>/reject" class="flex items-end gap-2">

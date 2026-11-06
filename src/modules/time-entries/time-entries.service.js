@@ -173,6 +173,26 @@ export function createTimeEntriesService({ db, repository, timezone = 'America/M
       return memberId === null ? [] : repository.submittedForManager(memberId).map(toDto);
     },
 
+    /** RF-54: solo el líder del proyecto o un admin modifican la bandera facturable. */
+    setBillable(actor, id, isBillable) {
+      const before = repository.findById(id);
+      if (!before) throw AppError.notFound('Registro de tiempo no encontrado');
+      const memberId = repository.memberOfUser(actor.id);
+      const isLeader = memberId !== null && before.project_manager_id === memberId;
+      if (actor.role !== 'admin' && !isLeader) {
+        throw AppError.forbidden(
+          'Solo el líder del proyecto o un administrador puede cambiar la bandera facturable',
+        );
+      }
+      if ((before.is_billable === 1) !== isBillable) {
+        db.transaction(() => {
+          repository.update(id, { isBillable });
+          audit(actor.id, id, 'update', { is_billable: [before.is_billable, Number(isBillable)] });
+        })();
+      }
+      return toDto(repository.findById(id));
+    },
+
     /** Aprueba o rechaza: solo el líder del proyecto o un admin, y nunca los propios registros. */
     review(actor, id, decision, reason = null) {
       const row = repository.findById(id);

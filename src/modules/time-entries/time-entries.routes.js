@@ -29,6 +29,7 @@ export function createTimeEntriesRouter({ db, timezone }) {
   router.get('/time/approvals', c.htmlApprovals);
   router.post('/time/approvals/:id/approve', c.htmlApprove);
   router.post('/time/approvals/:id/reject', c.htmlReject);
+  router.post('/time/approvals/:id/billable', c.htmlBillable);
   router.get('/api/v1/time-entries', c.apiList);
   router.get('/api/v1/time-entries/pending', c.apiPending);
   router.post('/api/v1/time-entries/submit-week', c.apiSubmitWeek);
@@ -39,5 +40,6 @@ export function createTimeEntriesRouter({ db, timezone }) {
   router.post('/api/v1/time-entries/:id/submit', c.apiSubmit);
   router.post('/api/v1/time-entries/:id/approve', c.apiApprove);
   router.post('/api/v1/time-entries/:id/reject', c.apiReject);
+  router.patch('/api/v1/time-entries/:id/billable', c.apiBillable);
   return router;
 }

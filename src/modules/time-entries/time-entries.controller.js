@@ -3,6 +3,7 @@ import { addDays } from '../../lib/dates.js';
 import { parseWith } from '../../lib/parse.js';
 import { mondayOf } from './time-entries.service.js';
 import {
+  billableSchema,
   createEntrySchema,
   idSchema,
   listQuerySchema,
@@ -125,6 +126,15 @@ export function createTimeEntriesController({ service }) {
     apiReject(req, res) {
       const { reason } = parseWith(rejectSchema, req.body);
       res.json({ data: service.review(actor(req), parseId(req.params.id), 'reject', reason) });
+    },
+    apiBillable(req, res) {
+      const { isBillable } = parseWith(billableSchema, req.body);
+      res.json({ data: service.setBillable(actor(req), parseId(req.params.id), isBillable) });
+    },
+    htmlBillable(req, res) {
+      const { isBillable } = parseWith(billableSchema, { isBillable: req.body.isBillable === '1' });
+      service.setBillable(actor(req), parseId(req.params.id), isBillable);
+      res.redirect('/time/approvals');
     },
     htmlSubmit(req, res) {
       const id = parseId(req.params.id);

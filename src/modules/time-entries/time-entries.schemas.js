@@ -51,3 +51,5 @@ export const submitWeekSchema = z.strictObject({ week: date });
 export const rejectSchema = z.strictObject({
   reason: z.string().trim().min(1, 'El motivo del rechazo es obligatorio').max(500),
 });
+
+export const billableSchema = z.strictObject({ isBillable: z.boolean() });
