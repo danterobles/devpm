@@ -253,6 +253,10 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   (K8, K9), ciclo promedio (K12), horas facturables por tipo de cliente (K13), ingreso estimado por
   moneda (K14), tabla por proyecto y «Proyectos en riesgo» con su causa (RF-94). Semáforos con umbrales
   inyectables (`thresholds.js`) y divisiones entre cero como `null`; pruebas unitarias por fórmula.
+- Endpoint `GET /api/v1/dashboard/kpis` (RF-92): filtros `from`, `to`, `clientType`, `clientId`,
+  `projectId` y `managerId` validados con Zod (400 con fechas inválidas, rango invertido o mayor a 366
+  días); lectura para cualquier usuario autenticado; el ingreso estimado (K14) solo se entrega a
+  `admin` y `pm`.
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y

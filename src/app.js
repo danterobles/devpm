@@ -10,6 +10,7 @@ import { createSse } from './realtime/sse.js';
 import { verifyOrigin } from './middlewares/verifyOrigin.js';
 import { layout } from './middlewares/layout.js';
 import { createSession } from './modules/auth/session.js';
+import { createDashboardRouter } from './modules/dashboard/dashboard.routes.js';
 import { createBurndownRouter } from './modules/burndown/burndown.routes.js';
 import { createGanttRouter } from './modules/gantt/gantt.routes.js';
 import { createTimeEntriesRouter } from './modules/time-entries/time-entries.routes.js';
@@ -90,6 +91,7 @@ export function createApp({
     app.use(createTeamRouter({ db, events: eventBus }));
     app.use(createSprintsRouter({ db, timezone: config.timezone, events: eventBus }));
     app.use(createTasksRouter({ db, timezone: config.timezone, events: eventBus }));
+    app.use(createDashboardRouter({ db, timezone: config.timezone }));
     app.use(createBurndownRouter({ db, timezone: config.timezone }));
     app.use(createGanttRouter({ db, timezone: config.timezone }));
     app.use(createTimeEntriesRouter({ db, timezone: config.timezone, events: eventBus }));

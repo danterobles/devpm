@@ -44,10 +44,9 @@ export function createKpiService({
      */
     getAll(filters = {}, { today = todayIn(timezone), includeRevenue = false } = {}) {
       const thresholds = getThresholds();
-      const range = {
-        from: filters.from ?? lastDays(today, 30).from,
-        to: filters.to ?? lastDays(today, 30).to,
-      };
+      // Periodo: lo indicado; sin `to` termina hoy; sin `from` abarca 30 días terminando en `to`.
+      const to = filters.to ?? today;
+      const range = { from: filters.from ?? lastDays(to, 30).from, to };
       const projects = repository.projects(filters);
       const ids = projects.map((p) => p.id);
       const active = projects.filter((p) => p.status === 'active');
