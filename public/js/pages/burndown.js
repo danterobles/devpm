@@ -144,11 +144,13 @@
       render(data);
       renderTable(data);
       renderSummary(data);
+      document.dispatchEvent(new CustomEvent('devpm:loaded', { detail: { at: new Date() } }));
     } catch (error) {
       message.textContent = error.message;
     }
   }
 
   metricSelect?.addEventListener('change', load);
+  document.addEventListener('devpm:refresh', load); // eventos de tareas y sprints (live.js)
   load();
 })();

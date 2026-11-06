@@ -9,7 +9,8 @@
 </div>
 <p class="mt-1 text-sm text-slate-600"><%= project.name %> · <%= project.startDate %> → <%= project.endDate %></p>
 
-<div data-gantt data-project-id="<%= project.id %>" data-can-reschedule="<%= canReschedule ? 'true' : 'false' %>">
+<div data-gantt data-project-id="<%= project.id %>" data-can-reschedule="<%= canReschedule ? 'true' : 'false' %>" data-live data-live-project="<%= project.id %>" data-live-types="task.,milestone.,project.,assignment.">
+  <p data-live-status class="mt-2 text-xs text-slate-600" role="status" aria-live="polite"></p>
   <div class="mt-4 flex flex-wrap items-center gap-4">
     <div role="group" aria-label="Escala de tiempo" class="flex gap-1">
       <button type="button" data-view-mode="Day" aria-pressed="false" class="rounded border px-3 py-1 text-sm hover:bg-slate-100 aria-pressed:bg-brand-600 aria-pressed:text-white">Día</button>
@@ -35,3 +36,4 @@
 </div>
 <script src="/vendor/frappe-gantt.umd.js"></script>
 <script src="/js/pages/gantt.js" defer></script>
+<script src="/js/lib/live.js" defer></script>

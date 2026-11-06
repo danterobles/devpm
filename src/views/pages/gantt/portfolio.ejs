@@ -2,7 +2,8 @@
 <h1 class="text-2xl font-bold">Portafolio de proyectos</h1>
 <p class="mt-1 text-sm text-slate-600">Un renglón por proyecto activo (inicio → fin planeados). El avance es la proporción de puntos de historia terminados. Haz clic en una barra para abrir el Gantt del proyecto.</p>
 
-<div data-gantt-portfolio>
+<div data-gantt-portfolio data-live data-live-types="project.,task.,milestone.">
+  <p data-live-status class="mt-2 text-xs text-slate-600" role="status" aria-live="polite"></p>
   <div class="mt-4 flex flex-wrap items-center gap-4">
     <div role="group" aria-label="Escala de tiempo" class="flex gap-1">
       <button type="button" data-view-mode="Week" aria-pressed="false" class="rounded border px-3 py-1 text-sm hover:bg-slate-100 aria-pressed:bg-brand-600 aria-pressed:text-white">Semana</button>
@@ -18,3 +19,4 @@
 </div>
 <script src="/vendor/frappe-gantt.umd.js"></script>
 <script src="/js/pages/gantt-portfolio.js" defer></script>
+<script src="/js/lib/live.js" defer></script>

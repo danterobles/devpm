@@ -12,6 +12,8 @@
 </p>
 <p id="board-status" class="sr-only" role="status" aria-live="polite"></p>
 
+<div data-live data-live-project="<%= project.id %>" data-live-types="task.,sprint.">
+  <p data-live-status class="mt-2 text-xs text-slate-600" role="status" aria-live="polite"></p>
 <div data-board class="mt-4 grid gap-3 md:grid-cols-3 xl:grid-cols-6">
   <% columns.forEach((col) => { %>
     <% if (col.status !== 'backlog' || col.tasks.length > 0) { %>
@@ -46,4 +48,6 @@
     <% } %>
   <% }) %>
 </div>
+</div>
 <script src="/js/pages/board.js" defer></script>
+<script src="/js/lib/live.js" defer></script>

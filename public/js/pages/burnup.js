@@ -77,6 +77,7 @@
       const { data } = await response.json();
       if (data.days.length === 0) {
         message.textContent = 'El proyecto todavía no tiene instantáneas de sprints.';
+        document.dispatchEvent(new CustomEvent('devpm:loaded', { detail: { at: new Date() } }));
         return;
       }
       message.textContent = '';
@@ -84,10 +85,12 @@
       summary.textContent = `Alcance: ${data.scope[last]} pts · Completado: ${data.completed[last]} pts · Pendiente: ${data.remaining[last]} pts`;
       render(data);
       renderTable(data);
+      document.dispatchEvent(new CustomEvent('devpm:loaded', { detail: { at: new Date() } }));
     } catch (error) {
       message.textContent = error.message;
     }
   }
 
+  document.addEventListener('devpm:refresh', load); // eventos de tareas y sprints (live.js)
   load();
 })();

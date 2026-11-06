@@ -267,6 +267,10 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   indicador «En vivo / Reconectando / Sin conexión» con la hora de la última actualización y refresco
   tras reconectar. El tablero lo usa: medido en un navegador real, un cambio de tarea actualiza los
   KPIs en ~0.5 s sin recargar.
+- Burndown, Burnup, Kanban, Gantt del proyecto y Gantt de portafolio se refrescan solos al llegar
+  eventos de dominio (`data-live`, prefijos de evento y proyecto): el Kanban vuelve a pedir la página y
+  reemplaza las columnas (sin perder el arrastre), el Gantt ignora el eco de sus propios cambios y el
+  Burndown refleja la instantánea recalculada. Medido en un navegador real: ~0.5 s.
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y

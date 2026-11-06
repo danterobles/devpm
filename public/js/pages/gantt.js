@@ -16,6 +16,7 @@
 
   let chart = null;
   let viewMode = 'Week';
+  let ignoreRefreshUntil = 0; // el eco de nuestro propio cambio no vuelve a dibujar el diagrama
 
   const escapeHtml = (value) =>
     String(value ?? '').replace(
@@ -70,6 +71,7 @@
         const body = await response.json().catch(() => ({}));
         throw new Error(body?.error?.message || 'No se pudo reprogramar la tarea');
       }
+      ignoreRefreshUntil = Date.now() + 2000;
       message.textContent = `«${task.name}» reprogramada: ${isoDate(start)} → ${isoDate(end)}`;
     } catch (error) {
       await load();
@@ -118,6 +120,7 @@
     if (data.tasks.length === 0) {
       chart = null;
       message.textContent = 'No hay tareas ni hitos con fechas para dibujar.';
+      document.dispatchEvent(new CustomEvent('devpm:loaded', { detail: { at: new Date() } }));
       return;
     }
     message.textContent = '';
@@ -134,12 +137,16 @@
       move_dependencies: false, // sin cascada: cada tarea se reprograma por separado
       on_date_change: reschedule,
     });
+    document.dispatchEvent(new CustomEvent('devpm:loaded', { detail: { at: new Date() } }));
   }
 
   for (const button of modeButtons) {
     button.addEventListener('click', () => setMode(button.dataset.viewMode));
   }
   groupToggle?.addEventListener('change', load);
+  document.addEventListener('devpm:refresh', () => {
+    if (Date.now() >= ignoreRefreshUntil) load(); // eventos de tareas, hitos y proyecto (live.js)
+  });
   setMode(viewMode);
   load();
 })();

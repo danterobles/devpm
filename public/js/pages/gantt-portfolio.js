@@ -52,6 +52,7 @@
     target.replaceChildren();
     if (data.projects.length === 0) {
       message.textContent = 'No hay proyectos activos.';
+      document.dispatchEvent(new CustomEvent('devpm:loaded', { detail: { at: new Date() } }));
       return;
     }
     message.textContent = '';
@@ -68,11 +69,13 @@
         window.location.assign(`/projects/${task.meta.projectId}/gantt`);
       },
     });
+    document.dispatchEvent(new CustomEvent('devpm:loaded', { detail: { at: new Date() } }));
   }
 
   for (const button of modeButtons) {
     button.addEventListener('click', () => setMode(button.dataset.viewMode));
   }
+  document.addEventListener('devpm:refresh', load); // eventos de proyectos, tareas e hitos (live.js)
   setMode(viewMode);
   load();
 })();

@@ -8,7 +8,8 @@
 </div>
 <p class="mt-1 text-sm text-slate-600"><%= project.code %> · <%= sprint.startDate %> → <%= sprint.endDate %> · estado: <%= sprint.status %></p>
 
-<div data-burndown data-sprint-id="<%= sprint.id %>">
+<div data-burndown data-sprint-id="<%= sprint.id %>" data-live data-live-project="<%= project.id %>" data-live-types="task.,sprint.">
+  <p data-live-status class="mt-2 text-xs text-slate-600" role="status" aria-live="polite"></p>
   <div class="mt-4 flex items-center gap-2">
     <label for="burndown-metric" class="text-sm font-medium">Medir en</label>
     <select id="burndown-metric" class="rounded border border-slate-300 px-3 py-1 text-sm">
@@ -39,3 +40,4 @@
 </div>
 <script src="/vendor/chart.umd.min.js"></script>
 <script src="/js/pages/burndown.js" defer></script>
+<script src="/js/lib/live.js" defer></script>

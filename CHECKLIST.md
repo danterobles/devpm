@@ -164,7 +164,7 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 - [x] Endpoint `GET /api/v1/dashboard/kpis` con filtros (RF-92)
 - [x] Vista del tablero: tarjetas con semáforo, gráficas y "Proyectos en riesgo" (RF-90, RF-93, RF-94)
 - [x] Cliente `public/js/lib/live.js` con debounce, indicador de conexión y última actualización (RF-95)
-- [ ] Burndown, Kanban y Gantt escuchan eventos y se refrescan solos
+- [x] Burndown, Kanban y Gantt escuchan eventos y se refrescan solos
 - [ ] Umbrales configurables en `settings` (RF-93)
 - [ ] Prueba de integración: cambio de tarea → evento SSE recibido
 - [ ] Verificar PRD §8.3 (parte de KPIs): al aprobar las horas del developer, K4, K6 y K13 cambian
