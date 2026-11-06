@@ -1,0 +1,184 @@
+# CHECKLIST — DevPM
+
+Control de avance por etapas. **Consúltalo antes de empezar cualquier trabajo y actualízalo al
+terminar cada tarea** (ver flujo en `CLAUDE.md`).
+
+- `[ ]` pendiente · `[~]` en progreso · `[x]` completada
+- Entre paréntesis: requerimiento del PRD que cubre la tarea.
+- Cada etapa termina con su **criterio de cierre**; no se avanza a la siguiente sin cumplirlo.
+- Tareas descubiertas durante el trabajo se agregan a la etapa correspondiente.
+
+## Resumen
+
+| Etapa | Nombre | Estado |
+|---|---|---|
+| 0 | Documentación y repositorio | ✅ Completada |
+| 1 | Scaffolding del proyecto | ⏳ Siguiente |
+| 2 | Base de datos | Pendiente |
+| 3 | Autenticación y roles | Pendiente |
+| 4 | Clientes y equipo | Pendiente |
+| 5 | Proyectos, hitos y asignaciones | Pendiente |
+| 6 | Planeación: sprints y tareas | Pendiente |
+| 7 | Registro de tiempo | Pendiente |
+| 8 | Diagrama de Gantt | Pendiente |
+| 9 | Burndown Chart | Pendiente |
+| 10 | Tablero de KPIs en tiempo real | Pendiente |
+| 11 | Calidad, seguridad y despliegue | Pendiente |
+
+---
+
+## Etapa 0 — Documentación y repositorio
+
+- [x] Inicializar repositorio git en rama `main` con `.gitignore`
+- [x] Crear `CHANGELOG.md` (formato Keep a Changelog)
+- [x] Crear `CLAUDE.md` con stack, comandos, convenciones y flujo de trabajo
+- [x] Crear `docs/PRD.md` con requerimientos, KPIs y criterios de aceptación
+- [x] Crear `docs/ARQUITECTURA.md` con arquitectura y mejores prácticas
+- [x] Crear `docs/DATA.md` con entidades, relaciones, índices y vistas
+- [x] Crear `CHECKLIST.md` por etapas
+
+**Criterio de cierre:** documentos base versionados, cada uno en su propio commit. ✅
+
+## Etapa 1 — Scaffolding del proyecto
+
+- [ ] `package.json` con `"type": "module"`, `engines.node >= 22` y scripts de `CLAUDE.md`
+- [ ] Instalar dependencias de producción y desarrollo (ARQUITECTURA §11)
+- [ ] `.env.example` y `src/config/index.js` con validación Zod
+- [ ] `src/lib/logger.js` (pino) y `src/lib/AppError.js`
+- [ ] `src/app.js` (`createApp({ db })`) con helmet, parsers, estáticos y EJS
+- [ ] `src/server.js` con cierre ordenado (SIGINT/SIGTERM)
+- [ ] Middlewares `notFound` y `errorHandler` (JSON en `/api/*`, vista en HTML)
+- [ ] Endpoint `GET /health`
+- [ ] Tailwind CSS 4: `src/styles/input.css` con `@theme`, scripts `build:css` y modo watch
+- [ ] `scripts/copy-vendor.js` (Chart.js y Frappe Gantt → `public/vendor/`) en `postinstall`
+- [ ] Layout base `views/layouts/main.ejs` con navegación y parciales (flash, paginación)
+- [ ] ESLint + Prettier configurados (`npm run lint`, `npm run format`)
+- [ ] Infraestructura de pruebas: `node:test`, `supertest`, prueba de `/health`
+
+**Criterio de cierre:** `npm run dev` levanta el servidor con estilos; `npm test` y `npm run lint` pasan.
+
+## Etapa 2 — Base de datos
+
+- [ ] `src/db/connection.js` con PRAGMAs (WAL, foreign_keys, busy_timeout, synchronous)
+- [ ] Runner de migraciones `src/db/migrate.js` con tabla `schema_migrations`
+- [ ] Migración `001_init.sql`: todas las tablas de `docs/DATA.md` §3
+- [ ] Migración `002_indexes_views.sql`: índices (§4) y vistas de KPIs (§5)
+- [ ] Helper de pruebas `tests/helpers/testDb.js` (BD `:memory:` migrada) y `factories.js`
+- [ ] Pruebas de restricciones clave (CHECK de clientes, un sprint activo, FK)
+- [ ] Seed de desarrollo `src/db/seeds/dev.js` (DATA §7) y script `db:reset`
+- [ ] Utilidad de auditoría (`audit_log`) reutilizable por los services
+
+**Criterio de cierre:** `npm run db:reset` crea la BD con datos de ejemplo; pruebas de esquema pasan.
+
+## Etapa 3 — Autenticación y roles
+
+- [ ] Sesiones con `express-session` y store en SQLite; cookie segura (RNF-04)
+- [ ] Login / logout con bcrypt y `session.regenerate()` (RF-01)
+- [ ] Rate limit en `/login` (RNF-04)
+- [ ] Middlewares `requireAuth` y `requireRole` (RF-02)
+- [ ] Verificación de `Origin` en métodos que modifican estado (CSRF)
+- [ ] CRUD de usuarios para `admin` y vinculación con miembro del equipo (RF-03, RF-04)
+- [ ] Cambio de contraseña propio (RF-05)
+- [ ] Pruebas: login correcto/incorrecto, 401 sin sesión, 403 por rol
+
+**Criterio de cierre:** criterio de aceptación PRD §8.6 cubierto por pruebas.
+
+## Etapa 4 — Clientes y equipo
+
+- [ ] Módulo `clients`: repository, service, schemas Zod por tipo, rutas API
+- [ ] Vistas de clientes internos: listado con búsqueda/filtro/paginación y formulario (RF-10, RF-11)
+- [ ] Vistas de clientes externos: listado y formulario con tarifa y moneda (RF-15, RF-16)
+- [ ] Regla: no eliminar cliente con proyectos, solo desactivar (RF-18)
+- [ ] Módulo `team`: CRUD de miembros (RF-20)
+- [ ] Skills y nivel por miembro (RF-21)
+- [ ] Ausencias (RF-22)
+- [ ] Pruebas de integración de clientes y equipo
+
+**Criterio de cierre:** CRUD completo de clientes (ambos tipos) y equipo, con pruebas en verde.
+
+## Etapa 5 — Proyectos, hitos y asignaciones
+
+- [ ] Módulo `projects`: CRUD con código único y `is_billable` según tipo de cliente (RF-30, RF-34)
+- [ ] Transiciones de estado válidas (RF-31, DATA §3.6)
+- [ ] Hitos por proyecto (RF-32)
+- [ ] Ficha del proyecto (resumen, equipo, hitos) (RF-33)
+- [ ] Módulo `assignments` con validación de periodo dentro del proyecto (RF-40)
+- [ ] Advertencia de sobreasignación > 100 % (RF-41)
+- [ ] Vista de carga del equipo por semana (RF-23) y matriz de asignaciones (RF-43)
+- [ ] Fichas de cliente con proyectos y horas (RF-12, RF-17)
+- [ ] Pruebas: transiciones inválidas (422), sobreasignación, permisos
+
+**Criterio de cierre:** criterio de aceptación PRD §8.4 cubierto por pruebas.
+
+## Etapa 6 — Planeación: sprints y tareas
+
+- [ ] Sprints: CRUD, iniciar (fija `committed_points`) y cerrar; un solo activo (RF-60, RF-66)
+- [ ] Tareas: CRUD con story points, estimación, fechas, responsable asignado al proyecto (RF-61, RF-42)
+- [ ] Historial de estados y `started_at`/`completed_at` (RF-62)
+- [ ] Backlog del proyecto con ordenamiento (RF-63)
+- [ ] Tablero Kanban por sprint con arrastrar y soltar (RF-63)
+- [ ] Dependencias fin-a-inicio con detección de ciclos (RF-64)
+- [ ] Subtareas (RF-65)
+- [ ] Pruebas: ciclo de dependencias, cierre de sprint, responsable no asignado
+
+**Criterio de cierre:** un sprint se planea, ejecuta en Kanban y cierra correctamente.
+
+## Etapa 7 — Registro de tiempo
+
+- [ ] Módulo `time-entries`: CRUD con validaciones RF-53 y asignación vigente
+- [ ] Hoja de tiempos semanal (cuadrícula día × proyecto) (RF-51)
+- [ ] Flujo de envío y aprobación/rechazo por el líder del proyecto (RF-52)
+- [ ] Bandera facturable heredada y editable por el líder (RF-54)
+- [ ] Exportación CSV (RF-55)
+- [ ] Pruebas: límite diario de 24 h, fecha futura, aprobación por pm ajeno (403)
+
+**Criterio de cierre:** criterio de aceptación PRD §8.3 (sin la parte de KPIs) cubierto por pruebas.
+
+## Etapa 8 — Diagrama de Gantt
+
+- [ ] Endpoint `GET /api/v1/projects/:id/gantt` (ARQUITECTURA §5)
+- [ ] Vista con Frappe Gantt: tareas, hitos, dependencias, avance y vistas día/semana/mes (RF-70–RF-72)
+- [ ] Reprogramación arrastrando, validando dependencias (RF-73)
+- [ ] Gantt de portafolio (RF-74)
+- [ ] Pruebas del formato de datos y de la validación de reprogramación
+
+**Criterio de cierre:** el Gantt refleja las tareas del seed y permite reprogramar con validación.
+
+## Etapa 9 — Burndown Chart
+
+- [ ] Servicio de snapshots con upsert idempotente (DATA §3.14)
+- [ ] Recalcular snapshot del día al cambiar tareas de un sprint activo (RF-81)
+- [ ] Job diario y relleno de días faltantes al arrancar
+- [ ] Endpoint `GET /api/v1/sprints/:id/burndown` con línea ideal en días hábiles (RF-80)
+- [ ] Vista con Chart.js: real vs. ideal y cambios de alcance (RF-82)
+- [ ] Burndown por horas (RF-83) y Burnup de proyecto (RF-84)
+- [ ] Pruebas unitarias de línea ideal y de snapshots con fecha inyectada
+
+**Criterio de cierre:** el burndown del sprint activo del seed es correcto día a día.
+
+## Etapa 10 — Tablero de KPIs en tiempo real
+
+- [ ] `realtime/eventBus.js` y emisión de eventos en todos los services (ARQUITECTURA §4)
+- [ ] Endpoint SSE `/api/v1/events` con heartbeat, `retry` y limpieza al desconectar (RF-91)
+- [ ] `kpi.service.js`: K1–K16 según PRD §6, con pruebas unitarias por fórmula
+- [ ] Endpoint `GET /api/v1/dashboard/kpis` con filtros (RF-92)
+- [ ] Vista del tablero: tarjetas con semáforo, gráficas y "Proyectos en riesgo" (RF-90, RF-93, RF-94)
+- [ ] Cliente `public/js/lib/live.js` con debounce, indicador de conexión y última actualización (RF-95)
+- [ ] Burndown, Kanban y Gantt escuchan eventos y se refrescan solos
+- [ ] Umbrales configurables en `settings` (RF-93)
+- [ ] Prueba de integración: cambio de tarea → evento SSE recibido
+
+**Criterio de cierre:** criterios de aceptación PRD §8.2, §8.3 y §8.5 verificados.
+
+## Etapa 11 — Calidad, seguridad y despliegue
+
+- [ ] Revisión de seguridad (ARQUITECTURA §7): CSP, cookies, permisos por pertenencia
+- [ ] Prueba de rendimiento con volumen de RNF-01 y revisión de `EXPLAIN QUERY PLAN`
+- [ ] Cobertura ≥ 80 % en services (RNF-08)
+- [ ] Revisión de accesibilidad y diseño responsivo (RNF-07)
+- [ ] Script de respaldo `scripts/backup-db.js` con retención (RNF-09)
+- [ ] `README.md` con instalación, uso y despliegue
+- [ ] Recorrido completo de los criterios de aceptación del MVP (PRD §8)
+- [ ] Publicar versión `0.1.0` en `CHANGELOG.md` y crear tag git `v0.1.0`
+
+**Criterio de cierre:** MVP aceptado y etiquetado.

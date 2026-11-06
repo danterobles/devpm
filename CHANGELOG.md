@@ -23,3 +23,5 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   internos/externos, equipo, skills, ausencias, proyectos, hitos, asignaciones, sprints, tareas,
   dependencias, historial, registro de tiempo, snapshots de burndown, auditoría y soporte),
   índices, vistas para KPIs, ciclo de vida de datos y datos semilla.
+- `CHECKLIST.md` con 12 etapas (0 a 11), tareas trazables a los requerimientos del PRD y
+  criterio de cierre por etapa; Etapa 0 marcada como completada.
