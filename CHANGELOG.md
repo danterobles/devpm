@@ -94,6 +94,10 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 - Habilidades por miembro (RF-21): `GET/POST /api/v1/team-members/:id/skills` y
   `DELETE .../skills/:skillId`, y sección en la ficha `/team/:id`. Se asignan por nombre con nivel
   1–5; el catálogo `skills` se crea al asignar (sin distinguir mayúsculas); reasignar actualiza el nivel.
+- Ausencias por miembro (RF-22): `GET/POST /api/v1/team-members/:id/time-off`,
+  `PATCH/DELETE .../time-off/:offId` y sección en la ficha. Tipos `vacation`, `sick`, `personal` y
+  `holiday`; periodos inclusivos con conteo de días; filtro `?from=&to=`; los traslapes se guardan con
+  la advertencia `TIME_OFF_OVERLAP` (decisión registrada en `docs/DATA.md` §3.5); bitácora.
 - Utilidad `isIsoDate` en `src/lib/dates.js`.
 
 ### Cambiado

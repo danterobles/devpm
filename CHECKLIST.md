@@ -16,8 +16,8 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 | 1 | Scaffolding del proyecto | ✅ Completada |
 | 2 | Base de datos | ✅ Completada |
 | 3 | Autenticación y roles | ✅ Completada |
-| 4 | Clientes y equipo | ⏳ Siguiente |
-| 5 | Proyectos, hitos y asignaciones | Pendiente |
+| 4 | Clientes y equipo | ✅ Completada |
+| 5 | Proyectos, hitos y asignaciones | ⏳ Siguiente |
 | 6 | Planeación: sprints y tareas | Pendiente |
 | 7 | Registro de tiempo | Pendiente |
 | 8 | Diagrama de Gantt | Pendiente |
@@ -91,10 +91,10 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 - [x] Regla: no eliminar cliente con proyectos, solo desactivar (RF-18)
 - [x] Módulo `team`: CRUD de miembros (RF-20)
 - [x] Skills y nivel por miembro (RF-21)
-- [ ] Ausencias (RF-22)
-- [ ] Pruebas de integración de clientes y equipo
+- [x] Ausencias (RF-22)
+- [x] Pruebas de integración de clientes y equipo
 
-**Criterio de cierre:** CRUD completo de clientes (ambos tipos) y equipo, con pruebas en verde.
+**Criterio de cierre:** CRUD completo de clientes (ambos tipos) y equipo, con pruebas en verde. ✅
 
 ## Etapa 5 — Proyectos, hitos y asignaciones
 

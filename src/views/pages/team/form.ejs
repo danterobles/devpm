@@ -107,4 +107,52 @@
       <% } %>
     </section>
   <% } %>
+
+  <% if (editing) { %>
+    <section class="mt-10" aria-labelledby="timeoff-title">
+      <h2 id="timeoff-title" class="text-xl font-semibold">Ausencias</h2>
+      <% if (warning === 'time-off-overlap') { %>
+        <p role="status" class="mt-3 rounded border border-warn bg-amber-50 px-4 py-3 text-sm text-amber-900">La ausencia se guardó, pero se traslapa con otra del mismo miembro.</p>
+      <% } %>
+      <% if (timeOffError) { %>
+        <p role="alert" class="mt-3 rounded border border-danger bg-red-50 px-4 py-3 text-sm text-red-800"><%= timeOffError %></p>
+      <% } %>
+      <ul class="mt-3 divide-y text-sm">
+        <% timeOff.forEach((o) => { %>
+          <li class="flex items-center justify-between py-2">
+            <span><%= o.type %>: <%= o.startDate %> a <%= o.endDate %> (<%= o.days %> días)<% if (o.notes) { %> — <%= o.notes %><% } %></span>
+            <% if (canWrite) { %>
+              <form method="post" action="/team/<%= member.id %>/time-off/<%= o.id %>/delete">
+                <button type="submit" class="underline" aria-label="Eliminar ausencia del <%= o.startDate %>">Eliminar</button>
+              </form>
+            <% } %>
+          </li>
+        <% }) %>
+        <% if (timeOff.length === 0) { %><li class="py-2 text-slate-600">Sin ausencias registradas.</li><% } %>
+      </ul>
+      <% if (canWrite) { %>
+        <form method="post" action="/team/<%= member.id %>/time-off" class="mt-4 flex flex-wrap items-end gap-3">
+          <div>
+            <label for="offType" class="block text-sm font-medium">Tipo</label>
+            <select id="offType" name="type" class="mt-1 rounded border border-slate-300 px-3 py-2">
+              <% timeOffTypes.forEach((t) => { %><option value="<%= t %>"><%= t %></option><% }) %>
+            </select>
+          </div>
+          <div>
+            <label for="offStart" class="block text-sm font-medium">Desde</label>
+            <input id="offStart" name="startDate" type="date" required class="mt-1 rounded border border-slate-300 px-3 py-2" />
+          </div>
+          <div>
+            <label for="offEnd" class="block text-sm font-medium">Hasta</label>
+            <input id="offEnd" name="endDate" type="date" required class="mt-1 rounded border border-slate-300 px-3 py-2" />
+          </div>
+          <div>
+            <label for="offNotes" class="block text-sm font-medium">Notas</label>
+            <input id="offNotes" name="notes" maxlength="500" class="mt-1 rounded border border-slate-300 px-3 py-2" />
+          </div>
+          <button type="submit" class="rounded border px-4 py-2 text-sm hover:bg-slate-100">Agregar</button>
+        </form>
+      <% } %>
+    </section>
+  <% } %>
 </section>
