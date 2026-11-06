@@ -6,6 +6,7 @@ import { notFound } from './middlewares/notFound.js';
 import { createErrorHandler } from './middlewares/errorHandler.js';
 import { createLogger } from './lib/logger.js';
 import { createEventBus } from './realtime/eventBus.js';
+import { createSse } from './realtime/sse.js';
 import { verifyOrigin } from './middlewares/verifyOrigin.js';
 import { layout } from './middlewares/layout.js';
 import { createSession } from './modules/auth/session.js';
@@ -32,6 +33,7 @@ export function createApp({
   db = null,
   logger = createLogger(config),
   eventBus = createEventBus(),
+  sseHeartbeatMs = 25_000,
 }) {
   const app = express();
 
@@ -81,6 +83,9 @@ export function createApp({
   app.use(layout());
 
   if (db) {
+    const sse = createSse({ eventBus, heartbeatMs: sseHeartbeatMs });
+    app.locals.sse = sse;
+    app.use(sse.router);
     app.use(createClientsRouter({ db, events: eventBus }));
     app.use(createTeamRouter({ db, events: eventBus }));
     app.use(createSprintsRouter({ db, timezone: config.timezone, events: eventBus }));

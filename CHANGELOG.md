@@ -243,6 +243,9 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   asignaciones, sprints, tareas, tiempo, equipo, ausencias y clientes) **después** de confirmar la
   transacción; las operaciones rechazadas y los cambios sin efecto no emiten. Eventos documentados en
   `docs/ARQUITECTURA.md` §4.
+- Endpoint SSE `GET /api/v1/events` (RF-91, `src/realtime/sse.js`): solo usuarios autenticados, mensajes
+  `id/event/data`, `retry: 3000`, heartbeat cada 25 s, filtro opcional `?projectId=` (sus eventos y los
+  globales), limpieza al desconectar y cierre de todas las conexiones en el apagado (`SIGINT`/`SIGTERM`).
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y

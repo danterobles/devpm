@@ -29,6 +29,7 @@ const server = app.listen(config.port, () => {
 function shutdown(signal) {
   logger.info(`${signal} recibido, cerrando...`);
   burndownJob.stop();
+  app.locals.sse?.closeAll(); // cierra las conexiones SSE para que server.close() termine
   server.close(() => {
     db.close();
     process.exit(0);
