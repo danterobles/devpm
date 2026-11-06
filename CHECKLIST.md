@@ -163,7 +163,7 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 - [x] `kpi.service.js`: K1–K16 según PRD §6, con pruebas unitarias por fórmula
 - [x] Endpoint `GET /api/v1/dashboard/kpis` con filtros (RF-92)
 - [x] Vista del tablero: tarjetas con semáforo, gráficas y "Proyectos en riesgo" (RF-90, RF-93, RF-94)
-- [ ] Cliente `public/js/lib/live.js` con debounce, indicador de conexión y última actualización (RF-95)
+- [x] Cliente `public/js/lib/live.js` con debounce, indicador de conexión y última actualización (RF-95)
 - [ ] Burndown, Kanban y Gantt escuchan eventos y se refrescan solos
 - [ ] Umbrales configurables en `settings` (RF-93)
 - [ ] Prueba de integración: cambio de tarea → evento SSE recibido

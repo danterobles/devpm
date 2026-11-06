@@ -262,6 +262,11 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   gráficas (Chart.js local: horas facturables, velocidad de sprints y avance frente a consumo) con filtros
   de periodo, tipo de cliente, cliente, proyecto y líder. Enlaces «Tablero» en la navegación y el inicio.
   Verificada en un navegador real con los datos de ejemplo.
+- Cliente de tiempo real `public/js/lib/live.js` (RF-91, RF-95): `EventSource` a `/api/v1/events`,
+  *debounce* de 500 ms que emite `devpm:refresh`, filtro por prefijos de evento y por proyecto,
+  indicador «En vivo / Reconectando / Sin conexión» con la hora de la última actualización y refresco
+  tras reconectar. El tablero lo usa: medido en un navegador real, un cambio de tarea actualiza los
+  KPIs en ~0.5 s sin recargar.
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y

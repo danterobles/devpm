@@ -93,3 +93,18 @@ test('la navegación incluye el tablero y el inicio lo enlaza', async () => {
   const home = await (await loginAs(app)).get('/');
   assert.match(home.text, /href="\/dashboard"/);
 });
+
+test('el tablero se actualiza en vivo: contenedor data-live, indicador de conexión y cliente SSE', async () => {
+  const { app } = setup();
+  const page = await (await loginAs(app)).get('/dashboard');
+  assert.match(page.text, /data-dashboard[^>]*data-live/);
+  assert.match(page.text, /<p id="dashboard-live" data-live-status/);
+  assert.match(page.text, /\/js\/lib\/live\.js/);
+  const live = await request(app).get('/js/lib/live.js');
+  assert.equal(live.status, 200);
+  assert.match(live.text, /\/api\/v1\/events/);
+  assert.doesNotMatch(live.text, /innerHTML/);
+  const script = (await request(app).get('/js/pages/dashboard.js')).text;
+  assert.match(script, /devpm:refresh/); // recarga cuando llegan eventos
+  assert.match(script, /devpm:loaded/); // avisa para marcar la última actualización
+});
