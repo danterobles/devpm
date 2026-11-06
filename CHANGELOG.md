@@ -128,6 +128,14 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   autenticado). Semanas lunes–domingo (8 por defecto, máximo 26), % por suma de dedicación con alerta
   de sobreasignación (> 100 %), días hábiles de ausencia informativos y filtro `?from=&to=`.
 
+### Agregado (Etapa 6 — Planeación)
+- Sprints (RF-60, RF-66): API `/api/v1/projects/:id/sprints` y `/api/v1/sprints/:id` (alta, edición,
+  `start`, `close` y baja de sprints planeados) y vista `/projects/:id/sprints`. Fechas dentro del
+  proyecto y sin traslapes; un solo sprint activo por proyecto; iniciar fija `committed_points`;
+  cerrar fija `completed_points` y manda las tareas no terminadas al backlog (con historial de estado)
+  o a un sprint planeado (`moveTo`); un sprint cerrado es de solo lectura. Utilidad
+  `src/lib/taskHistory.js`.
+
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y
   todo el estado se conserva en CHECKLIST, CHANGELOG y docs.
