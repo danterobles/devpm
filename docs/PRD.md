@@ -192,6 +192,27 @@ Empresas con relación comercial; su trabajo es facturable.
 | RF-54 | Marca de facturable heredada del proyecto y editable por el líder. | Media |
 | RF-55 | Exportación de horas a CSV por rango, proyecto o cliente. | Media |
 
+**Decisiones de definición (registro de tiempo, RF-50 a RF-55):**
+
+- Registro: cada usuario con miembro vinculado (`users.team_member_id`) registra **solo sus propias
+  horas**; sin vínculo recibe 403. `admin` y `pm` no capturan a nombre de otros. El `viewer` no accede
+  a registros individuales. Visibilidad: un `developer` ve únicamente sus registros; `admin` y `pm` ven
+  todos.
+- Validaciones (RF-53, `work_date` y «hoy» en la zona horaria de la aplicación): duración entera de 1 a
+  1440 minutos; no se aceptan fechas futuras; la suma diaria del miembro (todos los estados) no supera
+  1440 minutos; el miembro debe tener una asignación vigente al proyecto en `work_date`; la tarea, si se
+  indica, pertenece al proyecto.
+- Flujo (RF-52): el autor puede **enviar** un registro o **toda una semana** (lunes–domingo) de golpe
+  (sus `draft` y `rejected`). Solo `draft` y `rejected` son editables y eliminables por el autor; al
+  editar un `rejected` vuelve a `draft` y se limpia el motivo. `submitted` y `approved` son de solo lectura.
+- Aprobación: aprueba o rechaza el **líder del proyecto** (`projects.manager_id` vinculado a su usuario)
+  o un `admin`; un `pm` que no lidera el proyecto recibe 403 y **nadie aprueba sus propios registros**
+  (422). Rechazar exige un motivo.
+- Facturable (RF-54): `is_billable` se hereda de `projects.is_billable` al crear y solo lo modifican el
+  líder del proyecto o un `admin` (el autor no); queda en bitácora.
+- Exportación CSV (RF-55): solo `admin` y `pm`; filtros por rango, proyecto, cliente y estado; UTF-8 con
+  BOM, separador coma, horas con 2 decimales y celdas protegidas contra inyección de fórmulas.
+
 ### 5.8 Planeación
 
 | ID | Requerimiento | Prioridad |
