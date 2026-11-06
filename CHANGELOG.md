@@ -182,6 +182,13 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   (`src/lib/csv.js`).
 - Prueba de extremo a extremo del flujo de tiempo (registrar, enviar la semana, rechazar, corregir, aprobar y exportar).
 
+### Agregado (Etapa 8 — Diagrama de Gantt)
+- Endpoint `GET /api/v1/projects/:id/gantt` (RF-70, RF-72): tareas e hitos en el formato de Frappe Gantt
+  (`id`, `name`, `start`, `end`, `progress`, `dependencies`, `custom_class`) más `meta`; avance (100 si
+  `done`, o horas enviadas+aprobadas ÷ estimadas con tope 95), dependencias solo entre barras dibujadas,
+  hitos de un día, tareas sin fechas en `unscheduled`, orden por inicio o `?groupBy=sprint`, fecha de hoy
+  y bandera `canReschedule` (admin/pm). Lectura para cualquier usuario autenticado.
+
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y
   todo el estado se conserva en CHECKLIST, CHANGELOG y docs.

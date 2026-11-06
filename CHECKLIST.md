@@ -136,7 +136,7 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 
 ## Etapa 8 — Diagrama de Gantt
 
-- [ ] Endpoint `GET /api/v1/projects/:id/gantt` (ARQUITECTURA §5)
+- [x] Endpoint `GET /api/v1/projects/:id/gantt` (ARQUITECTURA §5)
 - [ ] Vista con Frappe Gantt: tareas, hitos, dependencias, avance y vistas día/semana/mes (RF-70–RF-72)
 - [ ] Reprogramación arrastrando, validando dependencias (RF-73)
 - [ ] Gantt de portafolio (RF-74)
