@@ -58,6 +58,18 @@ Prioridad: **Alta** = MVP, **Media** = siguiente iteración, **Baja** = deseable
 | RF-04 | Un usuario puede vincularse a un miembro del equipo (para registrar su propio tiempo). | Alta |
 | RF-05 | Cambio de contraseña por el propio usuario. | Media |
 
+**Decisiones de definición (RF-03 a RF-05):**
+
+- El admin captura la contraseña inicial al crear el usuario (y puede restablecerla al editar);
+  no hay cambio forzado en el primer inicio de sesión.
+- Política de contraseña (alta, edición y RF-05): mínimo 8 y máximo 200 caracteres, sin reglas de composición.
+- Los usuarios **no se eliminan**: solo se desactivan (`is_active = 0`). Desactivar a un usuario,
+  cambiarle el rol o la contraseña cierra todas sus sesiones.
+- Un admin no puede desactivarse a sí mismo ni quitarse el rol `admin`.
+- La vinculación (RF-04) es opcional y acepta el `team_member_id` de un miembro existente; un
+  miembro solo puede estar vinculado a un usuario. El CRUD de miembros llega en la Etapa 4.
+- Se ofrece API JSON (`/api/v1/users`) y vistas de administración (`/admin/users`), solo para `admin`.
+
 ### 5.2 Clientes internos
 
 Áreas o departamentos de la propia organización que solicitan desarrollos (no facturables).
