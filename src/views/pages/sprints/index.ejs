@@ -29,6 +29,7 @@
           <td class="py-2 pr-4"><%= s.donePoints %> / <%= s.totalPoints %><% if (s.committedPoints !== null) { %> (comprometidos <%= s.committedPoints %>)<% } %></td>
           <td class="py-2">
             <a class="underline" href="/projects/<%= project.id %>/sprints/<%= s.id %>/board">Tablero</a>
+            <% if (s.status !== 'planned') { %><a class="ml-3 underline" href="/projects/<%= project.id %>/sprints/<%= s.id %>/burndown">Burndown</a><% } %>
             <% if (canWrite && s.status === 'planned') { %>
               <form method="post" action="/projects/<%= project.id %>/sprints/<%= s.id %>/start" class="inline"><button type="submit" class="ml-3 underline">Iniciar</button></form>
               <form method="post" action="/projects/<%= project.id %>/sprints/<%= s.id %>/delete" class="inline"><button type="submit" class="ml-3 underline" aria-label="Eliminar <%= s.name %>">Eliminar</button></form>

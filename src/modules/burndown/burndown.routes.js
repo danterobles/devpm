@@ -16,9 +16,22 @@ export function createBurndownRouter({ db, timezone }) {
   };
 
   const router = Router();
-  router.use(['/api/v1/sprints/:id/burndown'], requireAuth);
+  router.use(['/api/v1/sprints/:id/burndown', '/projects/:id/sprints/:sid/burndown'], requireAuth);
   router.get('/api/v1/sprints/:id/burndown', (req, res) => {
     res.json({ data: service.sprint(sprintId(req)) });
+  });
+  router.get('/projects/:id/sprints/:sid/burndown', (req, res) => {
+    const projectId = idSchema.safeParse(req.params.id);
+    const sprintParsed = idSchema.safeParse(req.params.sid);
+    if (!projectId.success || !sprintParsed.success)
+      throw AppError.notFound('Sprint no encontrado');
+    const data = service.sprint(sprintParsed.data);
+    if (data.sprint.projectId !== projectId.data) throw AppError.notFound('Sprint no encontrado');
+    res.render('pages/burndown/sprint', {
+      title: `Burndown · ${data.sprint.name}`,
+      sprint: data.sprint,
+      project: { id: projectId.data, code: service.projectCode(projectId.data) },
+    });
   });
   return router;
 }

@@ -2,7 +2,8 @@
   <h1 class="text-2xl font-bold">Tablero <span class="text-slate-500"><%= sprint.name %></span></h1>
   <p class="text-sm">
     <a class="underline" href="/projects/<%= project.id %>/sprints">Sprints</a> ·
-    <a class="underline" href="/projects/<%= project.id %>/backlog">Backlog</a>
+    <a class="underline" href="/projects/<%= project.id %>/backlog">Backlog</a> ·
+    <a class="underline" href="/projects/<%= project.id %>/sprints/<%= sprint.id %>/burndown">Burndown</a>
   </p>
 </div>
 <p class="mt-1 text-sm text-slate-600">

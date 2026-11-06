@@ -226,6 +226,10 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   `scopeChanges` por día. Línea ideal por días hábiles (`src/modules/burndown/ideal.js`), días pasados
   sin instantánea arrastran el último valor, los futuros y los previos al inicio real son `null`,
   sprints cerrados terminan en su instantánea final y los sprints que se pasan de fecha amplían el eje.
+- Vista del Burndown `/projects/:id/sprints/:sid/burndown` (RF-80, RF-82) con Chart.js servido
+  localmente (`public/js/pages/burndown.js`): línea ideal discontinua, restante real, barras de cambio de
+  alcance (ámbar al agregar, verde al retirar), resumen del sprint y tabla de datos como alternativa
+  accesible. Enlaces desde la lista de sprints y el tablero.
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y

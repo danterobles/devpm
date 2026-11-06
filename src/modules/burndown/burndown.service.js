@@ -15,7 +15,10 @@ export function createBurndownService({ db, timezone = 'America/Mexico_City' }) 
     'SELECT COALESCE(SUM(story_points), 0) FROM tasks WHERE sprint_id = ?',
   );
 
+  const projectCode = db.prepare('SELECT code FROM projects WHERE id = ?').pluck();
+
   return {
+    projectCode: (projectId) => projectCode.get(projectId),
     sprint(sprintId) {
       const sprint = sprintRow.get(sprintId);
       if (!sprint) throw AppError.notFound('Sprint no encontrado');
