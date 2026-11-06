@@ -164,6 +164,23 @@ Empresas con relación comercial; su trabajo es facturable.
 - Asignaciones: el periodo debe quedar dentro del rango planeado del proyecto (422); solo miembros
   activos; la sobreasignación (> 100 %) se guarda con la advertencia `OVER_ALLOCATION` (ver `docs/DATA.md` §3.8).
 
+**Decisiones de definición (fichas, carga y matriz, RF-12, RF-17, RF-23, RF-33, RF-43):**
+
+- «Horas consumidas» (ficha del proyecto y de clientes) = registros de tiempo con estado `submitted` o
+  `approved` (se excluyen borradores y rechazados). Las «horas facturables» son las de esos registros con
+  `is_billable = 1`, y el **monto estimado** del cliente externo = horas facturables × tarifa por hora
+  (en la moneda del cliente).
+- Ficha del proyecto (RF-33): estado, cliente, líder, fechas, horas consumidas frente al presupuesto,
+  miembros asignados y avance de hitos, además del equipo y los hitos. El Gantt y el Burndown se enlazan
+  cuando existan (Etapas 8 y 9).
+- Carga semanal (RF-23): semana lunes–domingo; el % de un miembro en una semana es la suma de
+  `allocation_percent` de sus asignaciones cuyo periodo toca esa semana; alerta si supera 100 %. Los días
+  hábiles de ausencia se muestran como informativos pero **no** modifican el porcentaje. Rango por
+  defecto: 8 semanas desde la actual (`?from=&to=` en fechas).
+- Matriz de asignaciones (RF-43): miembros × proyectos con la dedicación %; filtro `?from=&to=` (por
+  defecto, los proyectos y asignaciones que tocan el rango de la carga).
+- Ambas vistas son de lectura para cualquier usuario autenticado.
+
 ### 5.7 Tiempo de desarrolladores
 
 | ID | Requerimiento | Prioridad |
