@@ -52,6 +52,32 @@ export function createClientsService({ db, repository }) {
 
     get: (id) => toDto(requireClient(id)),
 
+    /** RF-12 / RF-17: proyectos del cliente con horas (enviadas + aprobadas) y monto estimado. */
+    summary(id) {
+      const client = requireClient(id);
+      const projects = repository.projectsWithHours(id).map((p) => ({
+        id: p.id,
+        code: p.code,
+        name: p.name,
+        status: p.status,
+        consumedMinutes: p.consumed,
+        billableMinutes: p.billable,
+      }));
+      const sum = (key) => projects.reduce((acc, p) => acc + p[key], 0);
+      const totals = {
+        projects: projects.length,
+        consumedMinutes: sum('consumedMinutes'),
+        billableMinutes: sum('billableMinutes'),
+      };
+      if (client.type === 'external') {
+        totals.estimatedAmountCents = Math.round(
+          (totals.billableMinutes * client.hourly_rate_cents) / 60,
+        );
+        totals.currency = client.currency;
+      }
+      return { projects, totals };
+    },
+
     create(actorId, input) {
       checkTaxId(input.taxId);
       const id = db.transaction(() => {

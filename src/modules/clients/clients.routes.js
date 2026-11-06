@@ -17,6 +17,7 @@ export function createClientsRouter({ db }) {
   api.get('/', c.list);
   api.post('/', canWrite, c.create);
   api.get('/:id', c.get);
+  api.get('/:id/summary', c.summary);
   api.patch('/:id', canWrite, c.update);
 
   // Vistas HTML: un juego de rutas por tipo de cliente.

@@ -49,7 +49,10 @@ function formToInput(type, body) {
   return input;
 }
 
-const formView = (res, { status = 200, type, client, error = null, editing, canWrite }) =>
+const formView = (
+  res,
+  { status = 200, type, client, error = null, editing, canWrite, summary = null },
+) =>
   res.status(status).render('pages/clients/form', {
     title: `${editing ? 'Editar' : 'Nuevo'} ${TYPE_LABELS[type].singular}`,
     type,
@@ -58,6 +61,8 @@ const formView = (res, { status = 200, type, client, error = null, editing, canW
     error,
     editing,
     canWrite,
+    summary,
+    centsToRate,
   });
 
 export function createClientsController({ service }) {
@@ -65,6 +70,7 @@ export function createClientsController({ service }) {
   return {
     list: (req, res) => res.json(service.list(parseWith(listQuerySchema, req.query))),
     get: (req, res) => res.json({ data: service.get(parseId(req.params.id)) }),
+    summary: (req, res) => res.json({ data: service.summary(parseId(req.params.id)) }),
     create(req, res) {
       const input = parseWith(createClientSchema, req.body);
       res.status(201).json({ data: service.create(actor(req), input) });
@@ -132,6 +138,7 @@ export function createClientsController({ service }) {
             client: { ...client, hourlyRate: centsToRate(client.hourlyRateCents) },
             editing: true,
             canWrite: canWrite(req),
+            summary: service.summary(client.id),
           });
         },
         create(req, res) {

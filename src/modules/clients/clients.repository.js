@@ -24,7 +24,20 @@ export function createClientsRepository(db) {
   const byId = db.prepare('SELECT * FROM clients WHERE id = ?');
   const byTaxId = db.prepare('SELECT id FROM clients WHERE tax_id = ?');
 
+  const projectHours = db.prepare(
+    `SELECT p.id, p.code, p.name, p.status,
+            COALESCE(SUM(t.minutes), 0) AS consumed,
+            COALESCE(SUM(CASE WHEN t.is_billable = 1 THEN t.minutes END), 0) AS billable
+       FROM projects p
+       LEFT JOIN time_entries t
+              ON t.project_id = p.id AND t.status IN ('submitted','approved')
+      WHERE p.client_id = ?
+      GROUP BY p.id
+      ORDER BY p.code DESC, p.id DESC`,
+  );
+
   return {
+    projectsWithHours: (clientId) => projectHours.all(clientId),
     findById: (id) => byId.get(id),
     findIdByTaxId: (taxId) => byTaxId.get(taxId)?.id ?? null,
 

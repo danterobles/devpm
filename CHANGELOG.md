@@ -120,6 +120,9 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 - Ficha del proyecto (RF-33): panel de resumen (cliente, líder, horas consumidas frente al presupuesto,
   horas facturables, miembros asignados, avance de hitos y fechas reales) y `GET /api/v1/projects/:id/summary`.
   Las horas cuentan registros enviados y aprobadas (decisión en `docs/PRD.md`).
+- Fichas de cliente (RF-12, RF-17): sección «Proyectos y horas» en `/clients/:type/:id` y
+  `GET /api/v1/clients/:id/summary` con proyectos, horas consumidas y facturables, y monto estimado
+  (horas facturables × tarifa) para clientes externos.
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y

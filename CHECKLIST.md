@@ -105,7 +105,7 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 - [x] Módulo `assignments` con validación de periodo dentro del proyecto (RF-40)
 - [x] Advertencia de sobreasignación > 100 % (RF-41)
 - [ ] Vista de carga del equipo por semana (RF-23) y matriz de asignaciones (RF-43)
-- [ ] Fichas de cliente con proyectos y horas (RF-12, RF-17)
+- [x] Fichas de cliente con proyectos y horas (RF-12, RF-17)
 - [ ] Pruebas: transiciones inválidas (422), sobreasignación, permisos
 
 **Criterio de cierre:** criterio de aceptación PRD §8.4 cubierto por pruebas.
