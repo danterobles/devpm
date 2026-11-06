@@ -85,6 +85,8 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   `/clients/external` con listado (búsqueda, filtro de estado, paginación), alta y edición por
   formulario; la tarifa se captura en pesos y se guarda en centavos; los controles de escritura se
   ocultan a `developer` y `viewer`. Enlace «Clientes» en la navegación.
+- Regla RF-18: los clientes no se eliminan (la API no ofrece `DELETE`; solo se desactivan) y la BD
+  rechaza borrar uno con proyectos; cubierto con pruebas.
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y

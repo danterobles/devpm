@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 import request from 'supertest';
 import { buildTestApp } from '../helpers/testApp.js';
 import { createTestDb } from '../helpers/testDb.js';
-import { user, internalClient, externalClient } from '../helpers/factories.js';
+import { user, internalClient, externalClient, project } from '../helpers/factories.js';
 
 const PASSWORD = 'Secreta123!';
 const hash = bcrypt.hashSync(PASSWORD, 4);
@@ -194,4 +194,23 @@ test('editar cliente interno: campos propios, y se puede limpiar un opcional con
   assert.equal(res.body.data.department, 'Compras');
   assert.equal(res.body.data.costCenter, null);
   assert.equal(res.body.data.contactName, 'Ana');
+});
+
+test('RF-18: no existe eliminación de clientes; con proyectos solo se desactiva', async () => {
+  const { app, db } = setup();
+  const id = externalClient(db);
+  project(db, { client_id: id });
+  const pm = await loginAs(app, 'pm');
+  const admin = await loginAs(app, 'admin');
+  // La API no ofrece DELETE (404, no 405/200) ni para admin.
+  assert.equal((await admin.delete(`/api/v1/clients/${id}`)).status, 404);
+  assert.equal((await pm.delete(`/api/v1/clients/${id}`)).status, 404);
+  assert.ok(db.prepare('SELECT 1 FROM clients WHERE id = ?').get(id));
+  // Desactivar sí es posible y conserva los proyectos.
+  const off = await pm.patch(`/api/v1/clients/${id}`).send({ isActive: false });
+  assert.equal(off.status, 200);
+  assert.equal(off.body.data.isActive, false);
+  assert.equal(db.prepare('SELECT count(*) FROM projects WHERE client_id = ?').pluck().get(id), 1);
+  // Defensa en profundidad: la BD rechaza borrar un cliente con proyectos (ON DELETE RESTRICT).
+  assert.throws(() => db.prepare('DELETE FROM clients WHERE id = ?').run(id), /FOREIGN KEY/);
 });
