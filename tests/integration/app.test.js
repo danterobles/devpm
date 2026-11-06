@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import request from 'supertest';
 import { buildTestApp } from '../helpers/testApp.js';
+import { createTestDb } from '../helpers/testDb.js';
 
 test('GET /health responde ok', async () => {
   const res = await request(buildTestApp()).get('/health');
@@ -10,18 +11,15 @@ test('GET /health responde ok', async () => {
 });
 
 test('GET /health reporta la base de datos si existe', async () => {
-  const db = { prepare: () => ({ get: () => ({}) }) };
-  const res = await request(buildTestApp({ db })).get('/health');
+  const res = await request(buildTestApp({ db: createTestDb() })).get('/health');
   assert.equal(res.body.db, 'ok');
 });
 
 test('GET /health devuelve 503 si la base de datos falla', async () => {
-  const db = {
-    prepare: () => {
-      throw new Error('boom');
-    },
-  };
-  const res = await request(buildTestApp({ db })).get('/health');
+  const db = createTestDb();
+  const app = buildTestApp({ db });
+  db.close();
+  const res = await request(app).get('/health');
   assert.equal(res.status, 503);
   assert.equal(res.body.status, 'degraded');
 });

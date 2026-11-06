@@ -8,6 +8,10 @@ const logger = createLogger(config);
 const db = openDb(config.databasePath);
 const app = createApp({ config, db, logger });
 
+// Limpieza periódica de sesiones vencidas
+const pruneTimer = setInterval(() => app.locals.sessionStore.prune(), 60 * 60 * 1000);
+pruneTimer.unref();
+
 const server = app.listen(config.port, () => {
   logger.info(`DevPM escuchando en http://localhost:${config.port} (${config.env})`);
 });

@@ -6,6 +6,7 @@ import { notFound } from './middlewares/notFound.js';
 import { createErrorHandler } from './middlewares/errorHandler.js';
 import { createLogger } from './lib/logger.js';
 import { layout } from './middlewares/layout.js';
+import { createSession } from './modules/auth/session.js';
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -39,6 +40,12 @@ export function createApp({ config, db = null, logger = createLogger(config) }) 
   app.use(express.json({ limit: '1mb' }));
   app.use(express.urlencoded({ extended: false, limit: '1mb' }));
   app.use(express.static(path.join(root, 'public')));
+
+  if (db) {
+    const { middleware, store } = createSession({ config, db });
+    app.locals.sessionStore = store;
+    app.use(middleware);
+  }
 
   app.locals.appName = 'DevPM';
   app.use(layout());
