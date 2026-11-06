@@ -10,11 +10,11 @@ import { createTimeOffService } from './timeoff.service.js';
 import { createTeamController } from './team.controller.js';
 
 /** Equipo: lectura para todo usuario autenticado; escritura solo `admin` y `pm`. */
-export function createTeamRouter({ db }) {
+export function createTeamRouter({ db, events }) {
   const c = createTeamController({
-    service: createTeamService({ db, repository: createTeamRepository(db) }),
+    service: createTeamService({ db, repository: createTeamRepository(db), events }),
     skills: createSkillsService({ db, repository: createSkillsRepository(db) }),
-    timeOff: createTimeOffService({ db, repository: createTimeOffRepository(db) }),
+    timeOff: createTimeOffService({ db, repository: createTimeOffRepository(db), events }),
   });
   const canWrite = requireRole('admin', 'pm');
 

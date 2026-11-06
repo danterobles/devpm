@@ -31,7 +31,7 @@ const BOARD_STATUSES = ['backlog', 'todo', 'in_progress', 'in_review', 'blocked'
 const DERIVED = ['assignee_name', 'sprint_name', 'subtask_count'];
 
 /** Casos de uso de tareas (RF-61, RF-62, RF-65, RF-42). */
-export function createTasksService({ db, repository, snapshots = null }) {
+export function createTasksService({ db, repository, snapshots = null, events = null }) {
   function requireProject(projectId) {
     if (!repository.projectExists(projectId)) throw AppError.notFound('Proyecto no encontrado');
   }
@@ -206,6 +206,7 @@ export function createTasksService({ db, repository, snapshots = null }) {
         const places = taskIds.map((id) => slots.get(id)).sort((a, b) => a - b);
         taskIds.forEach((id, i) => repository.setSortOrder(id, places[i]));
       })();
+      events?.emit('task.updated', { projectId });
       return repository.backlog(projectId).map(toDto);
     },
 
@@ -277,6 +278,11 @@ export function createTasksService({ db, repository, snapshots = null }) {
           changes: { dependsOn: [null, dependsOnId] },
         });
       })();
+      events?.emit('task.updated', {
+        projectId: task.project_id,
+        sprintId: task.sprint_id,
+        taskId,
+      });
       return { taskId, dependsOnTaskId: dependsOnId, type: 'FS' };
     },
 
@@ -296,6 +302,11 @@ export function createTasksService({ db, repository, snapshots = null }) {
           changes: { dependsOn: [dependsOnId, null] },
         });
       })();
+      events?.emit('task.updated', {
+        projectId: task.project_id,
+        sprintId: task.sprint_id,
+        taskId,
+      });
     },
 
     history(id) {
@@ -346,6 +357,7 @@ export function createTasksService({ db, repository, snapshots = null }) {
         return newId;
       })();
       snapshots?.recalculate([fields.sprintId]);
+      events?.emit('task.created', { projectId, sprintId: fields.sprintId ?? null, taskId: id });
       return toDto(repository.findById(id));
     },
 
@@ -392,6 +404,11 @@ export function createTasksService({ db, repository, snapshots = null }) {
         if (Object.keys(changes).length > 0) audit(actorId, id, 'update', changes);
       })();
       snapshots?.recalculate([before.sprint_id, repository.findById(id).sprint_id]);
+      events?.emit('task.updated', {
+        projectId: before.project_id,
+        sprintId: repository.findById(id).sprint_id,
+        taskId: id,
+      });
       return toDto(repository.findById(id));
     },
 
@@ -424,6 +441,11 @@ export function createTasksService({ db, repository, snapshots = null }) {
           audit(actor.id, id, 'status_change', { status: [task.status, to] });
         })();
         snapshots?.recalculate([task.sprint_id]);
+        events?.emit('task.status_changed', {
+          projectId: task.project_id,
+          sprintId: task.sprint_id,
+          taskId: id,
+        });
       }
       return toDto(repository.findById(id));
     },
@@ -436,6 +458,11 @@ export function createTasksService({ db, repository, snapshots = null }) {
         audit(actorId, id, 'delete', { title: [before.title, null] });
       })();
       snapshots?.recalculate([before.sprint_id]);
+      events?.emit('task.deleted', {
+        projectId: before.project_id,
+        sprintId: before.sprint_id,
+        taskId: id,
+      });
     },
   };
 }

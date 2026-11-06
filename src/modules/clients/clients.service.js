@@ -29,7 +29,7 @@ export function toDto(r) {
 }
 
 /** Casos de uso de clientes internos y externos (RF-10, RF-15). */
-export function createClientsService({ db, repository }) {
+export function createClientsService({ db, repository, events = null }) {
   function requireClient(id) {
     const row = repository.findById(id);
     if (!row) throw AppError.notFound('Cliente no encontrado');
@@ -91,6 +91,7 @@ export function createClientsService({ db, repository }) {
         });
         return newId;
       })();
+      events?.emit('client.updated', { clientId: id });
       return toDto(repository.findById(id));
     },
 
@@ -110,6 +111,7 @@ export function createClientsService({ db, repository }) {
           });
         }
       })();
+      events?.emit('client.updated', { clientId: id });
       return toDto(repository.findById(id));
     },
   };

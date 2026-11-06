@@ -6,9 +6,9 @@ import { createClientsService } from './clients.service.js';
 import { createClientsController } from './clients.controller.js';
 
 /** API de clientes: lectura para todo usuario autenticado; escritura solo `admin` y `pm`. */
-export function createClientsRouter({ db }) {
+export function createClientsRouter({ db, events }) {
   const c = createClientsController({
-    service: createClientsService({ db, repository: createClientsRepository(db) }),
+    service: createClientsService({ db, repository: createClientsRepository(db), events }),
   });
   const canWrite = requireRole('admin', 'pm');
 

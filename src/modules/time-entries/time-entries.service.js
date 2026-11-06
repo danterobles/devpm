@@ -34,7 +34,12 @@ const DERIVED = [
 const EDITABLE = ['draft', 'rejected'];
 
 /** Casos de uso del registro de tiempo (RF-50, RF-53). */
-export function createTimeEntriesService({ db, repository, timezone = 'America/Mexico_City' }) {
+export function createTimeEntriesService({
+  db,
+  repository,
+  timezone = 'America/Mexico_City',
+  events = null,
+}) {
   const audit = (actorId, id, action, changes) =>
     recordAudit(db, { userId: actorId, entity: 'time_entry', entityId: id, action, changes });
 
@@ -173,6 +178,10 @@ export function createTimeEntriesService({ db, repository, timezone = 'America/M
         repository.setReview(id, { status: 'submitted' });
         audit(actor.id, id, 'status_change', { status: [before.status, 'submitted'] });
       })();
+      events?.emit('time_entry.changed', {
+        projectId: before.project_id,
+        memberId: before.team_member_id,
+      });
       return toDto(repository.findById(id));
     },
 
@@ -188,6 +197,7 @@ export function createTimeEntriesService({ db, repository, timezone = 'America/M
           audit(actor.id, id, 'status_change', { status: [before.status, 'submitted'] });
         }
       })();
+      if (ids.length > 0) events?.emit('time_entry.changed', { memberId });
       return { submitted: ids.length, weekStart: from };
     },
 
@@ -214,6 +224,10 @@ export function createTimeEntriesService({ db, repository, timezone = 'America/M
           repository.update(id, { isBillable });
           audit(actor.id, id, 'update', { is_billable: [before.is_billable, Number(isBillable)] });
         })();
+        events?.emit('time_entry.changed', {
+          projectId: before.project_id,
+          memberId: before.team_member_id,
+        });
       }
       return toDto(repository.findById(id));
     },
@@ -247,6 +261,10 @@ export function createTimeEntriesService({ db, repository, timezone = 'America/M
           status: ['submitted', approved ? 'approved' : 'rejected'],
         });
       })();
+      events?.emit(approved ? 'time_entry.approved' : 'time_entry.changed', {
+        projectId: row.project_id,
+        memberId: row.team_member_id,
+      });
       return toDto(repository.findById(id));
     },
 
@@ -282,6 +300,7 @@ export function createTimeEntriesService({ db, repository, timezone = 'America/M
         });
         return newId;
       })();
+      events?.emit('time_entry.changed', { projectId: input.projectId, memberId });
       return toDto(repository.findById(id));
     },
 
@@ -309,6 +328,10 @@ export function createTimeEntriesService({ db, repository, timezone = 'America/M
         for (const k of DERIVED) delete changes[k];
         if (Object.keys(changes).length > 0) audit(actor.id, id, 'update', changes);
       })();
+      events?.emit('time_entry.changed', {
+        projectId: merged.projectId,
+        memberId: before.team_member_id,
+      });
       return toDto(repository.findById(id));
     },
 
@@ -322,6 +345,10 @@ export function createTimeEntriesService({ db, repository, timezone = 'America/M
           minutes: [before.minutes, null],
         });
       })();
+      events?.emit('time_entry.changed', {
+        projectId: before.project_id,
+        memberId: before.team_member_id,
+      });
     },
   };
 }

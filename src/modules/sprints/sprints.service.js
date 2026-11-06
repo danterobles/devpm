@@ -18,7 +18,7 @@ export const toDto = (r) => ({
 });
 
 /** Casos de uso de sprints (RF-60, RF-66). */
-export function createSprintsService({ db, repository, snapshots = null }) {
+export function createSprintsService({ db, repository, snapshots = null, events = null }) {
   function requireProject(projectId) {
     const p = repository.findProject(projectId);
     if (!p) throw AppError.notFound('Proyecto no encontrado');
@@ -63,6 +63,7 @@ export function createSprintsService({ db, repository, snapshots = null }) {
         audit(actorId, newId, 'create', { name: [null, input.name] });
         return newId;
       })();
+      events?.emit('sprint.updated', { projectId, sprintId: id });
       return toDto(repository.findById(id));
     },
 
@@ -81,6 +82,7 @@ export function createSprintsService({ db, repository, snapshots = null }) {
         for (const k of ['task_count', 'total_points', 'done_points']) delete changes[k];
         if (Object.keys(changes).length > 0) audit(actorId, id, 'update', changes);
       })();
+      events?.emit('sprint.updated', { projectId: before.project_id, sprintId: id });
       return toDto(repository.findById(id));
     },
 
@@ -102,6 +104,7 @@ export function createSprintsService({ db, repository, snapshots = null }) {
           committed_points: [null, committedPoints],
         });
       })();
+      events?.emit('sprint.started', { projectId: sprint.project_id, sprintId: id });
       return toDto(repository.findById(id));
     },
 
@@ -142,6 +145,7 @@ export function createSprintsService({ db, repository, snapshots = null }) {
           completed_points: [null, completedPoints],
         });
       })();
+      events?.emit('sprint.closed', { projectId: sprint.project_id, sprintId: id });
       return toDto(repository.findById(id));
     },
 
@@ -159,6 +163,7 @@ export function createSprintsService({ db, repository, snapshots = null }) {
         repository.remove(id);
         audit(actorId, id, 'delete', { name: [sprint.name, null] });
       })();
+      events?.emit('sprint.updated', { projectId: sprint.project_id, sprintId: id });
     },
   };
 }

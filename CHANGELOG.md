@@ -238,6 +238,12 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   «Burnup» en la ficha del proyecto.
 - Pruebas del Burndown: línea ideal (unitarias), instantáneas con fecha inyectada y verificación día a día con los sprints activos del seed.
 
+### Agregado (Etapa 10 — Tablero de KPIs)
+- Bus de eventos de dominio (`src/realtime/eventBus.js`) y emisión desde los services (proyectos, hitos,
+  asignaciones, sprints, tareas, tiempo, equipo, ausencias y clientes) **después** de confirmar la
+  transacción; las operaciones rechazadas y los cambios sin efecto no emiten. Eventos documentados en
+  `docs/ARQUITECTURA.md` §4.
+
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y
   todo el estado se conserva en CHECKLIST, CHANGELOG y docs.

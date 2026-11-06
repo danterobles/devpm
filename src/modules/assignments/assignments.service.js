@@ -13,7 +13,7 @@ export const toDto = (r) => ({
 });
 
 /** Asignaciones de miembros a proyectos (RF-40, RF-41). */
-export function createAssignmentsService({ db, repository }) {
+export function createAssignmentsService({ db, repository, events = null }) {
   function requireProject(projectId) {
     const p = repository.findProject(projectId);
     if (!p) throw AppError.notFound('Proyecto no encontrado');
@@ -84,6 +84,7 @@ export function createAssignmentsService({ db, repository }) {
         });
         return newId;
       })();
+      events?.emit('assignment.changed', { projectId, teamMemberId: input.teamMemberId });
       const row = repository.findById(projectId, id);
       return { data: toDto(row), warnings: overAllocation(row) };
     },
@@ -106,6 +107,7 @@ export function createAssignmentsService({ db, repository }) {
           });
         }
       })();
+      events?.emit('assignment.changed', { projectId, teamMemberId: before.team_member_id });
       const row = repository.findById(projectId, id);
       return { data: toDto(row), warnings: overAllocation(row) };
     },
@@ -122,6 +124,7 @@ export function createAssignmentsService({ db, repository }) {
           changes: { teamMemberId: [before.team_member_id, null] },
         });
       })();
+      events?.emit('assignment.changed', { projectId, teamMemberId: before.team_member_id });
     },
   };
 }

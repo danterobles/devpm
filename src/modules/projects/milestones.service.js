@@ -13,7 +13,7 @@ const toDto = (r) => ({
 });
 
 /** Hitos por proyecto (RF-32). */
-export function createMilestonesService({ db, repository }) {
+export function createMilestonesService({ db, repository, events = null }) {
   function requireProject(projectId) {
     if (!repository.projectExists(projectId)) throw AppError.notFound('Proyecto no encontrado');
   }
@@ -43,6 +43,7 @@ export function createMilestonesService({ db, repository }) {
         });
         return newId;
       })();
+      events?.emit('milestone.updated', { projectId });
       return toDto(repository.findById(projectId, id));
     },
 
@@ -70,6 +71,7 @@ export function createMilestonesService({ db, repository }) {
           });
         }
       })();
+      events?.emit('milestone.updated', { projectId });
       return toDto(repository.findById(projectId, id));
     },
 
@@ -85,6 +87,7 @@ export function createMilestonesService({ db, repository }) {
           changes: { name: [before.name, null], dueDate: [before.due_date, null] },
         });
       })();
+      events?.emit('milestone.updated', { projectId });
     },
   };
 }

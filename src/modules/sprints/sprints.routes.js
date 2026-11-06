@@ -7,12 +7,13 @@ import { createSprintsService } from './sprints.service.js';
 import { createSprintsController } from './sprints.controller.js';
 
 /** Sprints: lectura para todo usuario autenticado; escritura solo `admin` y `pm`. */
-export function createSprintsRouter({ db, timezone }) {
+export function createSprintsRouter({ db, timezone, events }) {
   const c = createSprintsController({
     service: createSprintsService({
       db,
       repository: createSprintsRepository(db),
       snapshots: createSnapshotsService({ db, timezone }),
+      events,
     }),
   });
   const canWrite = requireRole('admin', 'pm');

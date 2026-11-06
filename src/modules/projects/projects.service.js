@@ -36,7 +36,12 @@ export const TRANSITIONS = {
 };
 
 /** Casos de uso de proyectos (RF-30, RF-31, RF-34). */
-export function createProjectsService({ db, repository, timezone = 'America/Mexico_City' }) {
+export function createProjectsService({
+  db,
+  repository,
+  timezone = 'America/Mexico_City',
+  events = null,
+}) {
   function requireProject(id) {
     const row = repository.findById(id);
     if (!row) throw AppError.notFound('Proyecto no encontrado');
@@ -112,6 +117,7 @@ export function createProjectsService({ db, repository, timezone = 'America/Mexi
           changes: { status: [from, to] },
         });
       })();
+      events?.emit('project.status_changed', { projectId: id });
       return toDto(repository.findById(id));
     },
 
@@ -136,6 +142,7 @@ export function createProjectsService({ db, repository, timezone = 'America/Mexi
         });
         return newId;
       })();
+      events?.emit('project.created', { projectId: id });
       return toDto(repository.findById(id));
     },
 
@@ -181,6 +188,7 @@ export function createProjectsService({ db, repository, timezone = 'America/Mexi
           });
         }
       })();
+      events?.emit('project.updated', { projectId: id });
       return toDto(repository.findById(id));
     },
   };

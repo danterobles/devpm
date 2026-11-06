@@ -10,11 +10,24 @@ import { createAssignmentsService } from '../assignments/assignments.service.js'
 import { createProjectsController } from './projects.controller.js';
 
 /** Proyectos: lectura para todo usuario autenticado; escritura solo `admin` y `pm`. */
-export function createProjectsRouter({ db, timezone }) {
+export function createProjectsRouter({ db, timezone, events }) {
   const c = createProjectsController({
-    service: createProjectsService({ db, repository: createProjectsRepository(db), timezone }),
-    assignments: createAssignmentsService({ db, repository: createAssignmentsRepository(db) }),
-    milestones: createMilestonesService({ db, repository: createMilestonesRepository(db) }),
+    service: createProjectsService({
+      db,
+      repository: createProjectsRepository(db),
+      timezone,
+      events,
+    }),
+    assignments: createAssignmentsService({
+      db,
+      repository: createAssignmentsRepository(db),
+      events,
+    }),
+    milestones: createMilestonesService({
+      db,
+      repository: createMilestonesRepository(db),
+      events,
+    }),
   });
   const canWrite = requireRole('admin', 'pm');
 

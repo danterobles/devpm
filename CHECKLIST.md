@@ -158,7 +158,7 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 
 ## Etapa 10 — Tablero de KPIs en tiempo real
 
-- [ ] `realtime/eventBus.js` y emisión de eventos en todos los services (ARQUITECTURA §4)
+- [x] `realtime/eventBus.js` y emisión de eventos en todos los services (ARQUITECTURA §4)
 - [ ] Endpoint SSE `/api/v1/events` con heartbeat, `retry` y limpieza al desconectar (RF-91)
 - [ ] `kpi.service.js`: K1–K16 según PRD §6, con pruebas unitarias por fórmula
 - [ ] Endpoint `GET /api/v1/dashboard/kpis` con filtros (RF-92)

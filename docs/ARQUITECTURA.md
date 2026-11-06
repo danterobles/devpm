@@ -260,6 +260,13 @@ res.flushHeaders();
 | `sprint.started/closed` | planning | K8, K9, Burndown |
 | `time_entry.changed/approved` | time-entries | K4–K6, K13, K14, K16 |
 | `team_member.updated`, `time_off.changed` | team | K6, K7, K16 |
+| `sprint.updated` | planning | Burndown, Kanban |
+| `client.updated` | clients | filtros del tablero, K14 |
+| `settings.updated` | settings | semáforos de los KPIs |
+
+Todos los eventos llevan `id` (incremental por proceso), `type`, `at` (UTC ISO-8601) y, según el caso,
+`projectId`, `sprintId`, `taskId`, `memberId` o `clientId`. La emisión usa `src/realtime/eventBus.js`;
+los services reciben el bus como dependencia opcional (`events`) y emiten solo tras confirmar la transacción.
 
 ## 5. Gantt y Burndown
 

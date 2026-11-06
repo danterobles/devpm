@@ -13,7 +13,7 @@ const toDto = (r) => ({
 });
 
 /** Ausencias por miembro (RF-22). Los traslapes se permiten con advertencia (DATA §3.5). */
-export function createTimeOffService({ db, repository }) {
+export function createTimeOffService({ db, repository, events = null }) {
   function requireMember(memberId) {
     if (!repository.memberExists(memberId)) throw AppError.notFound('Miembro no encontrado');
   }
@@ -59,6 +59,7 @@ export function createTimeOffService({ db, repository }) {
         });
         return newId;
       })();
+      events?.emit('time_off.changed', { memberId });
       const row = repository.findById(memberId, id);
       return { data: toDto(row), warnings: warningsFor(memberId, row) };
     },
@@ -85,6 +86,7 @@ export function createTimeOffService({ db, repository }) {
           });
         }
       })();
+      events?.emit('time_off.changed', { memberId });
       const row = repository.findById(memberId, id);
       return { data: toDto(row), warnings: warningsFor(memberId, row) };
     },
@@ -105,6 +107,7 @@ export function createTimeOffService({ db, repository }) {
           },
         });
       })();
+      events?.emit('time_off.changed', { memberId });
     },
   };
 }

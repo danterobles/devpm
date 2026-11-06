@@ -22,7 +22,7 @@ export function toDto(r, { includeCost = false } = {}) {
 }
 
 /** Casos de uso del equipo de desarrollo (RF-20). */
-export function createTeamService({ db, repository }) {
+export function createTeamService({ db, repository, events = null }) {
   function requireMember(id) {
     const row = repository.findById(id);
     if (!row) throw AppError.notFound('Miembro no encontrado');
@@ -58,6 +58,7 @@ export function createTeamService({ db, repository }) {
         });
         return newId;
       })();
+      events?.emit('team_member.updated', { memberId: id });
       return toDto(repository.findById(id), { includeCost: true });
     },
 
@@ -77,6 +78,7 @@ export function createTeamService({ db, repository }) {
           });
         }
       })();
+      events?.emit('team_member.updated', { memberId: id });
       return toDto(repository.findById(id), { includeCost: true });
     },
   };
