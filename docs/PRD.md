@@ -146,6 +146,24 @@ Empresas con relación comercial; su trabajo es facturable.
 | RF-42 | Solo miembros asignados al proyecto pueden ser responsables de sus tareas o registrar horas en él. | Alta |
 | RF-43 | Matriz de asignaciones (miembros × proyectos) con filtro por rango de fechas. | Media |
 
+**Decisiones de definición (proyectos, hitos y asignaciones, RF-30 a RF-43):**
+
+- Permisos: cualquier usuario autenticado **lee**; solo `admin` y `pm` crean y editan proyectos,
+  hitos y asignaciones (403 para `developer` y `viewer`). Cualquier `pm` puede editar cualquier proyecto.
+- Código del proyecto: lo genera el sistema con el formato `PRJ-AAAA-NNN` (año de la fecha de inicio
+  planeada y consecutivo por año con 3 dígitos); no es editable.
+- Cliente: no se pueden crear proyectos para clientes inactivos (422) y el cliente no se puede cambiar
+  cuando el proyecto ya salió de `planning`. `is_billable` toma por defecto el tipo del cliente
+  (externo = facturable) y el `pm` puede modificarlo. El líder (`managerId`) debe ser un miembro activo.
+- Completar un proyecto (`active → completed`): si hay tareas con estado distinto de `done`, responde
+  422 `BUSINESS_RULE` con el conteo, salvo que se envíe `confirmOpenTasks: true` (en la vista, una
+  casilla de confirmación). Al completar se asigna `actual_end_date` = hoy.
+- Hitos: el estado se cambia manualmente (`pending`, `completed`, `missed`); al pasar a `completed` se
+  guarda `completed_at` y se limpia al salir de ese estado. La fecha compromiso puede quedar fuera
+  del rango planeado del proyecto.
+- Asignaciones: el periodo debe quedar dentro del rango planeado del proyecto (422); solo miembros
+  activos; la sobreasignación (> 100 %) se guarda con la advertencia `OVER_ALLOCATION` (ver `docs/DATA.md` §3.8).
+
 ### 5.7 Tiempo de desarrolladores
 
 | ID | Requerimiento | Prioridad |
