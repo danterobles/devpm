@@ -230,6 +230,12 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   localmente (`public/js/pages/burndown.js`): línea ideal discontinua, restante real, barras de cambio de
   alcance (ámbar al agregar, verde al retirar), resumen del sprint y tabla de datos como alternativa
   accesible. Enlaces desde la lista de sprints y el tablero.
+- Burndown por horas (RF-83): `?metric=hours` del endpoint del Burndown (minutos restantes, ideal desde
+  la primera instantánea, sin cambios de alcance) y selector «Medir en» en la vista, que muestra horas.
+- Burnup de proyecto (RF-84): `GET /api/v1/projects/:id/burnup` y vista `/projects/:id/burnup`
+  (Chart.js) con alcance total frente a completado por día, sumando las instantáneas de sus sprints;
+  un sprint cerrado aporta solo lo completado tras su cierre (decisión en `docs/PRD.md` §5.10). Enlace
+  «Burnup» en la ficha del proyecto.
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y

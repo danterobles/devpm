@@ -1,0 +1,34 @@
+<div class="flex flex-wrap items-center justify-between gap-2">
+  <h1 class="text-2xl font-bold">Burnup <span class="text-slate-500"><%= project.code %></span></h1>
+  <p class="text-sm">
+    <a class="underline" href="/projects/<%= project.id %>">Proyecto</a> ·
+    <a class="underline" href="/projects/<%= project.id %>/sprints">Sprints</a> ·
+    <a class="underline" href="/projects/<%= project.id %>/gantt">Gantt</a>
+  </p>
+</div>
+<p class="mt-1 text-sm text-slate-600"><%= project.name %> · alcance total frente a lo completado, sumando los sprints del proyecto (no incluye tareas que nunca estuvieron en un sprint).</p>
+
+<div data-burnup data-project-id="<%= project.id %>">
+  <p id="burnup-summary" class="mt-3 text-sm font-medium"></p>
+  <p id="burnup-message" class="mt-2 text-sm text-slate-600" role="status" aria-live="polite"></p>
+  <div class="mt-2 h-96 rounded border bg-white p-3">
+    <canvas id="burnup-chart" role="img" aria-label="Gráfica Burnup: alcance total y puntos completados del proyecto por día. Los mismos datos están en la tabla inferior."></canvas>
+  </div>
+  <details class="mt-4" open>
+    <summary class="cursor-pointer text-sm font-semibold">Datos en tabla</summary>
+    <table id="burnup-table" class="mt-2 w-full text-left text-sm">
+      <caption class="sr-only">Burnup del proyecto por día</caption>
+      <thead>
+        <tr class="border-b">
+          <th scope="col" class="py-1 pr-4">Día</th>
+          <th scope="col" class="py-1 pr-4">Alcance</th>
+          <th scope="col" class="py-1 pr-4">Completado</th>
+          <th scope="col" class="py-1 pr-4">Pendiente</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </details>
+</div>
+<script src="/vendor/chart.umd.min.js"></script>
+<script src="/js/pages/burnup.js" defer></script>

@@ -19,8 +19,70 @@ export function createBurndownService({ db, timezone = 'America/Mexico_City' }) 
   );
 
   const projectCode = db.prepare('SELECT code FROM projects WHERE id = ?').pluck();
+  const projectRow = db.prepare('SELECT id, code, name FROM projects WHERE id = ?');
+  const projectSnapshots = db.prepare(
+    `SELECT s.id AS sprint_id, s.status, d.snapshot_date, d.total_points, d.completed_points
+       FROM sprint_daily_snapshots d JOIN sprints s ON s.id = d.sprint_id
+      WHERE s.project_id = ? ORDER BY d.snapshot_date`,
+  );
+
+  const MAX_DAYS = 400;
 
   return {
+    /** RF-84: alcance total frente a completado del proyecto, sumando las instantáneas de sus sprints. */
+    projectBurnup(projectId) {
+      const project = projectRow.get(projectId);
+      if (!project) throw AppError.notFound('Proyecto no encontrado');
+      const today = todayIn(timezone);
+      const rows = projectSnapshots.all(projectId);
+      const result = {
+        project: { id: project.id, code: project.code, name: project.name },
+        today,
+        days: [],
+        scope: [],
+        completed: [],
+        remaining: [],
+      };
+      if (rows.length === 0) return result;
+
+      const bySprint = new Map();
+      for (const r of rows) {
+        if (!bySprint.has(r.sprint_id)) {
+          bySprint.set(r.sprint_id, {
+            status: r.status,
+            byDate: new Map(),
+            first: r.snapshot_date,
+          });
+        }
+        const sprint = bySprint.get(r.sprint_id);
+        sprint.byDate.set(r.snapshot_date, r);
+        sprint.last = r.snapshot_date;
+      }
+      const first = rows[0].snapshot_date;
+      const hasActive = [...bySprint.values()].some((sp) => sp.status === 'active');
+      const end = hasActive ? today : rows.at(-1).snapshot_date;
+
+      const latest = new Map(); // sprint → última instantánea ≤ día
+      for (let day = first, i = 0; day <= end && i < MAX_DAYS; day = addDays(day, 1), i += 1) {
+        let scope = 0;
+        let completed = 0;
+        for (const [sprintId, sp] of bySprint) {
+          if (sp.byDate.has(day)) latest.set(sprintId, sp.byDate.get(day));
+          const snap = latest.get(sprintId);
+          if (!snap) continue;
+          // Tras el cierre sus tareas no terminadas salen del sprint: solo queda lo completado.
+          const closedAlready = sp.status === 'closed' && day > sp.last;
+          scope += closedAlready ? snap.completed_points : snap.total_points;
+          completed += snap.completed_points;
+        }
+        result.days.push(day);
+        result.scope.push(scope);
+        result.completed.push(completed);
+        result.remaining.push(scope - completed);
+      }
+      return result;
+    },
+
     projectCode: (projectId) => projectCode.get(projectId),
     sprint(sprintId, { metric = 'points' } = {}) {
       const sprint = sprintRow.get(sprintId);

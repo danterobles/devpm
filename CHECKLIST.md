@@ -151,7 +151,7 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 - [x] Job diario y relleno de días faltantes al arrancar
 - [x] Endpoint `GET /api/v1/sprints/:id/burndown` con línea ideal en días hábiles (RF-80)
 - [x] Vista con Chart.js: real vs. ideal y cambios de alcance (RF-82)
-- [ ] Burndown por horas (RF-83) y Burnup de proyecto (RF-84)
+- [x] Burndown por horas (RF-83) y Burnup de proyecto (RF-84)
 - [ ] Pruebas unitarias de línea ideal y de snapshots con fecha inyectada
 
 **Criterio de cierre:** el burndown del sprint activo del seed es correcto día a día.
