@@ -246,6 +246,13 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 - Endpoint SSE `GET /api/v1/events` (RF-91, `src/realtime/sse.js`): solo usuarios autenticados, mensajes
   `id/event/data`, `retry: 3000`, heartbeat cada 25 s, filtro opcional `?projectId=` (sus eventos y los
   globales), limpieza al desconectar y cierre de todas las conexiones en el apagado (`SIGINT`/`SIGTERM`).
+- Servicio de KPIs (`src/modules/dashboard/kpi.service.js`, PRD §6 y §6.1): K1 a K16 con filtros
+  (periodo, tipo de cliente, cliente, proyecto y líder), agregación de portafolio sobre proyectos activos
+  (K3 = Σ EV ÷ Σ PV, K4 = Σ EV ÷ Σ horas, K5 = Σ horas ÷ Σ presupuesto), capacidad por días hábiles menos
+  ausencias (K6, K16), sobreasignación día por día (K7), velocidad y compromiso de los 3 últimos sprints
+  (K8, K9), ciclo promedio (K12), horas facturables por tipo de cliente (K13), ingreso estimado por
+  moneda (K14), tabla por proyecto y «Proyectos en riesgo» con su causa (RF-94). Semáforos con umbrales
+  inyectables (`thresholds.js`) y divisiones entre cero como `null`; pruebas unitarias por fórmula.
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y
