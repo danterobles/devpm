@@ -112,4 +112,50 @@
       </form>
     </section>
   <% } %>
+
+  <% if (editing) { %>
+    <section class="mt-10" aria-labelledby="milestones-title">
+      <h2 id="milestones-title" class="text-xl font-semibold">Hitos</h2>
+      <% if (milestoneError) { %>
+        <p role="alert" class="mt-3 rounded border border-danger bg-red-50 px-4 py-3 text-sm text-red-800"><%= milestoneError %></p>
+      <% } %>
+      <ul class="mt-3 divide-y text-sm">
+        <% milestones.forEach((m) => { %>
+          <li class="flex flex-wrap items-center justify-between gap-2 py-2">
+            <span><%= m.dueDate %> — <%= m.name %> <span class="text-slate-500">(<%= m.status %>)</span><% if (m.description) { %> — <%= m.description %><% } %></span>
+            <% if (canWrite) { %>
+              <span class="flex gap-3">
+                <% milestoneStatuses.filter((s) => s !== m.status).forEach((s) => { %>
+                  <form method="post" action="/projects/<%= project.id %>/milestones/<%= m.id %>/status">
+                    <button type="submit" name="status" value="<%= s %>" class="underline">Marcar <%= s %></button>
+                  </form>
+                <% }) %>
+                <form method="post" action="/projects/<%= project.id %>/milestones/<%= m.id %>/delete">
+                  <button type="submit" class="underline" aria-label="Eliminar hito <%= m.name %>">Eliminar</button>
+                </form>
+              </span>
+            <% } %>
+          </li>
+        <% }) %>
+        <% if (milestones.length === 0) { %><li class="py-2 text-slate-600">Sin hitos registrados.</li><% } %>
+      </ul>
+      <% if (canWrite) { %>
+        <form method="post" action="/projects/<%= project.id %>/milestones" class="mt-4 flex flex-wrap items-end gap-3">
+          <div>
+            <label for="msName" class="block text-sm font-medium">Hito</label>
+            <input id="msName" name="name" required maxlength="150" class="mt-1 rounded border border-slate-300 px-3 py-2" />
+          </div>
+          <div>
+            <label for="msDue" class="block text-sm font-medium">Fecha compromiso</label>
+            <input id="msDue" name="dueDate" type="date" required class="mt-1 rounded border border-slate-300 px-3 py-2" />
+          </div>
+          <div>
+            <label for="msDesc" class="block text-sm font-medium">Descripción</label>
+            <input id="msDesc" name="description" maxlength="1000" class="mt-1 rounded border border-slate-300 px-3 py-2" />
+          </div>
+          <button type="submit" class="rounded border px-4 py-2 text-sm hover:bg-slate-100">Agregar</button>
+        </form>
+      <% } %>
+    </section>
+  <% } %>
 </section>

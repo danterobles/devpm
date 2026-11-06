@@ -110,6 +110,9 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   estado» en la ficha. Máquina de estados de `docs/DATA.md` §3.6 (422 en transiciones inválidas),
   `actual_start_date` al activar, `actual_end_date` al completar y confirmación explícita
   (`confirmOpenTasks`) si quedan tareas abiertas; se registra como `status_change` en la bitácora.
+- Hitos por proyecto (RF-32): `GET/POST /api/v1/projects/:id/milestones`, `PATCH/DELETE .../:msId` y
+  sección en la ficha del proyecto. Estados `pending`, `completed` y `missed`; `completed_at` se guarda
+  al completar y se limpia al reabrir; ordenados por fecha compromiso; bitácora.
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y

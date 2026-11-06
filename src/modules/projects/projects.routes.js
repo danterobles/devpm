@@ -3,12 +3,15 @@ import { requireAuth } from '../../middlewares/requireAuth.js';
 import { requireRole } from '../../middlewares/requireRole.js';
 import { createProjectsRepository } from './projects.repository.js';
 import { createProjectsService } from './projects.service.js';
+import { createMilestonesRepository } from './milestones.repository.js';
+import { createMilestonesService } from './milestones.service.js';
 import { createProjectsController } from './projects.controller.js';
 
 /** Proyectos: lectura para todo usuario autenticado; escritura solo `admin` y `pm`. */
 export function createProjectsRouter({ db, timezone }) {
   const c = createProjectsController({
     service: createProjectsService({ db, repository: createProjectsRepository(db), timezone }),
+    milestones: createMilestonesService({ db, repository: createMilestonesRepository(db) }),
   });
   const canWrite = requireRole('admin', 'pm');
 
@@ -19,6 +22,10 @@ export function createProjectsRouter({ db, timezone }) {
   api.get('/:id', c.apiGet);
   api.patch('/:id', canWrite, c.apiUpdate);
   api.post('/:id/status', canWrite, c.apiChangeStatus);
+  api.get('/:id/milestones', c.apiMilestonesList);
+  api.post('/:id/milestones', canWrite, c.apiMilestoneCreate);
+  api.patch('/:id/milestones/:msId', canWrite, c.apiMilestoneUpdate);
+  api.delete('/:id/milestones/:msId', canWrite, c.apiMilestoneRemove);
 
   const html = Router();
   html.use(requireAuth);
@@ -28,6 +35,9 @@ export function createProjectsRouter({ db, timezone }) {
   html.get('/:id', c.htmlEdit);
   html.post('/:id', canWrite, c.htmlUpdate);
   html.post('/:id/status', canWrite, c.htmlChangeStatus);
+  html.post('/:id/milestones', canWrite, c.htmlMilestoneCreate);
+  html.post('/:id/milestones/:msId/status', canWrite, c.htmlMilestoneStatus);
+  html.post('/:id/milestones/:msId/delete', canWrite, c.htmlMilestoneRemove);
 
   const router = Router();
   router.use('/api/v1/projects', api);

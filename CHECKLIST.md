@@ -100,7 +100,7 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 
 - [x] Módulo `projects`: CRUD con código único y `is_billable` según tipo de cliente (RF-30, RF-34)
 - [x] Transiciones de estado válidas (RF-31, DATA §3.6)
-- [ ] Hitos por proyecto (RF-32)
+- [x] Hitos por proyecto (RF-32)
 - [ ] Ficha del proyecto (resumen, equipo, hitos) (RF-33)
 - [ ] Módulo `assignments` con validación de periodo dentro del proyecto (RF-40)
 - [ ] Advertencia de sobreasignación > 100 % (RF-41)

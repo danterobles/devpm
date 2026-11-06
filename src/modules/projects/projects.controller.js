@@ -1,6 +1,13 @@
 import { AppError } from '../../lib/AppError.js';
 import { parseWith } from '../../lib/parse.js';
 import {
+  MILESTONE_STATUSES,
+  createMilestoneSchema,
+  milestoneIdSchema,
+  milestoneStatusSchema,
+  updateMilestoneSchema,
+} from './milestones.schemas.js';
+import {
   METHODOLOGIES,
   PRIORITIES,
   STATUSES,
@@ -16,6 +23,12 @@ const canWriteRole = (req) => ['admin', 'pm'].includes(req.session.role);
 const parseId = (raw) => {
   const parsed = idParamSchema.safeParse(raw);
   if (!parsed.success) throw AppError.notFound('Proyecto no encontrado');
+  return parsed.data;
+};
+
+const parseMilestoneId = (raw) => {
+  const parsed = milestoneIdSchema.safeParse(raw);
+  if (!parsed.success) throw AppError.notFound('Hito no encontrado');
   return parsed.data;
 };
 
@@ -51,12 +64,21 @@ function formToInput(body) {
   return input;
 }
 
-export function createProjectsController({ service }) {
+export function createProjectsController({ service, milestones }) {
   const actor = (req) => req.session.userId;
 
   const formView = (
     res,
-    { status = 200, project, error = null, editing, canWrite, statusError = null },
+    {
+      status = 200,
+      project,
+      error = null,
+      editing,
+      canWrite,
+      statusError = null,
+      milestoneList = [],
+      milestoneError = null,
+    },
   ) =>
     res.status(status).render('pages/projects/form', {
       title: editing ? (canWrite ? 'Editar proyecto' : 'Ficha del proyecto') : 'Nuevo proyecto',
@@ -65,6 +87,9 @@ export function createProjectsController({ service }) {
       editing,
       canWrite,
       statusError,
+      milestones: milestoneList,
+      milestoneError,
+      milestoneStatuses: MILESTONE_STATUSES,
       transitions: editing ? service.allowedTransitions(project.status) : [],
       options: service.options(),
       priorities: PRIORITIES,
@@ -72,7 +97,7 @@ export function createProjectsController({ service }) {
     });
 
   /** Ficha del proyecto (formulario de edición + transiciones de estado). */
-  function fichaView(req, res, id, { status = 200, error = null } = {}) {
+  function fichaView(req, res, id, { status = 200, error = null, milestoneError = null } = {}) {
     const project = service.get(id);
     formView(res, {
       status,
@@ -85,6 +110,8 @@ export function createProjectsController({ service }) {
       editing: true,
       canWrite: canWriteRole(req),
       statusError: error,
+      milestoneList: milestones.list(id),
+      milestoneError,
     });
   }
 
@@ -146,6 +173,51 @@ export function createProjectsController({ service }) {
     htmlEdit(req, res) {
       fichaView(req, res, parseId(req.params.id));
     },
+    // ---- Hitos (RF-32) ----
+    apiMilestonesList: (req, res) => res.json({ data: milestones.list(parseId(req.params.id)) }),
+    apiMilestoneCreate(req, res) {
+      const input = parseWith(createMilestoneSchema, req.body);
+      res.status(201).json({ data: milestones.create(actor(req), parseId(req.params.id), input) });
+    },
+    apiMilestoneUpdate(req, res) {
+      const input = parseWith(updateMilestoneSchema, req.body);
+      const data = milestones.update(
+        actor(req),
+        parseId(req.params.id),
+        parseMilestoneId(req.params.msId),
+        input,
+      );
+      res.json({ data });
+    },
+    apiMilestoneRemove(req, res) {
+      milestones.remove(actor(req), parseId(req.params.id), parseMilestoneId(req.params.msId));
+      res.status(204).end();
+    },
+    htmlMilestoneCreate(req, res) {
+      const id = parseId(req.params.id);
+      try {
+        milestones.create(actor(req), id, parseWith(createMilestoneSchema, req.body));
+        return res.redirect(`/projects/${id}`);
+      } catch (err) {
+        if (!(err instanceof AppError) || err.status >= 500 || err.status === 404) throw err;
+        return fichaView(req, res, id, {
+          status: err.status,
+          milestoneError: err.details?.[0]?.message ?? err.message,
+        });
+      }
+    },
+    htmlMilestoneStatus(req, res) {
+      const id = parseId(req.params.id);
+      const { status } = parseWith(milestoneStatusSchema, { status: req.body.status });
+      milestones.update(actor(req), id, parseMilestoneId(req.params.msId), { status });
+      res.redirect(`/projects/${id}`);
+    },
+    htmlMilestoneRemove(req, res) {
+      const id = parseId(req.params.id);
+      milestones.remove(actor(req), id, parseMilestoneId(req.params.msId));
+      res.redirect(`/projects/${id}`);
+    },
+
     apiChangeStatus(req, res) {
       const id = parseId(req.params.id);
       const input = parseWith(changeStatusSchema, req.body);
