@@ -14,3 +14,5 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 - `CHANGELOG.md` para registrar los cambios del proyecto.
 - `CLAUDE.md` con stack (Node.js 22, Express 5, EJS, Tailwind CSS 4, SQLite/better-sqlite3),
   comandos, convenciones de código y flujo de trabajo (CHECKLIST → código → CHANGELOG → commit).
+- `docs/PRD.md` con visión, roles, requerimientos funcionales (RF-01 a RF-95), 16 KPIs con
+  fórmulas y umbrales, requerimientos no funcionales, criterios de aceptación del MVP y roadmap.
