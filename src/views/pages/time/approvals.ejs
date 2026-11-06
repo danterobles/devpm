@@ -31,3 +31,30 @@
   <% }) %>
   <% if (entries.length === 0) { %><li class="py-3 text-slate-600">No hay registros pendientes de revisión.</li><% } %>
 </ul>
+
+<% if (canExport) { %>
+  <section class="mt-8" aria-labelledby="export-title">
+    <h2 id="export-title" class="text-xl font-semibold">Exportar horas a CSV</h2>
+    <form method="get" action="/api/v1/time-entries/export.csv" class="mt-3 flex flex-wrap items-end gap-3">
+      <div>
+        <label for="exFrom" class="block text-sm font-medium">Desde</label>
+        <input id="exFrom" name="from" type="date" class="mt-1 rounded border border-slate-300 px-3 py-2" />
+      </div>
+      <div>
+        <label for="exTo" class="block text-sm font-medium">Hasta</label>
+        <input id="exTo" name="to" type="date" class="mt-1 rounded border border-slate-300 px-3 py-2" />
+      </div>
+      <div>
+        <label for="exStatus" class="block text-sm font-medium">Estado</label>
+        <select id="exStatus" name="status" class="mt-1 rounded border border-slate-300 px-3 py-2">
+          <option value="all">Todos</option>
+          <option value="approved">Aprobados</option>
+          <option value="submitted">Enviados</option>
+          <option value="draft">Borrador</option>
+          <option value="rejected">Rechazados</option>
+        </select>
+      </div>
+      <button type="submit" class="rounded border px-4 py-2 text-sm hover:bg-slate-100">Descargar CSV</button>
+    </form>
+  </section>
+<% } %>

@@ -22,7 +22,15 @@ export const toDto = (r) => ({
 });
 
 export const mondayOf = (date) => addDays(date, -((weekday(date) + 6) % 7));
-const DERIVED = ['member_name', 'project_code', 'project_name', 'project_manager_id', 'task_title'];
+const DERIVED = [
+  'member_name',
+  'project_code',
+  'project_name',
+  'project_manager_id',
+  'task_title',
+  'client_name',
+  'client_type',
+];
 const EDITABLE = ['draft', 'rejected'];
 
 /** Casos de uso del registro de tiempo (RF-50, RF-53). */
@@ -138,6 +146,23 @@ export function createTimeEntriesService({ db, repository, timezone = 'America/M
         projects: repository.assignedProjects(memberId, weekStart, addDays(weekStart, 6)),
         tasks: repository.openTasksFor(memberId),
       };
+    },
+
+    /** RF-55: todos los registros que cumplen los filtros (sin paginar), listos para exportar. */
+    exportRows(filters) {
+      return repository.all(filters).map((r) => ({
+        date: r.work_date,
+        member: r.member_name,
+        projectCode: r.project_code,
+        project: r.project_name,
+        client: r.client_name,
+        clientType: r.client_type === 'external' ? 'externo' : 'interno',
+        task: r.task_title,
+        hours: (r.minutes / 60).toFixed(2),
+        billable: r.is_billable === 1 ? 'Sí' : 'No',
+        status: r.status,
+        description: r.description,
+      }));
     },
 
     /** RF-52: el autor envía un registro (draft o rejected → submitted). */

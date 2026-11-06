@@ -1,10 +1,11 @@
 const SELECT = `
   SELECT e.*, trim(m.first_name || ' ' || m.last_name) AS member_name,
          p.code AS project_code, p.name AS project_name, p.manager_id AS project_manager_id,
-         t.title AS task_title
+         t.title AS task_title, c.name AS client_name, c.type AS client_type
     FROM time_entries e
     JOIN team_members m ON m.id = e.team_member_id
     JOIN projects p ON p.id = e.project_id
+    JOIN clients c ON c.id = p.client_id
     LEFT JOIN tasks t ON t.id = e.task_id`;
 
 // camelCase (API) → columna. Lista cerrada: nunca se interpolan claves del usuario.

@@ -176,6 +176,10 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 - Bandera facturable (RF-54): se hereda del proyecto al registrar (y al cambiar de proyecto);
   `PATCH /api/v1/time-entries/:id/billable` y selector en `/time/approvals` para el líder del proyecto
   y admin (el autor y los pm ajenos reciben 403); el cambio queda en la bitácora.
+- Exportación de horas a CSV (RF-55): `GET /api/v1/time-entries/export.csv` (solo `admin` y `pm`) con
+  filtros por rango, proyecto, cliente, miembro y estado, y formulario en `/time/approvals`. UTF-8 con
+  BOM, coma como separador, horas con 2 decimales y protección contra inyección de fórmulas
+  (`src/lib/csv.js`).
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y

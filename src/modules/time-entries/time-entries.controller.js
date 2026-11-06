@@ -1,5 +1,6 @@
 import { AppError } from '../../lib/AppError.js';
-import { addDays } from '../../lib/dates.js';
+import { toCsv } from '../../lib/csv.js';
+import { addDays, today as todayIn } from '../../lib/dates.js';
 import { parseWith } from '../../lib/parse.js';
 import { mondayOf } from './time-entries.service.js';
 import {
@@ -36,6 +37,19 @@ function formToInput(body) {
     description: body.description,
   };
 }
+const EXPORT_COLUMNS = [
+  { key: 'date', header: 'Fecha' },
+  { key: 'member', header: 'Miembro' },
+  { key: 'projectCode', header: 'Código del proyecto' },
+  { key: 'project', header: 'Proyecto' },
+  { key: 'client', header: 'Cliente' },
+  { key: 'clientType', header: 'Tipo de cliente' },
+  { key: 'task', header: 'Tarea' },
+  { key: 'hours', header: 'Horas' },
+  { key: 'billable', header: 'Facturable' },
+  { key: 'status', header: 'Estado' },
+  { key: 'description', header: 'Descripción' },
+];
 export const minutesToHours = (m) => `${(m / 60).toFixed(1)} h`;
 
 export function createTimeEntriesController({ service }) {
@@ -73,6 +87,7 @@ export function createTimeEntriesController({ service }) {
     res.status(status).render('pages/time/approvals', {
       title: 'Aprobaciones de tiempo',
       entries: service.pending(actor(req)),
+      canExport: ['admin', 'pm'].includes(req.session.role),
       error,
       minutesToHours,
     });
@@ -174,6 +189,16 @@ export function createTimeEntriesController({ service }) {
       }
     },
 
+    apiExport(req, res) {
+      const filters = parseWith(listQuerySchema, req.query);
+      const csv = toCsv(EXPORT_COLUMNS, service.exportRows(filters));
+      res.set({
+        'Content-Type': 'text/csv; charset=utf-8',
+        'Content-Disposition': `attachment; filename="horas-${todayIn(service.timezone)}.csv"`,
+        'Cache-Control': 'no-store',
+      });
+      res.send(csv);
+    },
     apiList: (req, res) =>
       res.json(service.list(actor(req), parseWith(listQuerySchema, req.query))),
     apiGet: (req, res) => res.json({ data: service.get(actor(req), parseId(req.params.id)) }),

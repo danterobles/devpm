@@ -129,7 +129,7 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 - [x] Hoja de tiempos semanal (cuadrícula día × proyecto) (RF-51)
 - [x] Flujo de envío y aprobación/rechazo por el líder del proyecto (RF-52)
 - [x] Bandera facturable heredada y editable por el líder (RF-54)
-- [ ] Exportación CSV (RF-55)
+- [x] Exportación CSV (RF-55)
 - [ ] Pruebas: límite diario de 24 h, fecha futura, aprobación por pm ajeno (403)
 
 **Criterio de cierre:** criterio de aceptación PRD §8.3 (sin la parte de KPIs) cubierto por pruebas.

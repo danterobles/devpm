@@ -32,6 +32,7 @@ export function createTimeEntriesRouter({ db, timezone }) {
   router.post('/time/approvals/:id/billable', c.htmlBillable);
   router.get('/api/v1/time-entries', c.apiList);
   router.get('/api/v1/time-entries/pending', c.apiPending);
+  router.get('/api/v1/time-entries/export.csv', requireRole('admin', 'pm'), c.apiExport);
   router.post('/api/v1/time-entries/submit-week', c.apiSubmitWeek);
   router.post('/api/v1/time-entries', c.apiCreate);
   router.get('/api/v1/time-entries/:id', c.apiGet);
