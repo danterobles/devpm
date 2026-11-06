@@ -9,6 +9,13 @@
 <p class="mt-1 text-sm text-slate-600"><%= project.code %> · <%= sprint.startDate %> → <%= sprint.endDate %> · estado: <%= sprint.status %></p>
 
 <div data-burndown data-sprint-id="<%= sprint.id %>">
+  <div class="mt-4 flex items-center gap-2">
+    <label for="burndown-metric" class="text-sm font-medium">Medir en</label>
+    <select id="burndown-metric" class="rounded border border-slate-300 px-3 py-1 text-sm">
+      <option value="points" selected>Puntos de historia</option>
+      <option value="hours">Horas estimadas restantes</option>
+    </select>
+  </div>
   <p id="burndown-summary" class="mt-3 text-sm font-medium"></p>
   <p id="burndown-message" class="mt-2 text-sm text-slate-600" role="status" aria-live="polite"></p>
   <div class="mt-2 h-96 rounded border bg-white p-3">

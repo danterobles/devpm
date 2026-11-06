@@ -143,3 +143,44 @@ test('el compromiso del ideal usa committed_points y, si falta, el total de la p
   assert.equal(d.ideal[0], 20);
   assert.equal(d.sprint.committedPoints, null);
 });
+
+test('RF-83: metric=hours devuelve minutos restantes con ideal desde la primera instantánea y sin cambios de alcance', async () => {
+  const { app, db, sid } = setup();
+  snap(db, sid, '2026-05-11', 10, 0, 2400);
+  snap(db, sid, '2026-05-12', 10, 2, 1800);
+  snap(db, sid, '2026-05-13', 10, 4, 1500);
+  snap(db, sid, '2026-05-14', 10, 6, 900);
+  const d = (await (await viewer(app)).get(`/api/v1/sprints/${sid}/burndown?metric=hours`)).body
+    .data;
+  assert.equal(d.metric, 'hours');
+  assert.equal(d.unit, 'minutes');
+  assert.deepEqual(d.days, ['2026-05-11', '2026-05-12', '2026-05-13', '2026-05-14', '2026-05-15']);
+  assert.deepEqual(d.ideal, [2400, 1800, 1200, 600, 0]);
+  assert.deepEqual(d.remaining, [2400, 1800, 1500, 900, null]);
+  assert.deepEqual(d.total, [null, null, null, null, null]);
+  assert.deepEqual(d.scopeChanges, [null, null, null, null, null]); // el alcance en horas no se guarda
+});
+
+test('metric: points por defecto; valores desconocidos 400; sprint planeado usa las horas estimadas actuales', async () => {
+  const { app, db, pid, sid } = setup();
+  const v = await viewer(app);
+  assert.equal(
+    (await v.get(`/api/v1/sprints/${sid}/burndown?metric=points`)).body.data.metric,
+    'points',
+  );
+  assert.equal((await v.get(`/api/v1/sprints/${sid}/burndown?metric=dolares`)).status, 400);
+  const planned = sprint(db, {
+    project_id: pid,
+    status: 'planned',
+    start_date: '2026-06-01',
+    end_date: '2026-06-03',
+  });
+  db.prepare(
+    "INSERT INTO tasks (project_id, sprint_id, title, estimated_minutes, status) VALUES (?, ?, 'T', 600, 'todo')",
+  ).run(pid, planned);
+  db.prepare(
+    "INSERT INTO tasks (project_id, sprint_id, title, estimated_minutes, status) VALUES (?, ?, 'U', 300, 'done')",
+  ).run(pid, planned);
+  const d = (await v.get(`/api/v1/sprints/${planned}/burndown?metric=hours`)).body.data;
+  assert.deepEqual(d.ideal, [600, 300, 0]); // solo cuenta lo no terminado
+});

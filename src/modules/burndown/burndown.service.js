@@ -14,12 +14,15 @@ export function createBurndownService({ db, timezone = 'America/Mexico_City' }) 
   const currentPoints = db.prepare(
     'SELECT COALESCE(SUM(story_points), 0) FROM tasks WHERE sprint_id = ?',
   );
+  const currentMinutes = db.prepare(
+    "SELECT COALESCE(SUM(estimated_minutes), 0) FROM tasks WHERE sprint_id = ? AND status != 'done'",
+  );
 
   const projectCode = db.prepare('SELECT code FROM projects WHERE id = ?').pluck();
 
   return {
     projectCode: (projectId) => projectCode.get(projectId),
-    sprint(sprintId) {
+    sprint(sprintId, { metric = 'points' } = {}) {
       const sprint = sprintRow.get(sprintId);
       if (!sprint) throw AppError.notFound('Sprint no encontrado');
       const today = todayIn(timezone);
@@ -46,8 +49,11 @@ export function createBurndownService({ db, timezone = 'America/Mexico_City' }) 
         return carried;
       });
 
-      const commitment =
-        sprint.committed_points ?? rows[0]?.total_points ?? currentPoints.pluck().get(sprintId);
+      const hours = metric === 'hours';
+      const commitment = hours
+        ? (rows[0]?.remaining_minutes ?? currentMinutes.pluck().get(sprintId))
+        : (sprint.committed_points ?? rows[0]?.total_points ?? currentPoints.pluck().get(sprintId));
+      const none = days.map(() => null);
       return {
         sprint: {
           id: sprint.id,
@@ -58,17 +64,21 @@ export function createBurndownService({ db, timezone = 'America/Mexico_City' }) 
           endDate: sprint.end_date,
           committedPoints: sprint.committed_points,
         },
-        metric: 'points',
+        metric,
+        unit: hours ? 'minutes' : 'points',
         today,
         days,
         ideal: idealLine(days, commitment),
-        remaining: real.map((r) => (r ? r.remaining_points : null)),
-        total: real.map((r) => (r ? r.total_points : null)),
-        scopeChanges: real.map((r, i) => {
-          if (!r) return null;
-          const previous = real[i - 1];
-          return previous ? r.total_points - previous.total_points : 0;
-        }),
+        remaining: real.map((r) => (r ? (hours ? r.remaining_minutes : r.remaining_points) : null)),
+        // El alcance en horas no se guarda por día: solo hay cambios de alcance en puntos.
+        total: hours ? none : real.map((r) => (r ? r.total_points : null)),
+        scopeChanges: hours
+          ? none
+          : real.map((r, i) => {
+              if (!r) return null;
+              const previous = real[i - 1];
+              return previous ? r.total_points - previous.total_points : 0;
+            }),
       };
     },
   };

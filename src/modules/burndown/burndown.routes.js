@@ -1,10 +1,12 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { AppError } from '../../lib/AppError.js';
+import { parseWith } from '../../lib/parse.js';
 import { requireAuth } from '../../middlewares/requireAuth.js';
 import { createBurndownService } from './burndown.service.js';
 
 const idSchema = z.coerce.number().int().positive();
+const querySchema = z.object({ metric: z.enum(['points', 'hours']).default('points') });
 
 /** Burndown: lectura para todo usuario autenticado. */
 export function createBurndownRouter({ db, timezone }) {
@@ -18,7 +20,8 @@ export function createBurndownRouter({ db, timezone }) {
   const router = Router();
   router.use(['/api/v1/sprints/:id/burndown', '/projects/:id/sprints/:sid/burndown'], requireAuth);
   router.get('/api/v1/sprints/:id/burndown', (req, res) => {
-    res.json({ data: service.sprint(sprintId(req)) });
+    const { metric } = parseWith(querySchema, req.query);
+    res.json({ data: service.sprint(sprintId(req), { metric }) });
   });
   router.get('/projects/:id/sprints/:sid/burndown', (req, res) => {
     const projectId = idSchema.safeParse(req.params.id);

@@ -74,3 +74,14 @@ test('el Burndown se enlaza desde la lista de sprints y desde el tablero', async
   assert.match((await pm.get(`/projects/${pid}/sprints`)).text, link);
   assert.match((await pm.get(`/projects/${pid}/sprints/${sid}/board`)).text, link);
 });
+
+test('RF-83: la vista permite alternar entre puntos y horas y el script pide metric', async () => {
+  const { app, pid, sid } = setup();
+  const page = await (await loginAs(app, 'viewer')).get(`/projects/${pid}/sprints/${sid}/burndown`);
+  assert.match(page.text, /id="burndown-metric"/);
+  assert.match(page.text, /value="hours"/);
+  const script = (await request(app).get('/js/pages/burndown.js')).text;
+  assert.match(script, /metric=/);
+  assert.match(script, /Horas restantes/);
+  assert.match(script, /\/ 60/); // minutos → horas
+});
