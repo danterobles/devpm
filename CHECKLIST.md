@@ -89,7 +89,7 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 - [x] Vistas de clientes internos: listado con búsqueda/filtro/paginación y formulario (RF-10, RF-11)
 - [x] Vistas de clientes externos: listado y formulario con tarifa y moneda (RF-15, RF-16)
 - [x] Regla: no eliminar cliente con proyectos, solo desactivar (RF-18)
-- [ ] Módulo `team`: CRUD de miembros (RF-20)
+- [x] Módulo `team`: CRUD de miembros (RF-20)
 - [ ] Skills y nivel por miembro (RF-21)
 - [ ] Ausencias (RF-22)
 - [ ] Pruebas de integración de clientes y equipo

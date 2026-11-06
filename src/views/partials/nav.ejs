@@ -5,6 +5,7 @@
       <li><a class="hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-white" href="/">Inicio</a></li>
       <% if (typeof currentUser !== 'undefined' && currentUser) { %>
         <li><a class="hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-white" href="/clients">Clientes</a></li>
+        <li><a class="hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-white" href="/team">Equipo</a></li>
       <% } %>
       <% if (typeof currentUser !== 'undefined' && currentUser && currentUser.role === 'admin') { %>
         <li><a class="hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-white" href="/admin/users">Usuarios</a></li>

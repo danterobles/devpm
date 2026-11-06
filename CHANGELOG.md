@@ -87,6 +87,11 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   ocultan a `developer` y `viewer`. Enlace «Clientes» en la navegación.
 - Regla RF-18: los clientes no se eliminan (la API no ofrece `DELETE`; solo se desactivan) y la BD
   rechaza borrar uno con proyectos; cubierto con pruebas.
+- Módulo `team` (RF-20): API `/api/v1/team-members` y vistas `/team` (listado con búsqueda, puesto,
+  estado y paginación; alta, edición y desactivación). Capacidad semanal en minutos (formulario en
+  horas), costo por hora en centavos visible solo para `admin` y `pm`; correo único; sin eliminación.
+  Escritura solo `admin` y `pm`. Enlace «Equipo» en la navegación.
+- Utilidad `isIsoDate` en `src/lib/dates.js`.
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y

@@ -1,0 +1,68 @@
+<% const action = editing ? `/team/${member.id}` : '/team'; %>
+<% const field = 'mt-1 w-full rounded border border-slate-300 px-3 py-2'; %>
+<% const ro = canWrite ? '' : 'readonly disabled'; %>
+<% const v = (key) => (member[key] === null || member[key] === undefined ? '' : member[key]); %>
+<section class="mx-auto max-w-lg">
+  <h1 class="text-2xl font-bold"><%= title %></h1>
+  <% if (error) { %>
+    <p role="alert" class="mt-4 rounded border border-danger bg-red-50 px-4 py-3 text-sm text-red-800"><%= error %></p>
+  <% } %>
+  <form method="post" action="<%= action %>" class="mt-4 space-y-4">
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label for="firstName" class="block text-sm font-medium">Nombre</label>
+        <input id="firstName" name="firstName" required maxlength="80" value="<%= v('firstName') %>" <%= ro %> class="<%= field %>" />
+      </div>
+      <div>
+        <label for="lastName" class="block text-sm font-medium">Apellidos</label>
+        <input id="lastName" name="lastName" required maxlength="80" value="<%= v('lastName') %>" <%= ro %> class="<%= field %>" />
+      </div>
+    </div>
+    <div>
+      <label for="email" class="block text-sm font-medium">Correo</label>
+      <input id="email" name="email" type="email" required maxlength="254" value="<%= v('email') %>" <%= ro %> class="<%= field %>" />
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label for="position" class="block text-sm font-medium">Puesto</label>
+        <select id="position" name="position" <%= ro %> class="<%= field %>">
+          <% positions.forEach((p) => { %><option value="<%= p %>" <%= member.position === p ? 'selected' : '' %>><%= p %></option><% }) %>
+        </select>
+      </div>
+      <div>
+        <label for="seniority" class="block text-sm font-medium">Seniority</label>
+        <select id="seniority" name="seniority" <%= ro %> class="<%= field %>">
+          <% seniorities.forEach((s) => { %><option value="<%= s %>" <%= member.seniority === s ? 'selected' : '' %>><%= s %></option><% }) %>
+        </select>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label for="weeklyHours" class="block text-sm font-medium">Capacidad semanal (horas)</label>
+        <input id="weeklyHours" name="weeklyHours" required inputmode="decimal" pattern="\d+(\.\d{1,2})?" value="<%= v('weeklyHours') %>" <%= ro %> class="<%= field %>" />
+      </div>
+      <% if (canWrite) { %>
+        <div>
+          <label for="hourlyCost" class="block text-sm font-medium">Costo por hora</label>
+          <input id="hourlyCost" name="hourlyCost" required inputmode="decimal" pattern="\d+(\.\d{1,2})?" value="<%= v('hourlyCost') %>" class="<%= field %>" />
+        </div>
+      <% } %>
+    </div>
+    <div>
+      <label for="hireDate" class="block text-sm font-medium">Fecha de ingreso</label>
+      <input id="hireDate" name="hireDate" type="date" value="<%= v('hireDate') %>" <%= ro %> class="<%= field %>" />
+    </div>
+    <% if (editing) { %>
+      <div class="flex items-center gap-2">
+        <input id="isActive" name="isActive" type="checkbox" value="1" <%= member.isActive ? 'checked' : '' %> <%= ro %> />
+        <label for="isActive" class="text-sm font-medium">Miembro activo</label>
+      </div>
+    <% } %>
+    <div class="flex gap-3">
+      <% if (canWrite) { %>
+        <button type="submit" class="rounded bg-brand-600 px-4 py-2 font-medium text-white hover:bg-brand-700">Guardar</button>
+      <% } %>
+      <a href="/team" class="rounded border px-4 py-2 hover:bg-slate-100"><%= canWrite ? 'Cancelar' : 'Volver' %></a>
+    </div>
+  </form>
+</section>
