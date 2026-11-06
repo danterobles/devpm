@@ -141,6 +141,11 @@ CHECK (
 | notes | TEXT | | |
 | created_at / updated_at | TEXT | NN | |
 
+**Regla de traslape (decisión):** se permite guardar ausencias del mismo miembro con periodos
+traslapados (inclusivos), pero la respuesta incluye una advertencia `TIME_OFF_OVERLAP` con los ids
+que se traslapan (equivalente a la advertencia de sobreasignación RF-41). El cálculo de capacidad
+debe contar cada día de ausencia una sola vez.
+
 ### 3.6 `projects` — Proyectos
 
 | Columna | Tipo | Restricciones | Descripción |
