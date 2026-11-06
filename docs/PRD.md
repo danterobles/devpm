@@ -284,6 +284,23 @@ Empresas con relación comercial; su trabajo es facturable.
 | RF-83 | Burndown alternativo por horas restantes. | Baja |
 | RF-84 | Burnup de proyecto (alcance total vs. completado). | Baja |
 
+**Decisiones de definición (Burndown, RF-80 a RF-84):**
+
+- Lectura para cualquier usuario autenticado. Hay instantáneas solo para sprints `active` y `closed`
+  (al iniciar se guarda la del día 0 y al cerrar se guarda la final del día de cierre).
+- Eje de días: del `start_date` al `end_date` del sprint. Un día **pasado** sin instantánea (servidor
+  apagado) arrastra el último valor conocido —es exacto porque todo cambio de tarea recalcula el día—;
+  los días anteriores al inicio real del sprint y los futuros tienen valor real `null`.
+- Línea ideal: el primer día hábil (lunes a viernes, sin festivos) vale los puntos comprometidos
+  (`committed_points`) y el último día hábil vale 0, descendiendo linealmente entre días hábiles; los
+  fines de semana repiten el valor previo; un sprint de un solo día hábil termina en 0.
+- Cambio de alcance (RF-82) de un día = `total_points(d) − total_points(d−1)` (0 en la primera
+  instantánea). Burndown por horas (RF-83): `remaining_minutes` = suma de `estimated_minutes` de las
+  tareas no terminadas; su ideal parte de las horas restantes de la primera instantánea.
+- Burnup de proyecto (RF-84): por día, alcance = suma del `total_points` y completado = suma del
+  `completed_points` de la última instantánea de cada uno de sus sprints; no incluye tareas que nunca
+  estuvieron en un sprint.
+
 ### 5.11 Tablero de KPIs en tiempo real
 
 | ID | Requerimiento | Prioridad |
