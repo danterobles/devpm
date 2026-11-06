@@ -1,0 +1,6 @@
+node_modules
+public/vendor
+public/css
+package-lock.json
+*.ejs
+*.md
