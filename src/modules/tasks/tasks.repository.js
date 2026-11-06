@@ -47,7 +47,31 @@ export function createTasksRepository(db) {
   );
   const userMember = db.prepare('SELECT team_member_id FROM users WHERE id = ?');
 
+  const backlog = db.prepare(
+    `${SELECT} WHERE t.project_id = ? AND t.sprint_id IS NULL AND t.parent_task_id IS NULL
+      ORDER BY t.sort_order, t.id`,
+  );
+  const projectTasks = db.prepare(
+    'SELECT id, project_id, sort_order FROM tasks WHERE project_id = ? ORDER BY sort_order, id',
+  );
+  const setOrder = db.prepare('UPDATE tasks SET sort_order = ? WHERE id = ?');
+  const openSprints = db.prepare(
+    "SELECT id, name, status FROM sprints WHERE project_id = ? AND status != 'closed' ORDER BY start_date, id",
+  );
+  const members = db.prepare(
+    `SELECT DISTINCT m.id, trim(m.first_name || ' ' || m.last_name) AS name
+       FROM assignments a JOIN team_members m ON m.id = a.team_member_id
+      WHERE a.project_id = ? AND m.is_active = 1 ORDER BY name COLLATE NOCASE`,
+  );
+  const projectInfo = db.prepare('SELECT id, code, name FROM projects WHERE id = ?');
+
   return {
+    backlog: (projectId) => backlog.all(projectId),
+    projectTasks: (projectId) => projectTasks.all(projectId),
+    setSortOrder: (id, order) => setOrder.run(order, id),
+    openSprints: (projectId) => openSprints.all(projectId),
+    assignedMembers: (projectId) => members.all(projectId),
+    projectInfo: (id) => projectInfo.get(id),
     projectExists: (id) => Boolean(project.get(id)),
     findById: (id) => byId.get(id),
     findSprint: (id) => sprint.get(id),

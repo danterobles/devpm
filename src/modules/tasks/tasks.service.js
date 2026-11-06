@@ -102,6 +102,56 @@ export function createTasksService({ db, repository }) {
       return { data: rows.map(toDto), meta: { page: query.page, pageSize: query.pageSize, total } };
     },
     get: (id) => toDto(requireTask(id)),
+    backlog(projectId) {
+      requireProject(projectId);
+      return repository.backlog(projectId).map(toDto);
+    },
+    formOptions(projectId) {
+      requireProject(projectId);
+      return {
+        project: repository.projectInfo(projectId),
+        sprints: repository.openSprints(projectId),
+        members: repository.assignedMembers(projectId),
+      };
+    },
+
+    /**
+     * Reordena el subconjunto `taskIds`: las tareas reciben, en el nuevo orden, los mismos lugares
+     * (`sort_order`) que ocupaban, de modo que las demás conservan su posición relativa.
+     */
+    reorder(actorId, projectId, taskIds) {
+      requireProject(projectId);
+      if (new Set(taskIds).size !== taskIds.length) {
+        throw AppError.businessRule('La lista contiene tareas repetidas');
+      }
+      db.transaction(() => {
+        // Normaliza empates para que cada tarea tenga un lugar propio.
+        const all = repository.projectTasks(projectId);
+        all.forEach((t, i) => {
+          if (t.sort_order !== i + 1) repository.setSortOrder(t.id, i + 1);
+        });
+        const slots = new Map(all.map((t, i) => [t.id, i + 1]));
+        if (taskIds.some((id) => !slots.has(id))) {
+          throw AppError.businessRule('Todas las tareas deben pertenecer al proyecto');
+        }
+        const places = taskIds.map((id) => slots.get(id)).sort((a, b) => a - b);
+        taskIds.forEach((id, i) => repository.setSortOrder(id, places[i]));
+      })();
+      return repository.backlog(projectId).map(toDto);
+    },
+
+    /** Sube o baja una tarea un lugar dentro del backlog; en los extremos no hace nada. */
+    moveInBacklog(actorId, projectId, taskId, direction) {
+      const task = requireTask(taskId);
+      if (task.project_id !== projectId) throw AppError.notFound('Tarea no encontrada');
+      const ids = repository.backlog(projectId).map((t) => t.id);
+      const from = ids.indexOf(taskId);
+      const to = direction === 'up' ? from - 1 : from + 1;
+      if (from === -1 || to < 0 || to >= ids.length) return;
+      [ids[from], ids[to]] = [ids[to], ids[from]];
+      this.reorder(actorId, projectId, ids);
+    },
+
     history(id) {
       requireTask(id);
       return repository.historyOf(id).map((h) => ({

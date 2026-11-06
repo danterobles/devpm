@@ -77,3 +77,9 @@ export const listQuerySchema = z.object({
   assigneeId: z.coerce.number().int().positive().optional(),
   backlog: z.enum(['true', 'false']).optional(),
 });
+
+export const reorderSchema = z.strictObject({
+  taskIds: z.array(z.number().int().positive()).min(1).max(500),
+});
+
+export const moveSchema = z.strictObject({ direction: z.enum(['up', 'down']) });

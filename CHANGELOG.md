@@ -141,6 +141,9 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   `backlog` (una tarea `done` no sale); estados libres con historial, `started_at` (primera vez en
   progreso) y `completed_at`; un `developer` solo cambia el estado de sus tareas; subtareas de un
   nivel que siguen el sprint del padre; tareas de sprints cerrados en solo lectura; bitácora.
+- Backlog del proyecto (RF-63): vista `/projects/:id/backlog` (tareas sin sprint en orden, alta rápida,
+  subir/bajar y enviar a un sprint) y `PUT /api/v1/projects/:id/tasks/order` para reordenar; las tareas
+  fuera del subconjunto conservan su posición relativa. Enlaces al backlog desde proyecto y sprints.
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y

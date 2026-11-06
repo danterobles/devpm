@@ -17,13 +17,19 @@ export function createTasksRouter({ db }) {
   const canChangeStatus = requireRole('admin', 'pm', 'developer');
 
   const router = Router();
-  router.use(['/api/v1/projects/:id/tasks', '/api/v1/tasks'], requireAuth);
+  router.use(['/api/v1/projects/:id/tasks', '/api/v1/tasks', '/projects/:id/backlog'], requireAuth);
   router.get('/api/v1/projects/:id/tasks', c.apiList);
   router.post('/api/v1/projects/:id/tasks', canWrite, c.apiCreate);
   router.get('/api/v1/tasks/:id', c.apiGet);
   router.get('/api/v1/tasks/:id/history', c.apiHistory);
+  router.put('/api/v1/projects/:id/tasks/order', canWrite, c.apiReorder);
   router.patch('/api/v1/tasks/:id', canWrite, c.apiUpdate);
   router.post('/api/v1/tasks/:id/status', canChangeStatus, c.apiChangeStatus);
   router.delete('/api/v1/tasks/:id', canWrite, c.apiRemove);
+  // Vistas
+  router.get('/projects/:id/backlog', c.htmlBacklog);
+  router.post('/projects/:id/backlog', canWrite, c.htmlBacklogCreate);
+  router.post('/projects/:id/backlog/:taskId/move', canWrite, c.htmlBacklogMove);
+  router.post('/projects/:id/backlog/:taskId/sprint', canWrite, c.htmlBacklogSprint);
   return router;
 }

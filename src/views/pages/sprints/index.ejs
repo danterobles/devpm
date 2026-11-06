@@ -1,6 +1,6 @@
 <div class="flex items-center justify-between">
   <h1 class="text-2xl font-bold">Sprints <span class="text-slate-500"><%= project.code %></span></h1>
-  <a href="/projects/<%= project.id %>" class="text-sm underline">Volver al proyecto</a>
+  <p class="text-sm"><a href="/projects/<%= project.id %>" class="underline">Proyecto</a> · <a href="/projects/<%= project.id %>/backlog" class="underline">Backlog</a></p>
 </div>
 <% if (error) { %>
   <p role="alert" class="mt-4 rounded border border-danger bg-red-50 px-4 py-3 text-sm text-red-800"><%= error %></p>
