@@ -35,6 +35,9 @@ export function createApp({ config, db = null, logger = createLogger(config) }) 
 
   app.use(
     helmet({
+      // «same-origin» (no «no-referrer»): el navegador envía Origin en los formularios propios
+      // y verifyOrigin puede comprobarlo, sin filtrar el referrer a otros sitios.
+      referrerPolicy: { policy: 'same-origin' },
       contentSecurityPolicy: {
         directives: {
           defaultSrc: ["'self'"],

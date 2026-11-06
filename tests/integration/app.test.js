@@ -57,3 +57,9 @@ test('archivos estáticos locales se sirven', async () => {
   const res = await request(buildTestApp()).get('/vendor/chart.umd.min.js');
   assert.equal(res.status, 200);
 });
+
+test('la política de referrer permite que los navegadores envíen Origin en formularios del mismo sitio', async () => {
+  // Con "no-referrer" los navegadores mandan «Origin: null» en los POST y verifyOrigin los rechazaría.
+  const res = await request(buildTestApp()).get('/health');
+  assert.equal(res.headers['referrer-policy'], 'same-origin');
+});
