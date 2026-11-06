@@ -1,0 +1,46 @@
+{
+  "name": "devpm",
+  "version": "0.0.1",
+  "description": "DevPM - Gestión de proyectos de desarrollo de software con KPIs en tiempo real",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "concurrently -k -n srv,css \"node --watch --env-file-if-exists=.env src/server.js\" \"npm:watch:css\"",
+    "start": "node --env-file-if-exists=.env src/server.js",
+    "build:css": "tailwindcss -i src/styles/input.css -o public/css/output.css --minify",
+    "watch:css": "tailwindcss -i src/styles/input.css -o public/css/output.css --watch",
+    "postinstall": "node scripts/copy-vendor.js",
+    "test": "node --test --test-reporter=spec \"tests/**/*.test.js\"",
+    "test:coverage": "node --test --experimental-test-coverage \"tests/**/*.test.js\"",
+    "lint": "eslint .",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "better-sqlite3": "^13.0.3",
+    "chart.js": "^4.6.1",
+    "ejs": "^7.0.2",
+    "express": "^5.3.0",
+    "express-rate-limit": "^8.7.3",
+    "express-session": "^1.19.0",
+    "frappe-gantt": "^1.2.2",
+    "helmet": "^8.3.0",
+    "pino": "^10.4.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@tailwindcss/cli": "^4.3.5",
+    "concurrently": "^10.0.6",
+    "eslint": "^10.14.0",
+    "globals": "^17.14.0",
+    "pino-pretty": "^13.2.0",
+    "prettier": "^3.9.10",
+    "supertest": "^7.3.1",
+    "tailwindcss": "^4.3.5"
+  }
+}
