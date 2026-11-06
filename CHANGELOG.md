@@ -35,6 +35,19 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 - `scripts/copy-vendor.js`: Chart.js y Frappe Gantt servidos localmente desde `public/vendor`.
 - ESLint, Prettier y 11 pruebas iniciales (`node:test` + `supertest`).
 
+### Agregado (Etapa 2 — Base de datos)
+- `src/db/connection.js` (PRAGMAs WAL, foreign_keys, busy_timeout) y runner de migraciones
+  transaccional con `schema_migrations`.
+- Migraciones `001_init` (tablas de negocio) y `002_indexes_views` (índices, sprint activo único
+  y vistas `v_project_progress`, `v_member_allocations`, `v_time_by_client_type`).
+- Utilidades `src/lib/dates.js` (reloj inyectable) y `src/lib/audit.js` (`diff`, `recordAudit`).
+- Seed de desarrollo y scripts `db:migrate`, `db:seed`, `db:reset`.
+- Helpers de prueba (`testDb`, `factories`) y 37 pruebas nuevas (esquema, vistas, auditoría, fechas, seed).
+- El servidor abre la BD y `/health` reporta su estado.
+
+### Corregido
+- CHECK de fechas: `col = date(col)` aceptaba formatos inválidos (daba NULL); ahora `col IS date(col)`.
+
 ### Cambiado
 - `CLAUDE.md`: nueva regla para preguntar al usuario ante cualquier duda de definición y
   registrar la decisión en `docs/` antes de implementarla.

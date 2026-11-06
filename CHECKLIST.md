@@ -14,8 +14,8 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 |---|---|---|
 | 0 | Documentación y repositorio | ✅ Completada |
 | 1 | Scaffolding del proyecto | ✅ Completada |
-| 2 | Base de datos | ⏳ Siguiente |
-| 3 | Autenticación y roles | Pendiente |
+| 2 | Base de datos | ✅ Completada |
+| 3 | Autenticación y roles | ⏳ Siguiente |
 | 4 | Clientes y equipo | Pendiente |
 | 5 | Proyectos, hitos y asignaciones | Pendiente |
 | 6 | Planeación: sprints y tareas | Pendiente |
@@ -59,16 +59,16 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 
 ## Etapa 2 — Base de datos
 
-- [ ] `src/db/connection.js` con PRAGMAs (WAL, foreign_keys, busy_timeout, synchronous)
-- [ ] Runner de migraciones `src/db/migrate.js` con tabla `schema_migrations`
-- [ ] Migración `001_init.sql`: todas las tablas de `docs/DATA.md` §3
-- [ ] Migración `002_indexes_views.sql`: índices (§4) y vistas de KPIs (§5)
-- [ ] Helper de pruebas `tests/helpers/testDb.js` (BD `:memory:` migrada) y `factories.js`
-- [ ] Pruebas de restricciones clave (CHECK de clientes, un sprint activo, FK)
-- [ ] Seed de desarrollo `src/db/seeds/dev.js` (DATA §7) y script `db:reset`
-- [ ] Utilidad de auditoría (`audit_log`) reutilizable por los services
+- [x] `src/db/connection.js` con PRAGMAs (WAL, foreign_keys, busy_timeout, synchronous)
+- [x] Runner de migraciones `src/db/migrate.js` con tabla `schema_migrations`
+- [x] Migración `001_init.sql`: todas las tablas de `docs/DATA.md` §3
+- [x] Migración `002_indexes_views.sql`: índices (§4) y vistas de KPIs (§5)
+- [x] Helper de pruebas `tests/helpers/testDb.js` (BD `:memory:` migrada) y `factories.js`
+- [x] Pruebas de restricciones clave (CHECK de clientes, un sprint activo, FK)
+- [x] Seed de desarrollo `src/db/seeds/dev.js` (DATA §7) y script `db:reset`
+- [x] Utilidad de auditoría (`audit_log`) reutilizable por los services
 
-**Criterio de cierre:** `npm run db:reset` crea la BD con datos de ejemplo; pruebas de esquema pasan.
+**Criterio de cierre:** `npm run db:reset` crea la BD con datos de ejemplo; pruebas de esquema pasan. ✅
 
 ## Etapa 3 — Autenticación y roles
 
