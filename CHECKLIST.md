@@ -20,8 +20,8 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 | 5 | Proyectos, hitos y asignaciones | ✅ Completada |
 | 6 | Planeación: sprints y tareas | ✅ Completada |
 | 7 | Registro de tiempo | ✅ Completada |
-| 8 | Diagrama de Gantt | ⏳ Siguiente |
-| 9 | Burndown Chart | Pendiente |
+| 8 | Diagrama de Gantt | ✅ Completada |
+| 9 | Burndown Chart | ⏳ Siguiente |
 | 10 | Tablero de KPIs en tiempo real | Pendiente |
 | 11 | Calidad, seguridad y despliegue | Pendiente |
 
@@ -140,9 +140,9 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 - [x] Vista con Frappe Gantt: tareas, hitos, dependencias, avance y vistas día/semana/mes (RF-70–RF-72)
 - [x] Reprogramación arrastrando, validando dependencias (RF-73)
 - [x] Gantt de portafolio (RF-74)
-- [ ] Pruebas del formato de datos y de la validación de reprogramación
+- [x] Pruebas del formato de datos y de la validación de reprogramación
 
-**Criterio de cierre:** el Gantt refleja las tareas del seed y permite reprogramar con validación.
+**Criterio de cierre:** el Gantt refleja las tareas del seed y permite reprogramar con validación. ✅
 
 ## Etapa 9 — Burndown Chart
 
