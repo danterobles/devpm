@@ -113,6 +113,10 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 - Hitos por proyecto (RF-32): `GET/POST /api/v1/projects/:id/milestones`, `PATCH/DELETE .../:msId` y
   sección en la ficha del proyecto. Estados `pending`, `completed` y `missed`; `completed_at` se guarda
   al completar y se limpia al reabrir; ordenados por fecha compromiso; bitácora.
+- Módulo `assignments` (RF-40, RF-41, RF-42): `GET/POST /api/v1/projects/:id/assignments`,
+  `PATCH/DELETE .../:aId` y sección «Equipo asignado» en la ficha. Rol en el proyecto, dedicación 1–100 %
+  y periodo dentro del rango del proyecto (422); solo miembros activos; la sobreasignación (> 100 % en
+  periodos traslapados, inclusivos) se guarda con la advertencia `OVER_ALLOCATION`; bitácora.
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y

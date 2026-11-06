@@ -158,4 +158,57 @@
       <% } %>
     </section>
   <% } %>
+
+  <% if (editing) { %>
+    <section class="mt-10" aria-labelledby="assignments-title">
+      <h2 id="assignments-title" class="text-xl font-semibold">Equipo asignado</h2>
+      <% if (warning === 'over-allocation') { %>
+        <p role="status" class="mt-3 rounded border border-warn bg-amber-50 px-4 py-3 text-sm text-amber-900">La asignación se guardó, pero el miembro queda sobreasignado (más de 100 %) en ese periodo.</p>
+      <% } %>
+      <% if (assignmentError) { %>
+        <p role="alert" class="mt-3 rounded border border-danger bg-red-50 px-4 py-3 text-sm text-red-800"><%= assignmentError %></p>
+      <% } %>
+      <ul class="mt-3 divide-y text-sm">
+        <% assignments.forEach((a) => { %>
+          <li class="flex items-center justify-between py-2">
+            <span><%= a.memberName %> — <%= a.projectRole %> (<%= a.allocationPercent %> %), <%= a.startDate %> a <%= a.endDate %></span>
+            <% if (canWrite) { %>
+              <form method="post" action="/projects/<%= project.id %>/assignments/<%= a.id %>/delete">
+                <button type="submit" class="underline" aria-label="Quitar a <%= a.memberName %>">Quitar</button>
+              </form>
+            <% } %>
+          </li>
+        <% }) %>
+        <% if (assignments.length === 0) { %><li class="py-2 text-slate-600">Sin miembros asignados.</li><% } %>
+      </ul>
+      <% if (canWrite) { %>
+        <form method="post" action="/projects/<%= project.id %>/assignments" class="mt-4 flex flex-wrap items-end gap-3">
+          <div>
+            <label for="asgMember" class="block text-sm font-medium">Miembro</label>
+            <select id="asgMember" name="teamMemberId" required class="mt-1 rounded border border-slate-300 px-3 py-2">
+              <option value="">—</option>
+              <% options.members.forEach((m) => { %><option value="<%= m.id %>"><%= m.name %></option><% }) %>
+            </select>
+          </div>
+          <div>
+            <label for="asgRole" class="block text-sm font-medium">Rol en el proyecto</label>
+            <input id="asgRole" name="projectRole" required maxlength="80" class="mt-1 rounded border border-slate-300 px-3 py-2" />
+          </div>
+          <div>
+            <label for="asgPct" class="block text-sm font-medium">Dedicación (%)</label>
+            <input id="asgPct" name="allocationPercent" type="number" min="1" max="100" required class="mt-1 w-24 rounded border border-slate-300 px-3 py-2" />
+          </div>
+          <div>
+            <label for="asgStart" class="block text-sm font-medium">Desde</label>
+            <input id="asgStart" name="startDate" type="date" required value="<%= project.startDate %>" class="mt-1 rounded border border-slate-300 px-3 py-2" />
+          </div>
+          <div>
+            <label for="asgEnd" class="block text-sm font-medium">Hasta</label>
+            <input id="asgEnd" name="endDate" type="date" required value="<%= project.endDate %>" class="mt-1 rounded border border-slate-300 px-3 py-2" />
+          </div>
+          <button type="submit" class="rounded border px-4 py-2 text-sm hover:bg-slate-100">Asignar</button>
+        </form>
+      <% } %>
+    </section>
+  <% } %>
 </section>

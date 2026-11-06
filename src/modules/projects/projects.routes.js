@@ -5,12 +5,15 @@ import { createProjectsRepository } from './projects.repository.js';
 import { createProjectsService } from './projects.service.js';
 import { createMilestonesRepository } from './milestones.repository.js';
 import { createMilestonesService } from './milestones.service.js';
+import { createAssignmentsRepository } from '../assignments/assignments.repository.js';
+import { createAssignmentsService } from '../assignments/assignments.service.js';
 import { createProjectsController } from './projects.controller.js';
 
 /** Proyectos: lectura para todo usuario autenticado; escritura solo `admin` y `pm`. */
 export function createProjectsRouter({ db, timezone }) {
   const c = createProjectsController({
     service: createProjectsService({ db, repository: createProjectsRepository(db), timezone }),
+    assignments: createAssignmentsService({ db, repository: createAssignmentsRepository(db) }),
     milestones: createMilestonesService({ db, repository: createMilestonesRepository(db) }),
   });
   const canWrite = requireRole('admin', 'pm');
@@ -22,6 +25,10 @@ export function createProjectsRouter({ db, timezone }) {
   api.get('/:id', c.apiGet);
   api.patch('/:id', canWrite, c.apiUpdate);
   api.post('/:id/status', canWrite, c.apiChangeStatus);
+  api.get('/:id/assignments', c.apiAssignmentsList);
+  api.post('/:id/assignments', canWrite, c.apiAssignmentCreate);
+  api.patch('/:id/assignments/:aId', canWrite, c.apiAssignmentUpdate);
+  api.delete('/:id/assignments/:aId', canWrite, c.apiAssignmentRemove);
   api.get('/:id/milestones', c.apiMilestonesList);
   api.post('/:id/milestones', canWrite, c.apiMilestoneCreate);
   api.patch('/:id/milestones/:msId', canWrite, c.apiMilestoneUpdate);
@@ -35,6 +42,8 @@ export function createProjectsRouter({ db, timezone }) {
   html.get('/:id', c.htmlEdit);
   html.post('/:id', canWrite, c.htmlUpdate);
   html.post('/:id/status', canWrite, c.htmlChangeStatus);
+  html.post('/:id/assignments', canWrite, c.htmlAssignmentCreate);
+  html.post('/:id/assignments/:aId/delete', canWrite, c.htmlAssignmentRemove);
   html.post('/:id/milestones', canWrite, c.htmlMilestoneCreate);
   html.post('/:id/milestones/:msId/status', canWrite, c.htmlMilestoneStatus);
   html.post('/:id/milestones/:msId/delete', canWrite, c.htmlMilestoneRemove);

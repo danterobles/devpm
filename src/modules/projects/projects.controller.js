@@ -1,6 +1,11 @@
 import { AppError } from '../../lib/AppError.js';
 import { parseWith } from '../../lib/parse.js';
 import {
+  createAssignmentSchema,
+  idSchema as assignmentIdSchema,
+  updateAssignmentSchema,
+} from '../assignments/assignments.schemas.js';
+import {
   MILESTONE_STATUSES,
   createMilestoneSchema,
   milestoneIdSchema,
@@ -29,6 +34,12 @@ const parseId = (raw) => {
 const parseMilestoneId = (raw) => {
   const parsed = milestoneIdSchema.safeParse(raw);
   if (!parsed.success) throw AppError.notFound('Hito no encontrado');
+  return parsed.data;
+};
+
+const parseAssignmentId = (raw) => {
+  const parsed = assignmentIdSchema.safeParse(raw);
+  if (!parsed.success) throw AppError.notFound('Asignación no encontrada');
   return parsed.data;
 };
 
@@ -64,7 +75,7 @@ function formToInput(body) {
   return input;
 }
 
-export function createProjectsController({ service, milestones }) {
+export function createProjectsController({ service, milestones, assignments }) {
   const actor = (req) => req.session.userId;
 
   const formView = (
@@ -78,6 +89,9 @@ export function createProjectsController({ service, milestones }) {
       statusError = null,
       milestoneList = [],
       milestoneError = null,
+      assignmentList = [],
+      assignmentError = null,
+      warning = null,
     },
   ) =>
     res.status(status).render('pages/projects/form', {
@@ -89,6 +103,9 @@ export function createProjectsController({ service, milestones }) {
       statusError,
       milestones: milestoneList,
       milestoneError,
+      assignments: assignmentList,
+      assignmentError,
+      warning,
       milestoneStatuses: MILESTONE_STATUSES,
       transitions: editing ? service.allowedTransitions(project.status) : [],
       options: service.options(),
@@ -97,7 +114,12 @@ export function createProjectsController({ service, milestones }) {
     });
 
   /** Ficha del proyecto (formulario de edición + transiciones de estado). */
-  function fichaView(req, res, id, { status = 200, error = null, milestoneError = null } = {}) {
+  function fichaView(
+    req,
+    res,
+    id,
+    { status = 200, error = null, milestoneError = null, assignmentError = null } = {},
+  ) {
     const project = service.get(id);
     formView(res, {
       status,
@@ -112,6 +134,9 @@ export function createProjectsController({ service, milestones }) {
       statusError: error,
       milestoneList: milestones.list(id),
       milestoneError,
+      assignmentList: assignments.list(id),
+      assignmentError,
+      warning: req.query.warning === 'over-allocation' ? 'over-allocation' : null,
     });
   }
 
@@ -173,6 +198,49 @@ export function createProjectsController({ service, milestones }) {
     htmlEdit(req, res) {
       fichaView(req, res, parseId(req.params.id));
     },
+    // ---- Asignaciones (RF-40, RF-41) ----
+    apiAssignmentsList: (req, res) => res.json({ data: assignments.list(parseId(req.params.id)) }),
+    apiAssignmentCreate(req, res) {
+      const input = parseWith(createAssignmentSchema, req.body);
+      res.status(201).json(assignments.create(actor(req), parseId(req.params.id), input));
+    },
+    apiAssignmentUpdate(req, res) {
+      const input = parseWith(updateAssignmentSchema, req.body);
+      const id = parseAssignmentId(req.params.aId);
+      res.json(assignments.update(actor(req), parseId(req.params.id), id, input));
+    },
+    apiAssignmentRemove(req, res) {
+      assignments.remove(actor(req), parseId(req.params.id), parseAssignmentId(req.params.aId));
+      res.status(204).end();
+    },
+    htmlAssignmentCreate(req, res) {
+      const id = parseId(req.params.id);
+      try {
+        const b = req.body;
+        const input = parseWith(createAssignmentSchema, {
+          teamMemberId: Number(b.teamMemberId),
+          projectRole: b.projectRole,
+          allocationPercent: Number(b.allocationPercent),
+          startDate: b.startDate,
+          endDate: b.endDate,
+        });
+        const { warnings } = assignments.create(actor(req), id, input);
+        const flag = warnings.length > 0 ? '?warning=over-allocation' : '';
+        return res.redirect(`/projects/${id}${flag}`);
+      } catch (err) {
+        if (!(err instanceof AppError) || err.status >= 500 || err.status === 404) throw err;
+        return fichaView(req, res, id, {
+          status: err.status,
+          assignmentError: err.details?.[0]?.message ?? err.message,
+        });
+      }
+    },
+    htmlAssignmentRemove(req, res) {
+      const id = parseId(req.params.id);
+      assignments.remove(actor(req), id, parseAssignmentId(req.params.aId));
+      res.redirect(`/projects/${id}`);
+    },
+
     // ---- Hitos (RF-32) ----
     apiMilestonesList: (req, res) => res.json({ data: milestones.list(parseId(req.params.id)) }),
     apiMilestoneCreate(req, res) {

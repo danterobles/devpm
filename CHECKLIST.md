@@ -102,8 +102,8 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 - [x] Transiciones de estado válidas (RF-31, DATA §3.6)
 - [x] Hitos por proyecto (RF-32)
 - [ ] Ficha del proyecto (resumen, equipo, hitos) (RF-33)
-- [ ] Módulo `assignments` con validación de periodo dentro del proyecto (RF-40)
-- [ ] Advertencia de sobreasignación > 100 % (RF-41)
+- [x] Módulo `assignments` con validación de periodo dentro del proyecto (RF-40)
+- [x] Advertencia de sobreasignación > 100 % (RF-41)
 - [ ] Vista de carga del equipo por semana (RF-23) y matriz de asignaciones (RF-43)
 - [ ] Fichas de cliente con proyectos y horas (RF-12, RF-17)
 - [ ] Pruebas: transiciones inválidas (422), sobreasignación, permisos
