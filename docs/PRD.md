@@ -256,6 +256,24 @@ Empresas con relación comercial; su trabajo es facturable.
 | RF-73 | Reprogramar arrastrando la barra (solo `admin`/`pm`), persistiendo las nuevas fechas. | Media |
 | RF-74 | Gantt de portafolio: un renglón por proyecto activo. | Media |
 
+**Decisiones de definición (Gantt, RF-70 a RF-74):**
+
+- Datos del Gantt: se dibujan las tareas (y subtareas) que tienen fecha de inicio y de fin; las demás
+  se listan como «sin programar». Los hitos se dibujan como barra de un día. Las tareas se ordenan por
+  fecha de inicio y pueden agruparse por sprint (`groupBy=sprint`; el backlog al final). Lectura para
+  cualquier usuario autenticado.
+- Reprogramar (RF-73, solo `admin` y `pm`): al cambiar las fechas de una tarea (arrastrando o por
+  cualquier edición) el servidor exige que (a) inicie **después** de que termine cada predecesora
+  (fin-a-inicio), (b) termine **antes** de que inicie cada sucesora, y (c) quede dentro del rango
+  planeado del proyecto. Si no se cumple responde 422 con el motivo y la barra regresa a su lugar.
+  No se mueven otras tareas automáticamente (sin cascada).
+- Los hitos son de solo lectura en el Gantt; su fecha se edita en la ficha del proyecto.
+- Gantt de portafolio (RF-74): solo proyectos `active`, un renglón por proyecto (inicio → fin
+  planeados). Avance = puntos de historia en `done` ÷ puntos totales de sus tareas; sin puntos, tareas
+  `done` ÷ tareas; sin tareas, 0.
+- Avance de una tarea: 100 si está `done`; si no, horas registradas (enviadas y aprobadas) ÷ horas
+  estimadas, con tope de 95; sin estimación, 0.
+
 ### 5.10 Burndown Chart
 
 | ID | Requerimiento | Prioridad |
