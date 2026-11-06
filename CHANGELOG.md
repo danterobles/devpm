@@ -100,6 +100,13 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   la advertencia `TIME_OFF_OVERLAP` (decisión registrada en `docs/DATA.md` §3.5); bitácora.
 - Utilidad `isIsoDate` en `src/lib/dates.js`.
 
+### Agregado (Etapa 5 — Proyectos, hitos y asignaciones)
+- Módulo `projects` (RF-30, RF-34): API `/api/v1/projects` y vistas `/projects` (listado con búsqueda,
+  estado, prioridad, cliente, líder y paginación; alta y edición). Código autogenerado `PRJ-AAAA-NNN`,
+  `is_billable` por defecto según el tipo de cliente, presupuesto en minutos y centavos (formulario en
+  horas y pesos), cliente activo obligatorio, cliente solo editable en planeación, fechas coherentes con
+  las asignaciones existentes y bitácora. Escritura solo `admin` y `pm`. Enlace «Proyectos» en la navegación.
+
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y
   todo el estado se conserva en CHECKLIST, CHANGELOG y docs.

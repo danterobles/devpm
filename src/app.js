@@ -9,6 +9,7 @@ import { verifyOrigin } from './middlewares/verifyOrigin.js';
 import { layout } from './middlewares/layout.js';
 import { createSession } from './modules/auth/session.js';
 import { createClientsRouter } from './modules/clients/clients.routes.js';
+import { createProjectsRouter } from './modules/projects/projects.routes.js';
 import { createTeamRouter } from './modules/team/team.routes.js';
 import { createUsersRouter } from './modules/auth/users.routes.js';
 import { createAuthRouter } from './modules/auth/auth.routes.js';
@@ -66,6 +67,7 @@ export function createApp({ config, db = null, logger = createLogger(config) }) 
   if (db) {
     app.use(createClientsRouter({ db }));
     app.use(createTeamRouter({ db }));
+    app.use(createProjectsRouter({ db }));
     app.use(
       createUsersRouter({
         db,

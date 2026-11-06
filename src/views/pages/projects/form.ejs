@@ -1,0 +1,93 @@
+<% const action = editing ? `/projects/${project.id}` : '/projects'; %>
+<% const field = 'mt-1 w-full rounded border border-slate-300 px-3 py-2'; %>
+<% const ro = canWrite ? '' : 'readonly disabled'; %>
+<% const v = (key) => (project[key] === null || project[key] === undefined ? '' : project[key]); %>
+<% const clientLocked = editing && project.status !== 'planning'; %>
+<section class="mx-auto max-w-2xl">
+  <h1 class="text-2xl font-bold"><%= title %><% if (editing) { %> <span class="text-slate-500"><%= project.code %></span><% } %></h1>
+  <% if (editing) { %><p class="mt-1 text-sm text-slate-600">Estado: <%= project.status %></p><% } %>
+  <% if (error) { %>
+    <p role="alert" class="mt-4 rounded border border-danger bg-red-50 px-4 py-3 text-sm text-red-800"><%= error %></p>
+  <% } %>
+  <form method="post" action="<%= action %>" class="mt-4 space-y-4">
+    <div>
+      <label for="name" class="block text-sm font-medium">Nombre</label>
+      <input id="name" name="name" required maxlength="150" value="<%= v('name') %>" <%= ro %> class="<%= field %>" />
+    </div>
+    <div>
+      <label for="description" class="block text-sm font-medium">Descripción</label>
+      <textarea id="description" name="description" rows="3" maxlength="2000" <%= ro %> class="<%= field %>"><%= v('description') %></textarea>
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label for="clientId" class="block text-sm font-medium">Cliente</label>
+        <select id="clientId" name="clientId" required <%= (clientLocked || !canWrite) ? 'disabled' : '' %> class="<%= field %>">
+          <option value="">—</option>
+          <% options.clients.forEach((c) => { %>
+            <option value="<%= c.id %>" <%= String(project.clientId ?? project.clientId) === String(c.id) ? 'selected' : '' %>><%= c.name %> (<%= c.type === 'internal' ? 'interno' : 'externo' %>)</option>
+          <% }) %>
+          <% if (editing && !options.clients.some((c) => c.id === project.clientId)) { %>
+            <option value="<%= project.clientId %>" selected><%= project.clientName %></option>
+          <% } %>
+        </select>
+      </div>
+      <div>
+        <label for="managerId" class="block text-sm font-medium">Líder</label>
+        <select id="managerId" name="managerId" <%= ro %> class="<%= field %>">
+          <option value="">Sin líder</option>
+          <% options.members.forEach((m) => { %>
+            <option value="<%= m.id %>" <%= String(v('managerId')) === String(m.id) ? 'selected' : '' %>><%= m.name %></option>
+          <% }) %>
+        </select>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label for="priority" class="block text-sm font-medium">Prioridad</label>
+        <select id="priority" name="priority" <%= ro %> class="<%= field %>">
+          <% priorities.forEach((p) => { %><option value="<%= p %>" <%= project.priority === p ? 'selected' : '' %>><%= p %></option><% }) %>
+        </select>
+      </div>
+      <div>
+        <label for="methodology" class="block text-sm font-medium">Metodología</label>
+        <select id="methodology" name="methodology" <%= ro %> class="<%= field %>">
+          <% methodologies.forEach((m) => { %><option value="<%= m %>" <%= project.methodology === m ? 'selected' : '' %>><%= m %></option><% }) %>
+        </select>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label for="startDate" class="block text-sm font-medium">Inicio planeado</label>
+        <input id="startDate" name="startDate" type="date" required value="<%= v('startDate') %>" <%= ro %> class="<%= field %>" />
+      </div>
+      <div>
+        <label for="endDate" class="block text-sm font-medium">Fin planeado</label>
+        <input id="endDate" name="endDate" type="date" required value="<%= v('endDate') %>" <%= ro %> class="<%= field %>" />
+      </div>
+    </div>
+    <div class="grid grid-cols-3 gap-4">
+      <div>
+        <label for="budgetHours" class="block text-sm font-medium">Presupuesto (horas)</label>
+        <input id="budgetHours" name="budgetHours" required inputmode="decimal" pattern="\d+(\.\d{1,2})?" value="<%= v('budgetHours') %>" <%= ro %> class="<%= field %>" />
+      </div>
+      <div>
+        <label for="budgetAmount" class="block text-sm font-medium">Presupuesto (monto)</label>
+        <input id="budgetAmount" name="budgetAmount" inputmode="decimal" pattern="\d+(\.\d{1,2})?" value="<%= v('budgetAmount') %>" <%= ro %> class="<%= field %>" />
+      </div>
+      <div>
+        <label for="isBillable" class="block text-sm font-medium">Facturable</label>
+        <select id="isBillable" name="isBillable" <%= ro %> class="<%= field %>">
+          <% if (!editing) { %><option value="">Según el cliente</option><% } %>
+          <option value="1" <%= v('isBillable') === '1' ? 'selected' : '' %>>Sí</option>
+          <option value="0" <%= v('isBillable') === '0' ? 'selected' : '' %>>No</option>
+        </select>
+      </div>
+    </div>
+    <div class="flex gap-3">
+      <% if (canWrite) { %>
+        <button type="submit" class="rounded bg-brand-600 px-4 py-2 font-medium text-white hover:bg-brand-700">Guardar</button>
+      <% } %>
+      <a href="/projects" class="rounded border px-4 py-2 hover:bg-slate-100"><%= canWrite ? 'Cancelar' : 'Volver' %></a>
+    </div>
+  </form>
+</section>
