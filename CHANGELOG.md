@@ -180,6 +180,7 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   filtros por rango, proyecto, cliente, miembro y estado, y formulario en `/time/approvals`. UTF-8 con
   BOM, coma como separador, horas con 2 decimales y protección contra inyección de fórmulas
   (`src/lib/csv.js`).
+- Prueba de extremo a extremo del flujo de tiempo (registrar, enviar la semana, rechazar, corregir, aprobar y exportar).
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y

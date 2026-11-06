@@ -19,8 +19,8 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 | 4 | Clientes y equipo | ✅ Completada |
 | 5 | Proyectos, hitos y asignaciones | ✅ Completada |
 | 6 | Planeación: sprints y tareas | ✅ Completada |
-| 7 | Registro de tiempo | ⏳ Siguiente |
-| 8 | Diagrama de Gantt | Pendiente |
+| 7 | Registro de tiempo | ✅ Completada |
+| 8 | Diagrama de Gantt | ⏳ Siguiente |
 | 9 | Burndown Chart | Pendiente |
 | 10 | Tablero de KPIs en tiempo real | Pendiente |
 | 11 | Calidad, seguridad y despliegue | Pendiente |
@@ -130,9 +130,9 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 - [x] Flujo de envío y aprobación/rechazo por el líder del proyecto (RF-52)
 - [x] Bandera facturable heredada y editable por el líder (RF-54)
 - [x] Exportación CSV (RF-55)
-- [ ] Pruebas: límite diario de 24 h, fecha futura, aprobación por pm ajeno (403)
+- [x] Pruebas: límite diario de 24 h, fecha futura, aprobación por pm ajeno (403)
 
-**Criterio de cierre:** criterio de aceptación PRD §8.3 (sin la parte de KPIs) cubierto por pruebas.
+**Criterio de cierre:** criterio de aceptación PRD §8.3 (sin la parte de KPIs) cubierto por pruebas. ✅
 
 ## Etapa 8 — Diagrama de Gantt
 
@@ -167,6 +167,7 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 - [ ] Burndown, Kanban y Gantt escuchan eventos y se refrescan solos
 - [ ] Umbrales configurables en `settings` (RF-93)
 - [ ] Prueba de integración: cambio de tarea → evento SSE recibido
+- [ ] Verificar PRD §8.3 (parte de KPIs): al aprobar las horas del developer, K4, K6 y K13 cambian
 - [ ] Verificar PRD §8.4: con dos asignaciones traslapadas al 60 % del mismo miembro, K7 = 1
 
 **Criterio de cierre:** criterios de aceptación PRD §8.2, §8.3 y §8.5 verificados.
