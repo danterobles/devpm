@@ -68,6 +68,40 @@ export function createTasksService({ db, repository }) {
     if (s.status === 'closed')
       throw AppError.businessRule('No se pueden agregar tareas a un sprint cerrado');
   }
+  /**
+   * RF-73: valida las fechas de una tarea. Dentro del rango del proyecto y, si es una tarea
+   * existente, respetando las dependencias fin-a-inicio: debe iniciar después de que termine cada
+   * predecesora y terminar antes de que inicie cada sucesora. Solo se revisa lo que se modifica.
+   */
+  function checkSchedule(projectId, taskId, { start, due, checkStart, checkDue }) {
+    const range = repository.projectRange(projectId);
+    const outside =
+      (checkStart && start && (start < range.start_date || start > range.end_date)) ||
+      (checkDue && due && (due < range.start_date || due > range.end_date));
+    if (outside) {
+      throw AppError.businessRule(
+        `Las fechas deben quedar dentro del proyecto (${range.start_date} a ${range.end_date})`,
+      );
+    }
+    if (taskId === null) return;
+    if (checkStart && start) {
+      const blocker = repository.predecessorDates(taskId).find((p) => start <= p.due_date);
+      if (blocker) {
+        throw AppError.businessRule(
+          `Debe iniciar después de que termine «${blocker.title}» (${blocker.due_date})`,
+        );
+      }
+    }
+    if (checkDue && due) {
+      const blocker = repository.successorDates(taskId).find((s) => due >= s.start_date);
+      if (blocker) {
+        throw AppError.businessRule(
+          `Debe terminar antes de que inicie «${blocker.title}» (${blocker.start_date})`,
+        );
+      }
+    }
+  }
+
   const audit = (actorId, id, action, changes) =>
     recordAudit(db, { userId: actorId, entity: 'task', entityId: id, action, changes });
 
@@ -291,6 +325,12 @@ export function createTasksService({ db, repository }) {
         assertEditable(parent);
         fields.sprintId = parent.sprint_id;
       }
+      checkSchedule(projectId, null, {
+        start: input.startDate,
+        due: input.dueDate,
+        checkStart: input.startDate !== undefined,
+        checkDue: input.dueDate !== undefined,
+      });
       checkSprint(projectId, fields.sprintId);
       checkMilestone(projectId, input.milestoneId);
       checkAssignee(projectId, input.assigneeId);
@@ -318,6 +358,12 @@ export function createTasksService({ db, repository }) {
           { field: 'dueDate', message: 'La fecha de fin no puede ser anterior a la de inicio' },
         ]);
       }
+      checkSchedule(before.project_id, id, {
+        start,
+        due,
+        checkStart: input.startDate !== undefined && input.startDate !== before.start_date,
+        checkDue: input.dueDate !== undefined && input.dueDate !== before.due_date,
+      });
       if (input.assigneeId !== undefined && input.assigneeId !== before.assignee_id) {
         checkAssignee(before.project_id, input.assigneeId);
       }

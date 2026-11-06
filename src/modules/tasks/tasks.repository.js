@@ -102,7 +102,22 @@ export function createTasksRepository(db) {
     'SELECT id, title FROM tasks WHERE project_id = ? AND id != ? ORDER BY sort_order, id',
   );
 
+  const projectRange = db.prepare('SELECT start_date, end_date FROM projects WHERE id = ?');
+  const predecessorDates = db.prepare(
+    `SELECT t.id, t.title, t.due_date FROM task_dependencies d
+       JOIN tasks t ON t.id = d.depends_on_task_id
+      WHERE d.task_id = ? AND t.due_date IS NOT NULL`,
+  );
+  const successorDates = db.prepare(
+    `SELECT t.id, t.title, t.start_date FROM task_dependencies d
+       JOIN tasks t ON t.id = d.task_id
+      WHERE d.depends_on_task_id = ? AND t.start_date IS NOT NULL`,
+  );
+
   return {
+    projectRange: (projectId) => projectRange.get(projectId),
+    predecessorDates: (taskId) => predecessorDates.all(taskId),
+    successorDates: (taskId) => successorDates.all(taskId),
     subtaskRows: (id) => subtaskRows.all(id),
     milestonesOf: (projectId) => milestoneRows.all(projectId),
     taskChoices: (projectId, exceptId) => taskChoices.all(projectId, exceptId),

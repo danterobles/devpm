@@ -191,8 +191,12 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 - Vista del Gantt `/projects/:id/gantt` (RF-70 a RF-72) con Frappe Gantt servido localmente
   (`public/js/pages/gantt.js`): escalas día/semana/mes, agrupación por sprint, dependencias, avance,
   línea del día actual, colores por estado (atrasadas con borde rojo, hitos en morado), popups con
-  contenido escapado y lista de tareas «sin programar». Solo lectura por ahora. Enlaces desde la ficha
-  del proyecto y los sprints.
+  contenido escapado y lista de tareas «sin programar». Enlaces desde la ficha del proyecto y los sprints.
+- Reprogramación arrastrando (RF-73): admin y pm arrastran las barras y el Gantt guarda con
+  `PATCH /api/v1/tasks/:id`; el servidor valida (en cualquier edición de fechas) que la tarea inicie
+  después de sus predecesoras, termine antes de sus sucesoras y quede dentro del proyecto (422 con el
+  motivo; la barra regresa a su lugar). Sin cascada; los hitos no se arrastran; las tareas de sprints
+  cerrados son de solo lectura.
 
 ### Corregido
 - Login rechazado con 403 en navegadores reales: `Referrer-Policy: no-referrer` (valor por defecto de

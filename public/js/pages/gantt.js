@@ -7,6 +7,7 @@
   if (!root || typeof Gantt === 'undefined') return;
 
   const projectId = root.dataset.projectId;
+  const canReschedule = root.dataset.canReschedule === 'true';
   const target = document.getElementById('gantt');
   const message = document.getElementById('gantt-message');
   const unscheduled = document.getElementById('gantt-unscheduled');
@@ -45,6 +46,35 @@
     if (meta.assigneeName) lines.push(`Responsable: ${escapeHtml(meta.assigneeName)}`);
     if (meta.sprintName) lines.push(`Sprint: ${escapeHtml(meta.sprintName)}`);
     return `<div class="p-2 text-sm">${lines.join('<br />')}</div>`;
+  }
+
+  // Fecha local YYYY-MM-DD (Frappe entrega Date; el fin ya viene como último día inclusivo).
+  const isoDate = (date) =>
+    `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+
+  // RF-73: persiste las nuevas fechas; si el servidor las rechaza, la barra regresa a su lugar.
+  async function reschedule(task, start, end) {
+    if (task.meta?.kind !== 'task') {
+      await load();
+      message.textContent = 'Los hitos se reprograman desde la ficha del proyecto.';
+      return;
+    }
+    try {
+      const response = await fetch(`/api/v1/tasks/${task.meta.taskId}`, {
+        method: 'PATCH',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ startDate: isoDate(start), dueDate: isoDate(end) }),
+      });
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}));
+        throw new Error(body?.error?.message || 'No se pudo reprogramar la tarea');
+      }
+      message.textContent = `«${task.name}» reprogramada: ${isoDate(start)} → ${isoDate(end)}`;
+    } catch (error) {
+      await load();
+      message.textContent = error.message;
+    }
   }
 
   function setMode(mode) {
@@ -99,7 +129,10 @@
       scroll_to: 'today',
       popup_on: 'hover',
       custom_popup_html: popup,
-      readonly: true, // la reprogramación (RF-73) se habilita aparte
+      readonly: !canReschedule, // RF-73: solo admin y pm arrastran las barras
+      readonly_progress: true, // el avance se calcula, no se edita
+      move_dependencies: false, // sin cascada: cada tarea se reprograma por separado
+      on_date_change: reschedule,
     });
   }
 

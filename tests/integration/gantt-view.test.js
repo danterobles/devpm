@@ -82,3 +82,16 @@ test('el script de la página y las librerías se sirven localmente y sin innerH
   assert.equal((await request(app).get('/vendor/frappe-gantt.umd.js')).status, 200);
   assert.equal((await request(app).get('/vendor/frappe-gantt.css')).status, 200);
 });
+
+test('el script reprograma con PATCH /api/v1/tasks/:id, solo para quien puede y sin mover hitos', async () => {
+  const { app } = setup();
+  const script = (await request(app).get('/js/pages/gantt.js')).text;
+  assert.match(script, /on_date_change/);
+  assert.match(script, /method: 'PATCH'/);
+  assert.match(script, /\/api\/v1\/tasks\//);
+  assert.match(script, /startDate/);
+  assert.match(script, /dueDate/);
+  assert.match(script, /readonly: !canReschedule/);
+  assert.match(script, /move_dependencies: false/); // sin cascada (decisión del PRD §5.9)
+  assert.match(script, /milestone/); // los hitos no se persisten al arrastrarlos
+});
