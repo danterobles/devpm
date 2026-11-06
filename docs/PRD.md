@@ -113,6 +113,20 @@ Empresas con relación comercial; su trabajo es facturable.
 | RF-22 | Registro de ausencias (vacaciones, incapacidad, permiso) que reducen la capacidad. | Media |
 | RF-23 | Vista de carga: asignación % por miembro y semana, con alerta si supera 100 %. | Alta |
 
+**Decisiones de definición (equipo, RF-20 a RF-22):**
+
+- Permisos: cualquier usuario autenticado **lee** la lista y la ficha de miembros; solo `admin` y `pm`
+  crean y editan miembros, habilidades y ausencias.
+- El costo por hora (`hourlyCostCents`) solo lo ven `admin` y `pm`; para `developer` y `viewer` el
+  campo se omite en API y vistas.
+- Habilidades: no hay catálogo aparte; al asignar una habilidad por nombre (nivel 1–5) a un miembro se
+  crea en el catálogo si no existe (sin distinguir mayúsculas); la categoría es opcional.
+- Los miembros y los clientes **no se eliminan**: solo se desactivan (`is_active = 0`) (RF-18). Las
+  ausencias sí se pueden eliminar.
+- Hay API JSON y vistas EJS para clientes internos, externos y equipo (habilidades y ausencias se
+  gestionan en la ficha del miembro). En las vistas los controles de escritura se ocultan a quien
+  no puede escribir.
+
 ### 5.5 Proyectos
 
 | ID | Requerimiento | Prioridad |
