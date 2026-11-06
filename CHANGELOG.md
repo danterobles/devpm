@@ -173,6 +173,9 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   `/time/approvals`. Aprueba el líder del proyecto o un admin (pm ajeno 403) y nadie revisa sus propios
   registros (422); el rechazado vuelve al autor con el motivo y puede reenviarse; transiciones
   registradas como `status_change` en la bitácora. La hoja permite enviar un registro o toda la semana.
+- Bandera facturable (RF-54): se hereda del proyecto al registrar (y al cambiar de proyecto);
+  `PATCH /api/v1/time-entries/:id/billable` y selector en `/time/approvals` para el líder del proyecto
+  y admin (el autor y los pm ajenos reciben 403); el cambio queda en la bitácora.
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y
