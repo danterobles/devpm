@@ -5,13 +5,7 @@ import request from 'supertest';
 import { buildTestApp } from '../helpers/testApp.js';
 import { createTestDb } from '../helpers/testDb.js';
 import { setClock } from '../../src/lib/dates.js';
-import {
-  user,
-  teamMember,
-  internalClient,
-  externalClient,
-  assignment,
-} from '../helpers/factories.js';
+import { user, teamMember, externalClient, assignment } from '../helpers/factories.js';
 
 // Criterio de cierre de la Etapa 7 (PRD §8.3, sin KPIs): un developer registra horas en su hoja
 // semanal y el pm (líder del proyecto) las aprueba.
