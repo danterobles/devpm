@@ -60,6 +60,8 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 - Rate limit en `POST /login` (RNF-04): 10 intentos fallidos por IP cada 15 min (configurable con
   `LOGIN_MAX_ATTEMPTS`); los logins correctos no consumen cupo; responde 429.
 - Middleware `validateBody` (Zod) en `src/middlewares/validate.js`.
+- Middlewares `requireAuth` (401 JSON en `/api/*`, redirección a `/login` en vistas) y
+  `requireRole(...roles)` (401 sin sesión, 403 con rol insuficiente; lista explícita, sin herencia) (RF-02).
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y
