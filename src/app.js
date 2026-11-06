@@ -8,6 +8,7 @@ import { createLogger } from './lib/logger.js';
 import { verifyOrigin } from './middlewares/verifyOrigin.js';
 import { layout } from './middlewares/layout.js';
 import { createSession } from './modules/auth/session.js';
+import { createUsersRouter } from './modules/auth/users.routes.js';
 import { createAuthRouter } from './modules/auth/auth.routes.js';
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -59,6 +60,16 @@ export function createApp({ config, db = null, logger = createLogger(config) }) 
 
   app.locals.appName = 'DevPM';
   app.use(layout());
+
+  if (db) {
+    app.use(
+      createUsersRouter({
+        db,
+        sessionStore: app.locals.sessionStore,
+        bcryptCost: config.isTest ? 4 : 12,
+      }),
+    );
+  }
 
   app.get('/health', (_req, res) => {
     let dbStatus = 'n/a';

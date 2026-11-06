@@ -3,6 +3,9 @@
     <a href="/" class="text-lg font-semibold"><%= appName %></a>
     <ul class="flex gap-4 text-sm">
       <li><a class="hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-white" href="/">Inicio</a></li>
+      <% if (typeof currentUser !== 'undefined' && currentUser && currentUser.role === 'admin') { %>
+        <li><a class="hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-white" href="/admin/users">Usuarios</a></li>
+      <% } %>
     </ul>
     <% if (typeof currentUser !== 'undefined' && currentUser) { %>
       <form method="post" action="/logout" class="ml-auto flex items-center gap-3 text-sm">

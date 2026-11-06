@@ -35,9 +35,7 @@ for (const method of ['put', 'patch', 'delete']) {
 }
 
 test('sin Origin se usa Referer: ajeno se rechaza, propio pasa', async () => {
-  const bad = await request(buildHost())
-    .post('/api/x')
-    .set('Referer', 'https://evil.example/page');
+  const bad = await request(buildHost()).post('/api/x').set('Referer', 'https://evil.example/page');
   assert.equal(bad.status, 403);
   const ok = await request(buildHost())
     .post('/api/x')

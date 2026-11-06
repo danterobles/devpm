@@ -64,6 +64,11 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   `requireRole(...roles)` (401 sin sesión, 403 con rol insuficiente; lista explícita, sin herencia) (RF-02).
 - Middleware global `verifyOrigin` (CSRF): en POST/PUT/PATCH/DELETE rechaza con 403 un `Origin`/`Referer`
   que no coincida con `Host` (RNF-04).
+- CRUD de usuarios para `admin` (RF-03, RF-04): API `/api/v1/users` (listado con búsqueda, estado y
+  paginación; alta, edición y baja lógica) y vistas `/admin/users`. Contraseña mínima de 8
+  caracteres; vinculación opcional con miembro del equipo; desactivar o cambiar rol/contraseña
+  cierra las sesiones del usuario; un admin no puede desactivarse ni quitarse el rol. Con bitácora.
+- Enlace «Usuarios» en la navegación para administradores.
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y

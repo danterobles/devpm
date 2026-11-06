@@ -1,0 +1,46 @@
+<% const action = editing ? `/admin/users/${user.id}` : '/admin/users'; %>
+<% const field = 'mt-1 w-full rounded border border-slate-300 px-3 py-2'; %>
+<section class="mx-auto max-w-md">
+  <h1 class="text-2xl font-bold"><%= editing ? 'Editar usuario' : 'Nuevo usuario' %></h1>
+  <% if (error) { %>
+    <p role="alert" class="mt-4 rounded border border-danger bg-red-50 px-4 py-3 text-sm text-red-800"><%= error %></p>
+  <% } %>
+  <form method="post" action="<%= action %>" class="mt-4 space-y-4">
+    <div>
+      <label for="fullName" class="block text-sm font-medium">Nombre completo</label>
+      <input id="fullName" name="fullName" required maxlength="120" value="<%= user.fullName || '' %>" class="<%= field %>" />
+    </div>
+    <div>
+      <label for="email" class="block text-sm font-medium">Correo</label>
+      <input id="email" name="email" type="email" required value="<%= user.email || '' %>" class="<%= field %>" />
+    </div>
+    <div>
+      <label for="role" class="block text-sm font-medium">Rol</label>
+      <select id="role" name="role" class="<%= field %>">
+        <% roles.forEach((r) => { %>
+          <option value="<%= r %>" <%= user.role === r ? 'selected' : '' %>><%= r %></option>
+        <% }) %>
+      </select>
+    </div>
+    <div>
+      <label for="password" class="block text-sm font-medium"><%= editing ? 'Nueva contraseña (opcional)' : 'Contraseña' %></label>
+      <input id="password" name="password" type="password" minlength="8" maxlength="200" autocomplete="new-password"
+        <%= editing ? '' : 'required' %> class="<%= field %>" />
+      <p class="mt-1 text-xs text-slate-600">Mínimo 8 caracteres.</p>
+    </div>
+    <div>
+      <label for="teamMemberId" class="block text-sm font-medium">ID de miembro del equipo (opcional)</label>
+      <input id="teamMemberId" name="teamMemberId" type="number" min="1" value="<%= user.teamMemberId ?? '' %>" class="<%= field %>" />
+    </div>
+    <% if (editing) { %>
+      <div class="flex items-center gap-2">
+        <input id="isActive" name="isActive" type="checkbox" value="1" <%= user.isActive ? 'checked' : '' %> />
+        <label for="isActive" class="text-sm font-medium">Usuario activo</label>
+      </div>
+    <% } %>
+    <div class="flex gap-3">
+      <button type="submit" class="rounded bg-brand-600 px-4 py-2 font-medium text-white hover:bg-brand-700">Guardar</button>
+      <a href="/admin/users" class="rounded border px-4 py-2 hover:bg-slate-100">Cancelar</a>
+    </div>
+  </form>
+</section>
