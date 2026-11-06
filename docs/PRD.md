@@ -204,6 +204,27 @@ Empresas con relación comercial; su trabajo es facturable.
 | RF-65 | Subtareas (una tarea puede tener tarea padre). | Baja |
 | RF-66 | Al cerrar un sprint, las tareas no terminadas regresan al backlog o pasan al siguiente sprint. | Media |
 
+**Decisiones de definición (sprints y tareas, RF-60 a RF-66):**
+
+- Permisos: cualquier usuario autenticado **lee**. `admin` y `pm` crean y editan sprints, tareas,
+  dependencias y orden. Un `developer` solo puede **cambiar el estado** (incluido arrastrar en el
+  Kanban) de las tareas cuyo responsable es su miembro vinculado (`users.team_member_id`); en las
+  demás recibe 403. El `viewer` solo lee.
+- Estados de tarea: cualquier transición entre estados es válida y siempre queda en el historial.
+  Al asignar una tarea en `backlog` a un sprint pasa a `todo`; al quitarla del sprint (si no está
+  `done`) regresa a `backlog`. Una tarea `done` no se saca de su sprint. El responsable debe estar
+  asignado al proyecto (RF-42).
+- Sprints: sus fechas deben quedar dentro del rango del proyecto y no traslaparse con otros sprints
+  del mismo proyecto. **Iniciar** (`planned → active`): exige que no haya otro activo y fija
+  `committed_points` = suma de puntos de sus tareas. **Cerrar** (`active → closed`): fija
+  `completed_points` = suma de puntos de sus tareas `done`; las no terminadas pasan al backlog
+  (estado `backlog`) o a un sprint `planned` indicado en `moveTo` (por defecto, backlog). Un sprint
+  `closed` es de solo lectura y no admite tareas nuevas.
+- Subtareas: un solo nivel (una subtarea no tiene subtareas) y del mismo proyecto. Siguen el sprint
+  de su tarea padre. Cada subtarea tiene sus propios puntos y todas (padre y subtareas) suman en
+  `committed_points` y `completed_points`. Un padre no puede pasar a `done` mientras tenga subtareas
+  que no estén `done` (422).
+
 ### 5.9 Diagrama de Gantt
 
 | ID | Requerimiento | Prioridad |
