@@ -46,3 +46,17 @@
 .gantt-container .bar-wrapper.milestone-completed .bar {
   fill: var(--color-ok);
 }
+
+/* Gantt de portafolio: color por prioridad del proyecto. */
+.gantt-container .bar-wrapper.portfolio-low .bar {
+  fill: oklch(0.78 0.03 255);
+}
+.gantt-container .bar-wrapper.portfolio-medium .bar {
+  fill: var(--color-brand-500);
+}
+.gantt-container .bar-wrapper.portfolio-high .bar {
+  fill: var(--color-warn);
+}
+.gantt-container .bar-wrapper.portfolio-critical .bar {
+  fill: var(--color-danger);
+}

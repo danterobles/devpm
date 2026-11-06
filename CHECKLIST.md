@@ -139,7 +139,7 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 - [x] Endpoint `GET /api/v1/projects/:id/gantt` (ARQUITECTURA §5)
 - [x] Vista con Frappe Gantt: tareas, hitos, dependencias, avance y vistas día/semana/mes (RF-70–RF-72)
 - [x] Reprogramación arrastrando, validando dependencias (RF-73)
-- [ ] Gantt de portafolio (RF-74)
+- [x] Gantt de portafolio (RF-74)
 - [ ] Pruebas del formato de datos y de la validación de reprogramación
 
 **Criterio de cierre:** el Gantt refleja las tareas del seed y permite reprogramar con validación.

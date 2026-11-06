@@ -22,7 +22,22 @@ export function createGanttRepository(db) {
     'SELECT id, name, due_date, status FROM milestones WHERE project_id = ? ORDER BY due_date, id',
   );
 
+  const portfolio = db.prepare(
+    `SELECT p.id, p.code, p.name, p.start_date, p.end_date, p.priority,
+            c.name AS client_name, trim(m.first_name || ' ' || m.last_name) AS manager_name,
+            COALESCE((SELECT SUM(story_points) FROM tasks WHERE project_id = p.id), 0) AS total_points,
+            COALESCE((SELECT SUM(story_points) FROM tasks WHERE project_id = p.id AND status = 'done'), 0) AS done_points,
+            (SELECT count(*) FROM tasks WHERE project_id = p.id) AS task_count,
+            (SELECT count(*) FROM tasks WHERE project_id = p.id AND status = 'done') AS done_count
+       FROM projects p
+       JOIN clients c ON c.id = p.client_id
+       LEFT JOIN team_members m ON m.id = p.manager_id
+      WHERE p.status = 'active'
+      ORDER BY p.start_date, p.code`,
+  );
+
   return {
+    activeProjects: () => portfolio.all(),
     findProject: (id) => project.get(id),
     tasksOf: (projectId) => tasks.all(projectId),
     dependenciesOf: (projectId) => dependencies.all(projectId),

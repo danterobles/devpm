@@ -197,6 +197,9 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   después de sus predecesoras, termine antes de sus sucesoras y quede dentro del proyecto (422 con el
   motivo; la barra regresa a su lugar). Sin cascada; los hitos no se arrastran; las tareas de sprints
   cerrados son de solo lectura.
+- Gantt de portafolio (RF-74): vista `/gantt` y `GET /api/v1/gantt/portfolio` con un renglón por
+  proyecto activo, avance por puntos de historia terminados (o por tareas si no hay puntos), color por
+  prioridad y clic en la barra para abrir el Gantt del proyecto. Enlace «Portafolio» en la navegación.
 
 ### Corregido
 - Login rechazado con 403 en navegadores reales: `Referrer-Policy: no-referrer` (valor por defecto de

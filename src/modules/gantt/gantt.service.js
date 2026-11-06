@@ -11,6 +11,33 @@ const byStart = (a, b) => a.start.localeCompare(b.start) || a.order - b.order;
 /** Datos del Gantt (RF-70 a RF-72) en el formato de Frappe Gantt. */
 export function createGanttService({ repository, timezone = 'America/Mexico_City' }) {
   return {
+    /** RF-74: un renglón por proyecto activo; avance por puntos hechos (o por tareas hechas). */
+    portfolio() {
+      const projects = repository.activeProjects().map((p) => {
+        let progress = 0;
+        if (p.total_points > 0) progress = Math.round((p.done_points / p.total_points) * 100);
+        else if (p.task_count > 0) progress = Math.round((p.done_count / p.task_count) * 100);
+        return {
+          id: `p${p.id}`,
+          name: `${p.code} · ${p.name}`,
+          start: p.start_date,
+          end: p.end_date,
+          progress,
+          dependencies: [],
+          custom_class: `portfolio-${p.priority}`,
+          meta: {
+            kind: 'project',
+            projectId: p.id,
+            code: p.code,
+            clientName: p.client_name,
+            managerName: p.manager_name,
+            priority: p.priority,
+          },
+        };
+      });
+      return { today: todayIn(timezone), projects };
+    },
+
     project(projectId, { groupBy = 'none', canReschedule = false } = {}) {
       const project = repository.findProject(projectId);
       if (!project) throw AppError.notFound('Proyecto no encontrado');

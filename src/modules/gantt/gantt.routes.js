@@ -20,7 +20,12 @@ export function createGanttRouter({ db, timezone }) {
   };
 
   const router = Router();
-  router.use(['/api/v1/projects/:id/gantt', '/projects/:id/gantt'], requireAuth);
+  router.use(
+    ['/api/v1/projects/:id/gantt', '/projects/:id/gantt', '/api/v1/gantt', '/gantt'],
+    requireAuth,
+  );
+  router.get('/api/v1/gantt/portfolio', (_req, res) => res.json({ data: service.portfolio() }));
+  router.get('/gantt', (_req, res) => res.render('pages/gantt/portfolio', { title: 'Portafolio' }));
   router.get('/api/v1/projects/:id/gantt', (req, res) => {
     const { groupBy } = parseWith(querySchema, req.query);
     res.json({
