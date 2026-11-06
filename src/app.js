@@ -7,6 +7,7 @@ import { createErrorHandler } from './middlewares/errorHandler.js';
 import { createLogger } from './lib/logger.js';
 import { layout } from './middlewares/layout.js';
 import { createSession } from './modules/auth/session.js';
+import { createAuthRouter } from './modules/auth/auth.routes.js';
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -45,6 +46,13 @@ export function createApp({ config, db = null, logger = createLogger(config) }) 
     const { middleware, store } = createSession({ config, db });
     app.locals.sessionStore = store;
     app.use(middleware);
+    app.use((req, res, next) => {
+      res.locals.currentUser = req.session?.userId
+        ? { id: req.session.userId, fullName: req.session.fullName, role: req.session.role }
+        : null;
+      next();
+    });
+    app.use(createAuthRouter({ db }));
   }
 
   app.locals.appName = 'DevPM';

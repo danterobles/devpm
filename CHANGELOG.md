@@ -53,6 +53,11 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   better-sqlite3: upsert, expiración, `prune`, `destroyByUser`).
 - Middleware de sesión: cookie `devpm.sid` HttpOnly, SameSite=Strict, Secure en producción,
   expiración por inactividad de 8 h y sin cookie para visitantes anónimos; limpieza horaria.
+- Login y logout (RF-01): `GET/POST /login` y `POST /logout` con módulo `auth` (schemas, repository,
+  service, controller, routes), bcrypt, `session.regenerate()` al autenticar, mensaje genérico
+  idéntico para correo inexistente, contraseña errónea o usuario inactivo (con comparación
+  de relleno para igualar tiempos), `last_login_at`, vista de login y botón «Salir» en la navegación.
+- Middleware `validateBody` (Zod) en `src/middlewares/validate.js`.
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y

@@ -73,7 +73,7 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 ## Etapa 3 — Autenticación y roles
 
 - [x] Sesiones con `express-session` y store propio en SQLite; cookie segura (RNF-04)
-- [ ] Login / logout con bcrypt y `session.regenerate()` (RF-01)
+- [x] Login / logout con bcrypt y `session.regenerate()` (RF-01)
 - [ ] Rate limit en `/login` (RNF-04)
 - [ ] Middlewares `requireAuth` y `requireRole` (RF-02)
 - [ ] Verificación de `Origin` en métodos que modifican estado (CSRF)
