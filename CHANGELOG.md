@@ -155,6 +155,7 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   historial, subtareas (un nivel; siguen al padre al cambiar de sprint; el padre no pasa a `done` con
   subtareas abiertas) y gestión de dependencias, con controles según el rol. Enlaces desde backlog y
   tablero.
+- Prueba de extremo a extremo del flujo de un sprint (planear, iniciar, ejecutar en el tablero y cerrar).
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y

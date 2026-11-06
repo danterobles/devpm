@@ -18,8 +18,8 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 | 3 | Autenticación y roles | ✅ Completada |
 | 4 | Clientes y equipo | ✅ Completada |
 | 5 | Proyectos, hitos y asignaciones | ✅ Completada |
-| 6 | Planeación: sprints y tareas | ⏳ Siguiente |
-| 7 | Registro de tiempo | Pendiente |
+| 6 | Planeación: sprints y tareas | ✅ Completada |
+| 7 | Registro de tiempo | ⏳ Siguiente |
 | 8 | Diagrama de Gantt | Pendiente |
 | 9 | Burndown Chart | Pendiente |
 | 10 | Tablero de KPIs en tiempo real | Pendiente |
@@ -119,9 +119,9 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 - [x] Tablero Kanban por sprint con arrastrar y soltar (RF-63)
 - [x] Dependencias fin-a-inicio con detección de ciclos (RF-64)
 - [x] Subtareas (RF-65)
-- [ ] Pruebas: ciclo de dependencias, cierre de sprint, responsable no asignado
+- [x] Pruebas: ciclo de dependencias, cierre de sprint, responsable no asignado
 
-**Criterio de cierre:** un sprint se planea, ejecuta en Kanban y cierra correctamente.
+**Criterio de cierre:** un sprint se planea, ejecuta en Kanban y cierra correctamente. ✅
 
 ## Etapa 7 — Registro de tiempo
 
