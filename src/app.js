@@ -8,6 +8,7 @@ import { createLogger } from './lib/logger.js';
 import { verifyOrigin } from './middlewares/verifyOrigin.js';
 import { layout } from './middlewares/layout.js';
 import { createSession } from './modules/auth/session.js';
+import { createBurndownRouter } from './modules/burndown/burndown.routes.js';
 import { createGanttRouter } from './modules/gantt/gantt.routes.js';
 import { createTimeEntriesRouter } from './modules/time-entries/time-entries.routes.js';
 import { createTasksRouter } from './modules/tasks/tasks.routes.js';
@@ -77,6 +78,7 @@ export function createApp({ config, db = null, logger = createLogger(config) }) 
     app.use(createTeamRouter({ db }));
     app.use(createSprintsRouter({ db, timezone: config.timezone }));
     app.use(createTasksRouter({ db, timezone: config.timezone }));
+    app.use(createBurndownRouter({ db, timezone: config.timezone }));
     app.use(createGanttRouter({ db, timezone: config.timezone }));
     app.use(createTimeEntriesRouter({ db, timezone: config.timezone }));
     app.use(createLoadRouter({ db, timezone: config.timezone }));

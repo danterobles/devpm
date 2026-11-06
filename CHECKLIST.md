@@ -149,7 +149,7 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 - [x] Servicio de snapshots con upsert idempotente (DATA §3.14)
 - [x] Recalcular snapshot del día al cambiar tareas de un sprint activo (RF-81)
 - [x] Job diario y relleno de días faltantes al arrancar
-- [ ] Endpoint `GET /api/v1/sprints/:id/burndown` con línea ideal en días hábiles (RF-80)
+- [x] Endpoint `GET /api/v1/sprints/:id/burndown` con línea ideal en días hábiles (RF-80)
 - [ ] Vista con Chart.js: real vs. ideal y cambios de alcance (RF-82)
 - [ ] Burndown por horas (RF-83) y Burnup de proyecto (RF-84)
 - [ ] Pruebas unitarias de línea ideal y de snapshots con fecha inyectada

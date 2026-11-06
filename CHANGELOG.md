@@ -222,6 +222,10 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   instantánea de cada sprint activo a las 23:55 de la zona de la aplicación, y relleno al arrancar el
   servidor de los días pasados sin instantánea (arrastrando el último valor conocido) más la captura de
   hoy; idempotente y con cierre ordenado (`SIGINT`/`SIGTERM`).
+- Endpoint `GET /api/v1/sprints/:id/burndown` (RF-80, RF-82): `days`, `ideal`, `remaining`, `total` y
+  `scopeChanges` por día. Línea ideal por días hábiles (`src/modules/burndown/ideal.js`), días pasados
+  sin instantánea arrastran el último valor, los futuros y los previos al inicio real son `null`,
+  sprints cerrados terminan en su instantánea final y los sprints que se pasan de fecha amplían el eje.
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y
