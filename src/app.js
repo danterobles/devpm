@@ -52,7 +52,7 @@ export function createApp({ config, db = null, logger = createLogger(config) }) 
         : null;
       next();
     });
-    app.use(createAuthRouter({ db }));
+    app.use(createAuthRouter({ db, loginLimit: config.loginMaxAttempts }));
   }
 
   app.locals.appName = 'DevPM';

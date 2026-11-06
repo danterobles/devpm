@@ -57,6 +57,8 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   service, controller, routes), bcrypt, `session.regenerate()` al autenticar, mensaje genérico
   idéntico para correo inexistente, contraseña errónea o usuario inactivo (con comparación
   de relleno para igualar tiempos), `last_login_at`, vista de login y botón «Salir» en la navegación.
+- Rate limit en `POST /login` (RNF-04): 10 intentos fallidos por IP cada 15 min (configurable con
+  `LOGIN_MAX_ATTEMPTS`); los logins correctos no consumen cupo; responde 429.
 - Middleware `validateBody` (Zod) en `src/middlewares/validate.js`.
 
 ### Cambiado

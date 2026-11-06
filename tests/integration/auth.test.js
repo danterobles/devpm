@@ -77,3 +77,30 @@ test('logout destruye la sesión y limpia la cookie', async () => {
   assert.equal(db.prepare('SELECT count(*) FROM sessions').pluck().get(), 0);
   assert.doesNotMatch((await agent.get('/')).text, /action="\/logout"/);
 });
+
+test('rate limit: tras 10 intentos fallidos /login responde 429 aun con credenciales válidas', async () => {
+  const { app } = setup();
+  const bad = { email: 'ana@test.local', password: 'incorrecta' };
+  for (let i = 0; i < 10; i++) {
+    assert.equal((await request(app).post('/login').type('form').send(bad)).status, 401);
+  }
+  const blocked = await request(app).post('/login').type('form').send(bad);
+  assert.equal(blocked.status, 429);
+  assert.match(blocked.text, /Demasiados intentos/);
+  const valid = await request(app)
+    .post('/login')
+    .type('form')
+    .send({ email: 'ana@test.local', password: PASSWORD });
+  assert.equal(valid.status, 429);
+});
+
+test('rate limit: los logins correctos no consumen cupo', async () => {
+  const { app } = setup();
+  for (let i = 0; i < 12; i++) {
+    const res = await request(app)
+      .post('/login')
+      .type('form')
+      .send({ email: 'ana@test.local', password: PASSWORD });
+    assert.equal(res.status, 302);
+  }
+});

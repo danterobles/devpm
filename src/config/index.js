@@ -7,6 +7,7 @@ const schema = z.object({
   SESSION_SECRET: z.string().min(32, 'SESSION_SECRET debe tener al menos 32 caracteres'),
   TZ_APP: z.string().default('America/Mexico_City'),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
+  LOGIN_MAX_ATTEMPTS: z.coerce.number().int().min(1).default(10),
   BACKUP_RETENTION_DAYS: z.coerce.number().int().min(1).default(14),
 });
 
@@ -29,6 +30,7 @@ export function loadConfig(env = process.env) {
     sessionSecret: c.SESSION_SECRET,
     timezone: c.TZ_APP,
     logLevel: c.LOG_LEVEL,
+    loginMaxAttempts: c.LOGIN_MAX_ATTEMPTS,
     backupRetentionDays: c.BACKUP_RETENTION_DAYS,
   });
 }
