@@ -17,8 +17,8 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 | 2 | Base de datos | ✅ Completada |
 | 3 | Autenticación y roles | ✅ Completada |
 | 4 | Clientes y equipo | ✅ Completada |
-| 5 | Proyectos, hitos y asignaciones | ⏳ Siguiente |
-| 6 | Planeación: sprints y tareas | Pendiente |
+| 5 | Proyectos, hitos y asignaciones | ✅ Completada |
+| 6 | Planeación: sprints y tareas | ⏳ Siguiente |
 | 7 | Registro de tiempo | Pendiente |
 | 8 | Diagrama de Gantt | Pendiente |
 | 9 | Burndown Chart | Pendiente |
@@ -106,9 +106,9 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 - [x] Advertencia de sobreasignación > 100 % (RF-41)
 - [x] Vista de carga del equipo por semana (RF-23) y matriz de asignaciones (RF-43)
 - [x] Fichas de cliente con proyectos y horas (RF-12, RF-17)
-- [ ] Pruebas: transiciones inválidas (422), sobreasignación, permisos
+- [x] Pruebas: transiciones inválidas (422), sobreasignación, permisos
 
-**Criterio de cierre:** criterio de aceptación PRD §8.4 cubierto por pruebas.
+**Criterio de cierre:** criterio de aceptación PRD §8.4 cubierto por pruebas (alerta de sobreasignación 60 % + 60 %); la parte «K7 = 1» se verifica en la Etapa 10. ✅
 
 ## Etapa 6 — Planeación: sprints y tareas
 
@@ -167,6 +167,7 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 - [ ] Burndown, Kanban y Gantt escuchan eventos y se refrescan solos
 - [ ] Umbrales configurables en `settings` (RF-93)
 - [ ] Prueba de integración: cambio de tarea → evento SSE recibido
+- [ ] Verificar PRD §8.4: con dos asignaciones traslapadas al 60 % del mismo miembro, K7 = 1
 
 **Criterio de cierre:** criterios de aceptación PRD §8.2, §8.3 y §8.5 verificados.
 
