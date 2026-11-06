@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { notFound } from './middlewares/notFound.js';
 import { createErrorHandler } from './middlewares/errorHandler.js';
 import { createLogger } from './lib/logger.js';
+import { verifyOrigin } from './middlewares/verifyOrigin.js';
 import { layout } from './middlewares/layout.js';
 import { createSession } from './modules/auth/session.js';
 import { createAuthRouter } from './modules/auth/auth.routes.js';
@@ -41,6 +42,7 @@ export function createApp({ config, db = null, logger = createLogger(config) }) 
   app.use(express.json({ limit: '1mb' }));
   app.use(express.urlencoded({ extended: false, limit: '1mb' }));
   app.use(express.static(path.join(root, 'public')));
+  app.use(verifyOrigin);
 
   if (db) {
     const { middleware, store } = createSession({ config, db });

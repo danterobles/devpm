@@ -76,7 +76,7 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 - [x] Login / logout con bcrypt y `session.regenerate()` (RF-01)
 - [x] Rate limit en `/login` (RNF-04)
 - [x] Middlewares `requireAuth` y `requireRole` (RF-02)
-- [ ] Verificación de `Origin` en métodos que modifican estado (CSRF)
+- [x] Verificación de `Origin` en métodos que modifican estado (CSRF)
 - [ ] CRUD de usuarios para `admin` y vinculación con miembro del equipo (RF-03, RF-04)
 - [ ] Cambio de contraseña propio (RF-05)
 - [ ] Pruebas: login correcto/incorrecto, 401 sin sesión, 403 por rol

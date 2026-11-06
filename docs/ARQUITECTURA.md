@@ -305,7 +305,7 @@ res.flushHeaders();
 | Contraseñas | `bcrypt` con costo 12; nunca se registran ni se devuelven en la API |
 | Autorización | `requireAuth` global para todo excepto `/login` y estáticos; `requireRole('admin','pm')` por ruta; el service verifica pertenencia (p. ej. un `pm` solo aprueba horas de sus proyectos) |
 | Cookies | `HttpOnly`, `SameSite=Strict`, `Secure` en producción, nombre no predecible |
-| CSRF | `SameSite=Strict` + verificación de cabecera `Origin`/`Referer` en métodos que modifican estado |
+| CSRF | `SameSite=Strict` + `verifyOrigin` (global, antes de las rutas): en POST/PUT/PATCH/DELETE el host de `Origin` (o `Referer` si falta) debe coincidir con `Host`, si no responde 403; `Origin: null` se rechaza; sin ambas cabeceras (clientes no navegador) pasa |
 | Cabeceras | `helmet` con CSP: `default-src 'self'`; sin `unsafe-inline` en scripts |
 | Fuerza bruta | `express-rate-limit` en `/login` (10 intentos / 15 min por IP) |
 | Inyección | SQL solo con parámetros; ordenamiento con lista blanca de columnas |
