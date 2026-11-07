@@ -327,3 +327,121 @@ test('se eliminan las notificaciones leídas con más de 90 días', async () => 
     unread,
   ]);
 });
+
+// ---- Preferencias por tipo de aviso (RF-180) ----
+
+test('preferencias por tipo: la página lista los 12 tipos con sus casillas marcadas por omisión', async () => {
+  const { app } = setup();
+  const html = (await (await loginAs(app, 'dev')).get('/account/notifications')).text;
+  for (const type of ['hours_to_review', 'task_mention', 'project_at_risk', 'hours_midweek'])
+    assert.match(html, new RegExp(`name="in_${type}" value="1" class="h-5 w-5" checked`), type);
+  assert.equal((html.match(/name="mail_/g) ?? []).length, 12);
+  assert.match(html, /<th scope="col"[^>]*>En la aplicación/);
+});
+
+test('preferencias por tipo: desactivar un tipo en la aplicación evita el aviso y desactivar ambos lo evita por completo', async () => {
+  const sent = [];
+  const mailer = createMailer({
+    smtp: { from: 'x' },
+    transport: { sendMail: async (m) => sent.push(m) },
+  });
+  const { app, db, ids } = setup({ mailer });
+  const dev = await loginAs(app, 'dev');
+  const notify = (type, key) =>
+    app.locals.notifications.notify({
+      userIds: [ids.dev],
+      type,
+      title: `T ${type}`,
+      body: 'b',
+      dedupeKey: key,
+    });
+  // «Horas rechazadas»: ni en la aplicación ni por correo; «Tarea asignada»: solo por correo
+  const keep = Object.fromEntries(
+    [
+      'hours_midweek',
+      'hours_close',
+      'hours_to_review',
+      'hours_approved',
+      'task_comment',
+      'task_mention',
+      'task_overdue',
+      'task_blocked',
+      'milestone_overdue',
+      'project_at_risk',
+    ].flatMap((t) => [
+      [`in_${t}`, '1'],
+      [`mail_${t}`, '1'],
+    ]),
+  );
+  await dev
+    .post('/account/notifications')
+    .type('form')
+    .send({ emailNotifications: '1', ...keep, mail_task_assigned: '1' });
+  assert.equal(notify('hours_rejected', 'a'), 0, 'sin aviso alguno');
+  assert.equal(rows(db, ids.dev).length, 0);
+  assert.equal(notify('task_assigned', 'b'), 1);
+  const row = rows(db, ids.dev)[0];
+  assert.notEqual(row.read_at, null, 'solo por correo: queda como leído');
+  assert.equal((await dev.get('/api/v1/notifications/unread-count')).body.data.unread, 0);
+  await new Promise((r) => setImmediate(r));
+  assert.equal(sent.length, 1, 'el correo sí se envía');
+  assert.equal(notify('task_assigned', 'b'), 0, 'la deduplicación sigue funcionando');
+  assert.equal(notify('hours_approved', 'c'), 1);
+  assert.equal((await dev.get('/api/v1/notifications/unread-count')).body.data.unread, 1);
+});
+
+test('preferencias por tipo: solo se guardan las que se apartan del valor por omisión y se pueden restablecer', async () => {
+  const { app, db, ids } = setup();
+  const dev = await loginAs(app, 'dev');
+  await dev.post('/account/notifications').type('form').send({ emailNotifications: '1' }); // todo desmarcado
+  assert.equal(
+    db
+      .prepare('SELECT count(*) FROM notification_preferences WHERE user_id = ?')
+      .pluck()
+      .get(ids.dev),
+    12,
+  );
+  const all = {};
+  for (const t of db.prepare('SELECT type FROM notification_preferences').pluck().all()) {
+    all[`in_${t}`] = '1';
+    all[`mail_${t}`] = '1';
+  }
+  await dev
+    .post('/account/notifications')
+    .type('form')
+    .send({ emailNotifications: '1', ...all });
+  assert.equal(db.prepare('SELECT count(*) FROM notification_preferences').pluck().get(), 0);
+});
+
+test('preferencias por tipo: cada persona tiene las suyas y los tipos inventados se ignoran', async () => {
+  const { app, db, ids } = setup();
+  await (
+    await loginAs(app, 'dev')
+  )
+    .post('/account/notifications')
+    .type('form')
+    .send({ in_inventado: '1', mail_inventado: '1' });
+  assert.equal(
+    db
+      .prepare("SELECT count(*) FROM notification_preferences WHERE type = 'inventado'")
+      .pluck()
+      .get(),
+    0,
+  );
+  assert.equal(
+    db
+      .prepare('SELECT count(*) FROM notification_preferences WHERE user_id = ?')
+      .pluck()
+      .get(ids.lead),
+    0,
+  );
+  assert.equal(
+    app.locals.notifications.notify({
+      userIds: [ids.lead],
+      type: 'task_assigned',
+      title: 't',
+      body: 'b',
+    }),
+    1,
+  );
+});

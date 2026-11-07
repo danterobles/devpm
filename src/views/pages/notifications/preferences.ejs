@@ -1,4 +1,4 @@
-<section class="max-w-xl">
+<section class="max-w-3xl">
   <h1 class="text-2xl font-bold">Preferencias de notificaciones</h1>
   <% if (done) { %>
     <p role="status" class="mt-4 rounded border border-ok bg-green-50 px-4 py-3 text-sm text-green-800">Preferencias guardadas.</p>
@@ -11,6 +11,31 @@
         <span class="block text-sm text-slate-600">Los avisos siempre aparecen dentro de la aplicación.</span>
       </span>
     </label>
+    <fieldset class="rounded-xl border border-navy-100 p-4 dark:border-white/10">
+      <legend class="px-1 text-sm font-semibold">Qué avisos quieres recibir</legend>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm">
+          <caption class="sr-only">Preferencias por tipo de aviso</caption>
+          <thead>
+            <tr class="border-b">
+              <th scope="col" class="py-2 pr-4">Aviso</th>
+              <th scope="col" class="px-3 py-2 text-center">En la aplicación</th>
+              <th scope="col" class="px-3 py-2 text-center">Por correo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% types.forEach((t) => { %>
+              <tr class="border-b">
+                <th scope="row" class="py-2 pr-4 font-medium"><%= t.label %></th>
+                <td class="px-3 py-2 text-center"><label class="inline-flex min-h-11 min-w-11 items-center justify-center"><input type="checkbox" name="in_<%= t.type %>" value="1" class="h-5 w-5" <%= t.inApp ? 'checked' : '' %> /><span class="sr-only"><%= t.label %>: en la aplicación</span></label></td>
+                <td class="px-3 py-2 text-center"><label class="inline-flex min-h-11 min-w-11 items-center justify-center"><input type="checkbox" name="mail_<%= t.type %>" value="1" class="h-5 w-5" <%= t.email ? 'checked' : '' %> /><span class="sr-only"><%= t.label %>: por correo</span></label></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+      <p class="mt-2 text-xs text-slate-600">Si desmarcas «en la aplicación» pero dejas «por correo», el aviso llega solo por correo (y queda como leído en tu historial).</p>
+    </fieldset>
     <% if (!mailAvailable) { %>
       <p class="rounded border border-warn bg-amber-50 px-4 py-3 text-sm text-amber-900">Este servidor no tiene correo configurado: por ahora solo recibirás avisos dentro de la aplicación.</p>
     <% } %>

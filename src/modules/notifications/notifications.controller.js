@@ -1,6 +1,7 @@
 import { AppError } from '../../lib/AppError.js';
 import { parseWith } from '../../lib/parse.js';
 import { idSchema, listQuerySchema } from './notifications.schemas.js';
+import { NOTIFICATION_TYPES } from './notifications.types.js';
 
 const parseId = (raw) => {
   const parsed = idSchema.safeParse(raw);
@@ -46,12 +47,21 @@ export function createNotificationsController({ service }) {
       res.render('pages/notifications/preferences', {
         title: 'Preferencias de notificaciones',
         emailEnabled: service.emailPreference(uid(req)),
+        types: service.preferences(uid(req)),
         mailAvailable: Boolean(req.app.locals.mailer?.enabled),
         done: false,
         ...extra,
       }),
     preferencesSubmit(req, res) {
       service.setEmailPreference(uid(req), req.body?.emailNotifications === '1');
+      // Una casilla por tipo y canal: `in_<tipo>` (en la aplicación) y `mail_<tipo>` (por correo)
+      const choices = Object.fromEntries(
+        Object.keys(NOTIFICATION_TYPES).map((type) => [
+          type,
+          { inApp: req.body?.[`in_${type}`] === '1', email: req.body?.[`mail_${type}`] === '1' },
+        ]),
+      );
+      service.setPreferences(uid(req), choices);
       return res.redirect('/account/notifications?saved=1');
     },
   };

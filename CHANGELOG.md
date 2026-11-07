@@ -16,6 +16,9 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 - Eventos de seguridad guardados (accesos, bloqueos, restablecimientos y cambios de dos pasos).
 - Pantallas del administrador: **Bitácora** (cambios con «antes → después», sin secretos), **Seguridad** (eventos de 90 días) y **Estado del sistema** (base, solicitudes con p50/p95, respaldos, adjuntos, avisos y alertas), con su navegación.
 - `npm run health` para monitores y cron.
+- Preferencias de notificación por tipo de aviso (en la aplicación y por correo, por separado).
+- Ícono de la aplicación (favicon) y `/favicon.ico` sin errores 404.
+- Pruebas de accesibilidad sobre todas las páginas y roles (un `h1`, etiquetas, ids únicos, nombres de botones y enlaces, `scope` y `caption` en tablas).
 - Migración `007_accounts_security.sql`.
 
 ## [0.4.0] - 2026-11-07

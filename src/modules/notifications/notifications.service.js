@@ -1,5 +1,6 @@
 import { AppError } from '../../lib/AppError.js';
 import { addDays, nowIso } from '../../lib/dates.js';
+import { NOTIFICATION_TYPES } from './notifications.types.js';
 
 const RETENTION_DAYS = 90;
 
@@ -23,7 +24,7 @@ export function createNotificationsService({
   function sendMail(userId, { title, body, link }) {
     if (!mailer?.enabled) return;
     const to = repository.recipient(userId);
-    if (!to || to.email_notifications !== 1) return;
+    if (!to || to.email_notifications !== 1) return; // interruptor general de correo
     const url = link ? `\n\n${appUrl}${link}` : '';
     void mailer.send({ to: to.email, subject: `[DevPM] ${title}`, text: `${body}${url}\n` });
   }
@@ -39,15 +40,28 @@ export function createNotificationsService({
      */
     notify({ userIds, type, title, body, link = null, dedupeKey = null, exceptUserId = null }) {
       let created = 0;
+      let unread = 0;
       for (const userId of new Set(userIds)) {
         if (userId == null || userId === exceptUserId) continue;
         if (!repository.recipient(userId)) continue; // usuario inactivo o inexistente
-        const id = repository.insert({ userId, type, title, body, link, dedupeKey });
+        const pref = repository.preference(userId, type);
+        if (!pref.inApp && !pref.email) continue; // la persona no quiere este tipo de aviso
+        // Sin aviso en la aplicación se guarda como ya leído: sirve de historial y de deduplicación.
+        const id = repository.insert({
+          userId,
+          type,
+          title,
+          body,
+          link,
+          dedupeKey,
+          readAt: pref.inApp ? null : nowIso(),
+        });
         if (id === null) continue;
         created += 1;
-        sendMail(userId, { title, body, link });
+        unread += pref.inApp ? 1 : 0;
+        if (pref.email) sendMail(userId, { title, body, link });
       }
-      if (created > 0) events?.emit('notification.created');
+      if (unread > 0) events?.emit('notification.created');
       return created;
     },
 
@@ -73,6 +87,25 @@ export function createNotificationsService({
       return repository.prune(`${addDays(today, -RETENTION_DAYS)}T00:00:00.000Z`);
     },
 
+    /** Preferencias por tipo (sin fila: todo activo), en el orden de `NOTIFICATION_TYPES`. */
+    preferences(userId) {
+      const saved = repository.preferences(userId);
+      return Object.entries(NOTIFICATION_TYPES).map(([type, label]) => ({
+        type,
+        label,
+        ...(saved.get(type) ?? { inApp: true, email: true }),
+      }));
+    },
+    setPreferences(userId, choices) {
+      repository.setPreferences(
+        userId,
+        Object.keys(NOTIFICATION_TYPES).map((type) => ({
+          type,
+          inApp: Boolean(choices[type]?.inApp),
+          email: Boolean(choices[type]?.email),
+        })),
+      );
+    },
     emailPreference: (userId) => repository.emailPreference(userId),
     setEmailPreference: (userId, enabled) => repository.setEmailPreference(userId, enabled),
   };

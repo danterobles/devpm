@@ -346,9 +346,9 @@ Se cierra con las etiquetas `etapa-23`, `etapa-24` y `etapa-25` en el último co
 
 ## Etapa 25 — Pulido y cierre (RF-180–RF-183)
 
-- [ ] Preferencias de notificación por tipo (en la aplicación y por correo)
-- [ ] Favicon y ruta `/favicon.ico`
-- [ ] Pruebas de accesibilidad sobre todas las páginas y recorrido de teclado
+- [x] Preferencias de notificación por tipo (en la aplicación y por correo)
+- [x] Favicon y ruta `/favicon.ico`
+- [x] Pruebas de accesibilidad sobre todas las páginas y recorrido de teclado
 - [ ] Fuentes de los manuales en `docs/manuales/fuente/` y manuales actualizados con la 0.5
 - [ ] README, CHANGELOG `[0.5.0]`, versión, etiquetas y publicación
 

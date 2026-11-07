@@ -12,8 +12,8 @@ export function createNotificationsRepository(db) {
   });
   const q = {
     insert: db.prepare(
-      `INSERT OR IGNORE INTO notifications (user_id, type, title, body, link, dedupe_key)
-       VALUES (@userId, @type, @title, @body, @link, @dedupeKey)`,
+      `INSERT OR IGNORE INTO notifications (user_id, type, title, body, link, dedupe_key, read_at)
+       VALUES (@userId, @type, @title, @body, @link, @dedupeKey, @readAt)`,
     ),
     unread: db
       .prepare('SELECT count(*) FROM notifications WHERE user_id = ? AND read_at IS NULL')
@@ -40,12 +40,20 @@ export function createNotificationsRepository(db) {
       .pluck(),
     admins: db.prepare("SELECT id FROM users WHERE role = 'admin' AND is_active = 1").pluck(),
     managerOf: db.prepare('SELECT manager_id FROM projects WHERE id = ?').pluck(),
+    prefs: db.prepare('SELECT type, in_app, email FROM notification_preferences WHERE user_id = ?'),
+    pref: db.prepare(
+      'SELECT in_app, email FROM notification_preferences WHERE user_id = ? AND type = ?',
+    ),
+    clearPrefs: db.prepare('DELETE FROM notification_preferences WHERE user_id = ?'),
+    addPref: db.prepare(
+      'INSERT INTO notification_preferences (user_id, type, in_app, email) VALUES (?, ?, ?, ?)',
+    ),
   };
 
   return {
     /** @returns {number|null} id creado, o null si la clave de deduplicación ya existía */
-    insert({ userId, type, title, body, link = null, dedupeKey = null }) {
-      const info = q.insert.run({ userId, type, title, body, link, dedupeKey });
+    insert({ userId, type, title, body, link = null, dedupeKey = null, readAt = null }) {
+      const info = q.insert.run({ userId, type, title, body, link, dedupeKey, readAt });
       return info.changes === 1 ? Number(info.lastInsertRowid) : null;
     },
     unreadCount: (userId) => q.unread.get(userId),
@@ -75,6 +83,23 @@ export function createNotificationsRepository(db) {
     setEmailPreference: (userId, enabled) => q.setEmailPref.run(enabled ? 1 : 0, userId),
     userOfMember: (memberId) => (memberId == null ? null : (q.userOfMember.get(memberId) ?? null)),
     activeAdmins: () => q.admins.all(),
+    /** Preferencia por tipo; sin fila, todo activo. */
+    preference(userId, type) {
+      const row = q.pref.get(userId, type);
+      return { inApp: row ? row.in_app === 1 : true, email: row ? row.email === 1 : true };
+    },
+    preferences: (userId) =>
+      new Map(
+        q.prefs.all(userId).map((r) => [r.type, { inApp: r.in_app === 1, email: r.email === 1 }]),
+      ),
+    /** Reemplaza las preferencias; solo se guardan las que se apartan del valor por omisión. */
+    setPreferences(userId, list) {
+      db.transaction(() => {
+        q.clearPrefs.run(userId);
+        for (const p of list)
+          if (!p.inApp || !p.email) q.addPref.run(userId, p.type, p.inApp ? 1 : 0, p.email ? 1 : 0);
+      })();
+    },
     managerOfProject: (projectId) => q.managerOf.get(projectId) ?? null,
   };
 }

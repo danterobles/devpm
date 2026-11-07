@@ -19,6 +19,7 @@ const PUBLIC = new Set([
   '/login/2fa',
   '/forgot-password',
   '/reset-password',
+  '/favicon.ico', // redirige al ícono SVG (estático)
 ]);
 
 function setup(config = testConfig()) {

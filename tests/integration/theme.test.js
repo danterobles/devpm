@@ -71,3 +71,15 @@ test('el tablero carga chart-theme.js y las gráficas siguen el tema', async () 
   assert.match(html, /\/js\/lib\/chart-theme\.js/);
   assert.ok(html.indexOf('chart.umd.min.js') < html.indexOf('chart-theme.js'));
 });
+
+test('el ícono de la aplicación: enlace en <head>, archivo SVG y /favicon.ico sin 404', async () => {
+  const app = buildTestApp({ db: createTestDb() });
+  const login = (await request(app).get('/login')).text;
+  assert.match(login, /<link rel="icon" href="\/favicon\.svg" type="image\/svg\+xml"/);
+  const svg = await request(app).get('/favicon.svg');
+  assert.equal(svg.status, 200);
+  assert.match(svg.headers['content-type'], /image\/svg\+xml/);
+  const ico = await request(app).get('/favicon.ico');
+  assert.equal(ico.status, 301);
+  assert.equal(ico.headers.location, '/favicon.svg');
+});
