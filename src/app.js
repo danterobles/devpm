@@ -30,6 +30,15 @@ import { createSearchRouter } from './modules/search/search.routes.js';
 import { createSavedFiltersRepository } from './modules/saved-filters/saved-filters.repository.js';
 import { createSavedFiltersService } from './modules/saved-filters/saved-filters.service.js';
 import { createSavedFiltersRouter } from './modules/saved-filters/saved-filters.routes.js';
+import { createSecretBox } from './lib/secretBox.js';
+import { createSecurityEventsRepository } from './modules/security-events/security-events.repository.js';
+import { createSecurityEventsService } from './modules/security-events/security-events.service.js';
+import { createAccountSecurityRepository } from './modules/account-security/account-security.repository.js';
+import { createAccountSecurityService } from './modules/account-security/account-security.service.js';
+import {
+  createAccountPublicRouter,
+  createAccountSecurityRouter,
+} from './modules/account-security/account-security.routes.js';
 import { createHomeRouter } from './modules/home/home.routes.js';
 import { createSettingsRouter } from './modules/settings/settings.routes.js';
 import { createSettingsService } from './modules/settings/settings.service.js';
@@ -98,6 +107,9 @@ export function createApp({
   app.use(layout());
 
   let notifications = null;
+  let accountRepository = null;
+  let accountSecurity = null;
+  let authRouter = null;
   if (db) {
     // Notificaciones (RF-100): el servicio se comparte con los services que generan avisos.
     const mail = mailer ?? createMailer({ smtp: config.smtp, logger });
@@ -109,6 +121,24 @@ export function createApp({
     });
     app.locals.mailer = mail;
     app.locals.notifications = notifications;
+    // Seguridad de cuentas (v0.5): eventos, recuperación de contraseña y dos pasos.
+    const securityEvents = createSecurityEventsService({
+      repository: createSecurityEventsRepository(db),
+      logger,
+    });
+    accountRepository = createAccountSecurityRepository(db);
+    accountSecurity = createAccountSecurityService({
+      db,
+      repository: accountRepository,
+      mailer: mail,
+      appUrl: config.appUrl,
+      sessionStore: () => app.locals.sessionStore,
+      events: securityEvents,
+      secretBox: createSecretBox(config.sessionSecret),
+      bcryptCost: config.isTest ? 4 : 12,
+    });
+    app.locals.securityEvents = securityEvents;
+    app.locals.accountSecurity = accountSecurity;
     const { middleware, store } = createSession({ config, db });
     app.locals.sessionStore = store;
     app.use(middleware);
@@ -121,7 +151,15 @@ export function createApp({
         : 0;
       next();
     });
-    app.use(createAuthRouter({ db, loginLimit: config.loginMaxAttempts, logger }));
+    authRouter = createAuthRouter({
+      db,
+      loginLimit: config.loginMaxAttempts,
+      logger,
+      securityEvents,
+      accountSecurity,
+    });
+    app.use(authRouter);
+    app.use(createAccountPublicRouter({ service: accountSecurity })); // recuperación: sin sesión
   }
 
   app.locals.appName = 'DevPM';
@@ -204,6 +242,13 @@ export function createApp({
       timezone: config.timezone,
     });
     app.use(createSavedFiltersRouter({ service: savedFilters }));
+    app.use(
+      createAccountSecurityRouter({
+        service: accountSecurity,
+        unlockAccount: authRouter.unlockAccount,
+        findUserEmail: (id) => accountRepository.findUser(id)?.email ?? null,
+      }),
+    );
     app.use(createSearchRouter({ db }));
     app.use(createImportRouter({ db, events: eventBus, timezone: config.timezone }));
     app.use(createHomeRouter({ db, notifications, kpi, timezone: config.timezone }));

@@ -35,8 +35,8 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 | 20 | Búsqueda global y filtros guardados (v0.4) | ✅ Completada |
 | 21 | Manuales y versión 0.4.0 | ✅ Completada |
 | 22 | Integración continua y contenedor | ⏸ Fuera de la 0.5.0 |
-| 23 | Cuentas y acceso (v0.5) | 🔄 En curso |
-| 24 | Bitácora, seguridad y estado (v0.5) | ⏳ Planeada |
+| 23 | Cuentas y acceso (v0.5) | ✅ Completada |
+| 24 | Bitácora, seguridad y estado (v0.5) | 🔄 En curso |
 | 25 | Pulido y cierre (v0.5) | ⏳ Planeada |
 
 ---
@@ -324,15 +324,15 @@ Se cierra con las etiquetas `etapa-23`, `etapa-24` y `etapa-25` en el último co
 
 ## Etapa 23 — Cuentas y acceso (RF-160–RF-165)
 
-- [ ] Migración `007_accounts_security.sql` (columnas TOTP, `password_resets`, `recovery_codes`, `security_events`, `notification_preferences`)
-- [ ] `totp.js` y `secretBox.js` con pruebas (vectores de RFC 6238, cifrado y manipulación)
-- [ ] Recuperación de contraseña: solicitud (genérica y con límite), enlace de un solo uso con vencimiento, restablecimiento que cierra sesiones
-- [ ] 2FA: activar en `/account/security`, códigos de recuperación, inicio de sesión en dos pasos sin sesión autenticada intermedia, desactivar con contraseña y código
-- [ ] Administración: quitar el 2FA y desbloquear una cuenta desde la ficha del usuario
-- [ ] Eventos de seguridad registrados en todos los pasos (`security_events`)
-- [ ] Pruebas: reutilización de códigos y tokens, enumeración de cuentas, fuerza bruta del código, sesión intermedia, permisos
+- [x] Migración `007_accounts_security.sql` (columnas TOTP, `password_resets`, `recovery_codes`, `security_events`, `notification_preferences`)
+- [x] `totp.js` y `secretBox.js` con pruebas (vectores de RFC 6238, cifrado y manipulación)
+- [x] Recuperación de contraseña: solicitud (genérica y con límite), enlace de un solo uso con vencimiento, restablecimiento que cierra sesiones
+- [x] 2FA: activar en `/account/security`, códigos de recuperación, inicio de sesión en dos pasos sin sesión autenticada intermedia, desactivar con contraseña y código
+- [x] Administración: quitar el 2FA y desbloquear una cuenta desde la ficha del usuario
+- [x] Eventos de seguridad registrados en todos los pasos (`security_events`)
+- [x] Pruebas: reutilización de códigos y tokens, enumeración de cuentas, fuerza bruta del código, sesión intermedia, permisos
 
-**Criterio de cierre:** se recupera una contraseña por correo y se inicia sesión con 2FA, sin fugas de información ni accesos intermedios.
+**Criterio de cierre:** se recupera una contraseña por correo y se inicia sesión con 2FA, sin fugas de información ni accesos intermedios. ✅
 
 ## Etapa 24 — Bitácora, seguridad y estado (RF-170–RF-173)
 

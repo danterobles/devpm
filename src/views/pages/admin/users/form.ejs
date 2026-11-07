@@ -2,6 +2,11 @@
 <% const field = 'mt-1 w-full rounded border border-slate-300 px-3 py-2'; %>
 <section class="mx-auto max-w-md">
   <h1 class="text-2xl font-bold"><%= editing ? 'Editar usuario' : 'Nuevo usuario' %></h1>
+  <% if (done === 'reset-2fa') { %>
+    <p role="status" class="mt-4 rounded border border-ok bg-green-50 px-4 py-3 text-sm text-green-800">Se quitó la autenticación en dos pasos de esta cuenta.</p>
+  <% } else if (done === 'unlock') { %>
+    <p role="status" class="mt-4 rounded border border-ok bg-green-50 px-4 py-3 text-sm text-green-800">Se desbloqueó la cuenta.</p>
+  <% } %>
   <% if (error) { %>
     <p role="alert" class="mt-4 rounded border border-danger bg-red-50 px-4 py-3 text-sm text-red-800"><%= error %></p>
   <% } %>
@@ -43,4 +48,21 @@
       <a href="/admin/users" class="rounded border px-4 py-2 hover:bg-slate-100">Cancelar</a>
     </div>
   </form>
+  <% if (editing) { %>
+    <section class="mt-8 space-y-3 border-t pt-4" aria-labelledby="access-title">
+      <h2 id="access-title" class="text-lg font-semibold">Acceso</h2>
+      <form method="post" action="/admin/users/<%= user.id %>/unlock">
+        <button type="submit" class="min-h-11 rounded-lg border px-4 py-2 text-sm hover:bg-slate-100">Desbloquear cuenta</button>
+        <p class="mt-1 text-xs text-slate-600">Quita el bloqueo por intentos fallidos de inicio de sesión.</p>
+      </form>
+      <% if (twoFactorEnabled) { %>
+        <form method="post" action="/admin/users/<%= user.id %>/reset-2fa">
+          <button type="submit" class="min-h-11 rounded-lg border px-4 py-2 text-sm hover:bg-slate-100">Quitar autenticación en dos pasos</button>
+          <p class="mt-1 text-xs text-slate-600">Para quien perdió su dispositivo y sus códigos de recuperación.</p>
+        </form>
+      <% } else { %>
+        <p class="text-sm text-slate-600">Esta cuenta no usa autenticación en dos pasos.</p>
+      <% } %>
+    </section>
+  <% } %>
 </section>

@@ -86,6 +86,10 @@ Se leen de `.env` (ver `.env.example`) o del entorno.
 - **Importar datos** (`admin` y `pm`, menú «Importar»): clientes, miembros del equipo y tareas de un proyecto
   desde un CSV. Descarga la plantilla, valida (nada se guarda) e importa; si alguna fila falla no se guarda ninguna.
 
+- **Cuentas y acceso (0.5):** «¿Olvidaste tu contraseña?» envía un enlace de un solo uso (vence en 1 h; requiere
+  `SMTP_HOST`; sin correo el administrador restablece la contraseña). Cada persona puede activar la
+  **autenticación en dos pasos** (TOTP) en «Seguridad», con códigos de recuperación; el administrador puede quitarla o
+  desbloquear una cuenta desde su ficha. Cambiar `SESSION_SECRET` invalida los secretos de dos pasos guardados.
 - **Colaboración (0.4):** comentarios con menciones (`@correo`) y adjuntos en cada tarea; búsqueda global en el
   encabezado; filtros guardados en proyectos, backlog y exportación de tiempo.
 

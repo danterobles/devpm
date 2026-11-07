@@ -12,7 +12,14 @@ import { user } from '../helpers/factories.js';
 // Revisión de seguridad (ARQUITECTURA §7, RNF-04 y RNF-05).
 const PASSWORD = 'Secreta123!';
 const hash = bcrypt.hashSync(PASSWORD, 4);
-const PUBLIC = new Set(['/health', '/login', '/logout']);
+const PUBLIC = new Set([
+  '/health',
+  '/login',
+  '/logout',
+  '/login/2fa',
+  '/forgot-password',
+  '/reset-password',
+]);
 
 function setup(config = testConfig()) {
   const db = createTestDb();
@@ -61,7 +68,7 @@ function allRoutes(app) {
   return out;
 }
 
-test('autorización global: sin sesión TODA ruta registrada exige iniciar sesión (salvo /health, /login y /logout)', async () => {
+test('autorización global: sin sesión TODA ruta registrada exige iniciar sesión (salvo /health, el inicio de sesión y la recuperación de contraseña)', async () => {
   const { app } = setup();
   const routes = allRoutes(app).filter((r) => !PUBLIC.has(r.path));
   assert.ok(routes.length > 120, `se recorrieron ${routes.length} rutas`);

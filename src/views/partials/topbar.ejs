@@ -29,6 +29,7 @@
             <span class="flex h-9 w-9 items-center justify-center rounded-full bg-navy-200 text-xs font-bold text-navy-900" aria-hidden="true"><%= user.fullName.split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase() %></span>
             <%= user.fullName %>
           </a>
+          <a href="/account/security" class="hidden min-h-9 items-center underline sm:inline-flex <%= focus %>">Seguridad</a>
           <button type="submit" class="min-h-9 underline <%= focus %>">Salir</button>
         </form>
       <% } %>

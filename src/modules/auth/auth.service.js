@@ -15,7 +15,13 @@ export function createAuthService({ repository }) {
         throw new AppError(401, 'INVALID_CREDENTIALS', 'Correo o contraseña incorrectos');
       }
       repository.touchLastLogin(user.id);
-      return { id: user.id, fullName: user.full_name, role: user.role };
+      return {
+        id: user.id,
+        email: user.email,
+        fullName: user.full_name,
+        role: user.role,
+        totpEnabled: user.totp_enabled === 1,
+      };
     },
   };
 }

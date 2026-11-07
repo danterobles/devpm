@@ -22,6 +22,10 @@ const formView = (res, { status = 200, user, error = null, editing }) =>
     user,
     error,
     editing,
+    twoFactorEnabled: editing
+      ? (res.app.locals.accountSecurity?.isEnabled(user.id) ?? false)
+      : false,
+    done: res.req?.query?.done ?? null,
   });
 
 const call = (fn, target) =>
@@ -49,6 +53,10 @@ export function createUsersController({ service, sessionStore }) {
   /** Cambia la contraseña propia y conserva solo la sesión actual (cierra las demás). */
   async function changeOwnPassword(req, { currentPassword, newPassword }) {
     await service.changeOwnPassword(actor(req), currentPassword, newPassword);
+    req.app.locals.securityEvents?.record('password_changed', {
+      userId: req.session.userId,
+      ip: req.ip,
+    });
     sessionStore?.destroyByUser(actor(req));
     await call(req.session.save, req.session);
   }

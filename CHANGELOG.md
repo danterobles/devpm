@@ -9,7 +9,12 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 
 ## [Sin publicar]
 
-_Sin cambios todavía._
+### Agregado
+
+- «¿Olvidaste tu contraseña?»: enlace de un solo uso por correo (vence en 1 h), con respuesta idéntica exista o no la cuenta y límites por IP y por correo.
+- Autenticación en dos pasos (TOTP) opcional, con códigos de recuperación, y desactivación con contraseña y código; el administrador puede quitarla o desbloquear cuentas.
+- Eventos de seguridad guardados (accesos, bloqueos, restablecimientos y cambios de dos pasos).
+- Migración `007_accounts_security.sql`.
 
 ## [0.4.0] - 2026-11-07
 

@@ -1,0 +1,16 @@
+<section class="mx-auto max-w-sm">
+  <h1 class="text-2xl font-bold">Verificación en dos pasos</h1>
+  <p class="mt-2 text-sm text-slate-600">Escribe el código de 6 dígitos de tu app de autenticación, o uno de tus códigos de recuperación.</p>
+  <% if (error) { %>
+    <p role="alert" class="mt-4 rounded border border-danger bg-red-50 px-4 py-3 text-sm text-red-800"><%= error %></p>
+  <% } %>
+  <form method="post" action="/login/2fa" class="mt-4 space-y-4">
+    <div>
+      <label for="code" class="block text-sm font-medium">Código</label>
+      <input id="code" name="code" required autocomplete="one-time-code" inputmode="text" maxlength="20" autofocus
+        class="mt-1 min-h-11 w-full rounded border border-slate-300 px-3 py-2 tracking-widest" />
+    </div>
+    <button type="submit" class="min-h-11 w-full rounded bg-brand-600 px-4 py-2 font-medium text-white hover:bg-brand-700">Verificar</button>
+  </form>
+  <p class="mt-4 text-sm"><a class="inline-flex min-h-11 items-center underline" href="/login">Volver al inicio de sesión</a></p>
+</section>

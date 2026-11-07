@@ -184,16 +184,13 @@ test('formularios: guardar y eliminar redirigen al listado con el filtro aplicad
     404,
   );
   // «time»: los filtros llegan como campos del formulario de exportación
-  const tm = await pm
-    .post('/saved-filters')
-    .type('form')
-    .send({
-      scope: 'time',
-      name: 'Mayo',
-      from: '2026-05-01',
-      to: '2026-05-31',
-      status: 'approved',
-    });
+  const tm = await pm.post('/saved-filters').type('form').send({
+    scope: 'time',
+    name: 'Mayo',
+    from: '2026-05-01',
+    to: '2026-05-31',
+    status: 'approved',
+  });
   assert.equal(
     tm.headers.location,
     '/time/approvals?from=2026-05-01&to=2026-05-31&status=approved',

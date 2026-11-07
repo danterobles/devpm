@@ -1,0 +1,22 @@
+<section class="mx-auto max-w-sm">
+  <h1 class="text-2xl font-bold">Recuperar contraseña</h1>
+  <% if (error) { %>
+    <p role="alert" class="mt-4 rounded border border-danger bg-red-50 px-4 py-3 text-sm text-red-800"><%= error %></p>
+  <% } %>
+  <% if (!mailAvailable) { %>
+    <p class="mt-4 rounded border border-warn bg-amber-50 px-4 py-3 text-sm text-amber-900">Este servidor no tiene correo configurado, así que no puede enviarte un enlace. Pide a tu administrador que restablezca tu contraseña.</p>
+  <% } else if (sent) { %>
+    <p role="status" class="mt-4 rounded border border-ok bg-green-50 px-4 py-3 text-sm text-green-800">Si existe una cuenta con ese correo, te enviamos un enlace para restablecer la contraseña. Vence en 1 hora y sirve una sola vez.</p>
+  <% } else { %>
+    <p class="mt-2 text-sm text-slate-600">Escribe tu correo y te enviaremos un enlace para elegir una contraseña nueva.</p>
+    <form method="post" action="/forgot-password" class="mt-4 space-y-4">
+      <div>
+        <label for="email" class="block text-sm font-medium">Correo</label>
+        <input id="email" name="email" type="email" required autocomplete="username" maxlength="254"
+          class="mt-1 min-h-11 w-full rounded border border-slate-300 px-3 py-2" />
+      </div>
+      <button type="submit" class="min-h-11 w-full rounded bg-brand-600 px-4 py-2 font-medium text-white hover:bg-brand-700">Enviar enlace</button>
+    </form>
+  <% } %>
+  <p class="mt-4 text-sm"><a class="inline-flex min-h-11 items-center underline" href="/login">Volver al inicio de sesión</a></p>
+</section>

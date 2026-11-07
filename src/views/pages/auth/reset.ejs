@@ -1,0 +1,26 @@
+<section class="mx-auto max-w-sm">
+  <h1 class="text-2xl font-bold">Nueva contraseña</h1>
+  <% if (error) { %>
+    <p role="alert" class="mt-4 rounded border border-danger bg-red-50 px-4 py-3 text-sm text-red-800"><%= error %></p>
+  <% } %>
+  <% if (token) { %>
+    <form method="post" action="/reset-password" class="mt-4 space-y-4">
+      <input type="hidden" name="token" value="<%= token %>" />
+      <div>
+        <label for="newPassword" class="block text-sm font-medium">Nueva contraseña</label>
+        <input id="newPassword" name="newPassword" type="password" required minlength="8" maxlength="72" autocomplete="new-password"
+          class="mt-1 min-h-11 w-full rounded border border-slate-300 px-3 py-2" />
+        <p class="mt-1 text-xs text-slate-600">De 8 a 72 caracteres.</p>
+      </div>
+      <div>
+        <label for="confirmPassword" class="block text-sm font-medium">Confirmar contraseña</label>
+        <input id="confirmPassword" name="confirmPassword" type="password" required autocomplete="new-password"
+          class="mt-1 min-h-11 w-full rounded border border-slate-300 px-3 py-2" />
+      </div>
+      <button type="submit" class="min-h-11 w-full rounded bg-brand-600 px-4 py-2 font-medium text-white hover:bg-brand-700">Guardar contraseña</button>
+    </form>
+  <% } else { %>
+    <p class="mt-4 text-sm"><a class="underline" href="/forgot-password">Pedir un enlace nuevo</a></p>
+  <% } %>
+  <p class="mt-4 text-sm"><a class="inline-flex min-h-11 items-center underline" href="/login">Volver al inicio de sesión</a></p>
+</section>

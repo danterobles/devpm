@@ -1,0 +1,72 @@
+<%
+  const field = 'mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 py-2';
+  const btn = 'min-h-11 rounded-lg bg-brand-600 px-4 py-2 font-medium text-white hover:bg-brand-700';
+  const card = 'mt-6 rounded-2xl border border-navy-100 bg-white p-5 dark:border-white/10';
+  const grouped = (s) => s.replace(/(.{4})/g, '$1 ').trim();
+%>
+<section class="max-w-2xl">
+  <h1 class="text-2xl font-bold sm:text-3xl">Seguridad de la cuenta</h1>
+  <p class="mt-1 text-sm text-slate-600">Protege tu acceso con un segundo paso: además de la contraseña, un código de 6 dígitos que genera tu teléfono.</p>
+
+  <% if (notice) { %><p role="status" class="mt-4 rounded border border-ok bg-green-50 px-4 py-3 text-sm text-green-800"><%= notice %></p><% } %>
+  <% if (error) { %><p role="alert" class="mt-4 rounded border border-danger bg-red-50 px-4 py-3 text-sm text-red-800"><%= error %></p><% } %>
+
+  <% if (codes) { %>
+    <section class="<%= card %>" aria-labelledby="codes-title">
+      <h2 id="codes-title" class="text-lg font-bold">Códigos de recuperación</h2>
+      <p class="mt-1 text-sm text-slate-600">Guárdalos en un lugar seguro. Cada uno sirve una sola vez si pierdes tu teléfono. <strong>No se volverán a mostrar.</strong></p>
+      <ol class="mt-3 grid grid-cols-2 gap-2 font-mono text-sm" data-recovery-codes>
+        <% codes.forEach((c) => { %><li class="rounded bg-navy-50 px-3 py-2 dark:bg-navy-950"><%= c %></li><% }) %>
+      </ol>
+    </section>
+  <% } %>
+
+  <section class="<%= card %>" aria-labelledby="state-title">
+    <h2 id="state-title" class="text-lg font-bold">Autenticación en dos pasos</h2>
+    <% if (status.enabled) { %>
+      <p class="mt-1 text-sm font-semibold text-green-800" role="status">Activada · te quedan <%= status.recoveryCodesLeft %> código(s) de recuperación.</p>
+
+      <form method="post" action="/account/security/codes" class="mt-4 flex flex-wrap items-end gap-3">
+        <div>
+          <label for="codes-code" class="block text-sm font-medium">Código de tu app (para generar códigos nuevos)</label>
+          <input id="codes-code" name="code" required inputmode="numeric" autocomplete="one-time-code" maxlength="7" class="<%= field %>" />
+        </div>
+        <button type="submit" class="min-h-11 rounded-lg border px-4 py-2 hover:bg-slate-100">Generar códigos nuevos</button>
+      </form>
+
+      <h3 class="mt-6 text-base font-bold">Desactivar</h3>
+      <form method="post" action="/account/security/disable" class="mt-2 grid gap-3 sm:grid-cols-2">
+        <div>
+          <label for="off-password" class="block text-sm font-medium">Tu contraseña</label>
+          <input id="off-password" name="password" type="password" required autocomplete="current-password" maxlength="72" class="<%= field %>" />
+        </div>
+        <div>
+          <label for="off-code" class="block text-sm font-medium">Código de tu app o de recuperación</label>
+          <input id="off-code" name="code" required autocomplete="one-time-code" maxlength="20" class="<%= field %>" />
+        </div>
+        <div class="sm:col-span-2"><button type="submit" class="min-h-11 rounded-lg border px-4 py-2 hover:bg-slate-100">Desactivar dos pasos</button></div>
+      </form>
+    <% } else if (setup) { %>
+      <ol class="mt-3 list-decimal space-y-2 pl-5 text-sm">
+        <li>Abre tu app de autenticación (Google Authenticator, Microsoft Authenticator, 1Password, Authy…).</li>
+        <li>Agrega una cuenta nueva con esta <strong>clave</strong>: <code class="break-all rounded bg-navy-50 px-2 py-1 font-mono text-base dark:bg-navy-950" data-totp-secret><%= grouped(setup.secret) %></code></li>
+        <li>O abre este enlace en tu teléfono: <a class="break-all underline" href="<%= setup.uri %>"><%= setup.uri %></a></li>
+        <li>Escribe el código de 6 dígitos que muestra la app para confirmar.</li>
+      </ol>
+      <form method="post" action="/account/security/enable" class="mt-4 flex flex-wrap items-end gap-3">
+        <div>
+          <label for="enable-code" class="block text-sm font-medium">Código de 6 dígitos</label>
+          <input id="enable-code" name="code" required inputmode="numeric" autocomplete="one-time-code" maxlength="7" class="<%= field %>" />
+        </div>
+        <button type="submit" class="<%= btn %>">Activar</button>
+      </form>
+    <% } else { %>
+      <p class="mt-1 text-sm text-slate-600">Desactivada. Te recomendamos activarla, sobre todo si eres administrador.</p>
+      <form method="post" action="/account/security/setup" class="mt-3">
+        <button type="submit" class="<%= btn %>">Activar dos pasos</button>
+      </form>
+    <% } %>
+  </section>
+
+  <p class="mt-6 text-sm"><a class="underline" href="/account/password">Cambiar contraseña</a></p>
+</section>
