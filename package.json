@@ -15,7 +15,7 @@
     "watch:css": "tailwindcss -i src/styles/input.css -o public/css/output.css --watch",
     "postinstall": "node scripts/copy-vendor.js",
     "test": "node --test --test-reporter=spec \"tests/**/*.test.js\"",
-    "test:coverage": "node --test --experimental-test-coverage \"tests/**/*.test.js\"",
+    "test:coverage": "node --test --experimental-test-coverage --test-coverage-include=\"src/modules/**/*.service.js\" --test-coverage-lines=80 --test-coverage-branches=80 --test-coverage-functions=80 \"tests/**/*.test.js\"",
     "lint": "eslint .",
     "format": "prettier --write .",
     "db:migrate": "node --env-file-if-exists=.env src/db/cli.js migrate",

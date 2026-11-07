@@ -176,7 +176,7 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 
 - [x] Revisión de seguridad (ARQUITECTURA §7): CSP, cookies, permisos por pertenencia
 - [x] Prueba de rendimiento con volumen de RNF-01 y revisión de `EXPLAIN QUERY PLAN`
-- [ ] Cobertura ≥ 80 % en services (RNF-08)
+- [x] Cobertura ≥ 80 % en services (RNF-08)
 - [ ] Revisión de accesibilidad y diseño responsivo (RNF-07)
 - [ ] Script de respaldo `scripts/backup-db.js` con retención (RNF-09)
 - [ ] `README.md` con instalación, uso y despliegue

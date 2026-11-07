@@ -59,6 +59,11 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   (límite 300 ms); y una revisión de `EXPLAIN QUERY PLAN` de las 124 consultas que ejecutan esos flujos
   comprueba que ninguna recorre por completo una tabla de crecimiento ilimitado.
 
+### Cambiado (Etapa 11)
+- `npm run test:coverage` mide los services (`src/modules/**/*.service.js`) y **falla** si líneas, ramas
+  o funciones bajan de 80 % (RNF-08). Hoy: 97–100 % de líneas en los 20 services y 96,7 % de ramas en
+  promedio.
+
 ### Corregido (Etapa 11)
 - Gantt del proyecto: p95 de 538 ms con 100 000 registros de tiempo porque `time_entries.task_id` no
   tenía índice (el avance de cada tarea recorría todos los registros); la migración `004_time_task_index`
