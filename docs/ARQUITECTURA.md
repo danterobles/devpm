@@ -310,14 +310,15 @@ los services reciben el bus como dependencia opcional (`events`) y emiten solo t
 |---|---|
 | Autenticación | `express-session` con *store* propio sobre `better-sqlite3` (`src/modules/auth/sqliteSessionStore.js`, ~40 líneas, tabla `sessions` de la migración 003, sin dependencia extra); `req.session.regenerate()` al iniciar sesión; expiración por inactividad de 8 h |
 | Contraseñas | `bcrypt` con costo 12; nunca se registran ni se devuelven en la API |
-| Autorización | `requireAuth` global para todo excepto `/login` y estáticos; `requireRole('admin','pm')` por ruta; el service verifica pertenencia (p. ej. un `pm` solo aprueba horas de sus proyectos) |
-| Cookies | `HttpOnly`, `SameSite=Strict`, `Secure` en producción, nombre no predecible |
+| Autorización | `requireAuth` **global** (en `app.js`) para todo excepto `/login`, `/logout`, `/health` y los estáticos (una prueba recorre todas las rutas y exige 401/redirección sin sesión); `requireRole('admin','pm')` por ruta; el service verifica pertenencia (p. ej. un `pm` solo aprueba horas de sus proyectos) |
+| Cookies | `HttpOnly`, `SameSite=Strict`, `Secure` en producción; nombre propio (`devpm.sid`), no el genérico `connect.sid` |
 | CSRF | `SameSite=Strict` + `verifyOrigin` (global, antes de las rutas): en POST/PUT/PATCH/DELETE el host de `Origin` (o `Referer` si falta) debe coincidir con `Host`, si no responde 403; `Origin: null` se rechaza; sin ambas cabeceras (clientes no navegador) pasa |
-| Cabeceras | `helmet` con CSP: `default-src 'self'`; sin `unsafe-inline` en scripts |
+| Cabeceras | `helmet` con CSP: `default-src 'self'`, `script-src 'self'` (sin `unsafe-inline` en scripts; `style-src` sí lo admite porque Chart.js y Frappe Gantt aplican estilos en línea) y `Referrer-Policy: same-origin`; `upgrade-insecure-requests` y HSTS **solo en producción** (en HTTP plano romperían la carga de recursos) |
 | Fuerza bruta | `express-rate-limit` en `/login` (10 intentos / 15 min por IP) |
 | Inyección | SQL solo con parámetros; ordenamiento con lista blanca de columnas |
 | XSS | Escapado EJS `<%= %>`; en el cliente usar `textContent`, nunca `innerHTML` con datos |
-| Secretos | Solo en `.env`; `SESSION_SECRET` obligatorio en producción |
+| Secretos | Solo en `.env`; `SESSION_SECRET` obligatorio (≥ 32 caracteres) y, en producción, distinto del valor de ejemplo de `.env.example` |
+| Dependencias | `npm audit --omit=dev` sin vulnerabilidades en producción (las de herramientas de desarrollo, como ESLint, no se despliegan) |
 | Auditoría | `audit_log` registra quién, qué entidad, qué acción y los cambios (JSON) |
 
 ## 8. Logs y observabilidad
