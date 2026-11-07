@@ -1,0 +1,31 @@
+<h1 class="text-2xl font-bold sm:text-3xl">Búsqueda</h1>
+<form method="get" action="/search" role="search" class="mt-4 flex flex-wrap items-end gap-3">
+  <div class="min-w-64 flex-1">
+    <label for="search-q" class="block text-sm font-medium">Buscar proyectos, tareas, clientes y miembros del equipo</label>
+    <input id="search-q" name="q" type="search" value="<%= result.q %>" minlength="<%= minLength %>" maxlength="100" required class="mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 py-2" />
+  </div>
+  <button type="submit" class="min-h-11 rounded-lg bg-navy-800 px-4 text-sm font-semibold text-white hover:bg-navy-700 dark:bg-sky-400 dark:text-navy-950 dark:hover:bg-sky-300">Buscar</button>
+</form>
+
+<% if (result.tooShort) { %>
+  <p class="mt-4 text-sm text-slate-600" role="status"><%= result.q ? `Escribe al menos ${minLength} caracteres.` : 'Escribe qué quieres encontrar.' %></p>
+<% } else { %>
+  <p class="mt-4 text-sm text-slate-600" role="status"><%= result.total %> resultado(s) para «<%= result.q %>».</p>
+  <div class="mt-4 grid gap-4 lg:grid-cols-2">
+    <% result.groups.forEach((g) => { %>
+      <section class="rounded-2xl border border-navy-100 bg-white p-5 dark:border-white/10" aria-labelledby="group-<%= g.key %>">
+        <h2 id="group-<%= g.key %>" class="text-lg font-bold"><%= g.label %> <span class="text-base font-medium text-slate-600">(<%= g.total %>)</span></h2>
+        <ul class="mt-2 divide-y divide-navy-100 text-sm dark:divide-white/10">
+          <% g.items.forEach((item) => { %>
+            <li class="py-2"><a class="font-semibold underline" href="<%= item.href %>"><%= item.title %></a><span class="block text-slate-600"><%= item.subtitle %></span></li>
+          <% }) %>
+          <% if (g.items.length === 0) { %><li class="py-2 text-slate-600">Sin resultados.</li><% } %>
+        </ul>
+        <% if (g.total > g.items.length) { %>
+          <p class="mt-2 text-sm text-slate-600">Mostrando <%= g.items.length %> de <%= g.total %>.
+            <% if (g.moreHref) { %><a class="underline" href="<%= g.moreHref %>">Ver más</a><% } else { %>Afina la búsqueda para ver el resto.<% } %></p>
+        <% } %>
+      </section>
+    <% }) %>
+  </div>
+<% } %>

@@ -70,6 +70,11 @@ const CASES = [
   ],
   ['API hoja semanal', () => `/api/v1/time-sheet?memberId=${sample.memberId}`],
   ['API tareas del proyecto', () => `/api/v1/projects/${sample.projectId}/tasks`],
+  // RF-153: la búsqueda global (LIKE) también debe cumplir RNF-01 con el volumen; si no, se evalúa FTS5.
+  ['API búsqueda global (proyecto)', () => '/api/v1/search?q=Proyecto'],
+  ['API búsqueda global (tarea)', () => '/api/v1/search?q=tarea'],
+  ['API búsqueda global (sin resultados)', () => '/api/v1/search?q=zzzz'],
+  ['Página de búsqueda', () => '/search?q=Proyecto'],
   ['API tablero de KPIs', () => '/api/v1/dashboard/kpis'],
   [
     'API KPIs con filtros',

@@ -5,6 +5,12 @@
 %>
 <header class="bg-navy-900 text-white dark:border-b dark:border-white/10">
   <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3 sm:px-6">
+    <% if (user) { %>
+      <form action="/search" method="get" role="search" class="order-last w-full sm:order-none sm:w-72">
+        <label for="global-search" class="sr-only">Buscar proyectos, tareas, clientes y equipo</label>
+        <input id="global-search" name="q" type="search" minlength="2" maxlength="100" placeholder="Buscar…" class="min-h-11 w-full rounded-lg border border-white/20 bg-white/10 px-3 text-sm text-white placeholder:text-navy-200 <%= focus %>" />
+      </form>
+    <% } %>
     <p class="min-w-0 truncate text-sm text-navy-200"><span class="font-semibold text-white"><%= appName %></span> <span aria-hidden="true">/</span> <%= title %></p>
     <div class="flex flex-wrap items-center gap-3">
       <div role="group" aria-label="Tema de color" class="flex rounded-lg border border-white/20 p-0.5">

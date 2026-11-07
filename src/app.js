@@ -26,6 +26,7 @@ import { createCommentsRouter } from './modules/comments/comments.routes.js';
 import { createAttachmentsRepository } from './modules/attachments/attachments.repository.js';
 import { createAttachmentsService } from './modules/attachments/attachments.service.js';
 import { createAttachmentsRouter } from './modules/attachments/attachments.routes.js';
+import { createSearchRouter } from './modules/search/search.routes.js';
 import { createHomeRouter } from './modules/home/home.routes.js';
 import { createSettingsRouter } from './modules/settings/settings.routes.js';
 import { createSettingsService } from './modules/settings/settings.service.js';
@@ -189,6 +190,7 @@ export function createApp({
       kpi,
       timezone: config.timezone,
     });
+    app.use(createSearchRouter({ db }));
     app.use(createImportRouter({ db, events: eventBus, timezone: config.timezone }));
     app.use(createHomeRouter({ db, notifications, kpi, timezone: config.timezone }));
     app.use(
