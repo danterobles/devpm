@@ -307,7 +307,7 @@ Orden recomendado: 18 → 19 → 20 → 21. Cada etapa se cierra con `npm test` 
 
 - [ ] Actualizar los manuales en PDF con lo de las versiones 0.3 y 0.4: notificaciones, «Mi día», importación, comentarios, adjuntos, búsqueda y filtros guardados (usuario y administrador, `SMTP_*` y `UPLOAD_DIR`)
 - [ ] README: nuevas variables, restauración de adjuntos y guía de actualización
-- [ ] Recorrido de aceptación de la v0.4 (comentar con mención → aviso; adjuntar y descargar; buscar y guardar un filtro) y revisión de seguridad completa
+- [x] Recorrido de aceptación de la v0.4 (comentar con mención → aviso; adjuntar y descargar; buscar y guardar un filtro) y revisión de seguridad completa: `tests/integration/acceptance-v04.test.js` y ARQUITECTURA §7
 - [ ] CHANGELOG `[0.4.0]`, versión en `package.json`, etiqueta `v0.4.0` y publicación
 
 **Criterio de cierre:** 0.4.0 aceptada y etiquetada.
