@@ -336,6 +336,8 @@ Empresas con relación comercial; su trabajo es facturable.
 | `task_overdue` | Diario 09:00: tarea no terminada con fecha fin pasada (una vez por tarea) | El responsable |
 | `task_blocked` | Al pasar una tarea a «bloqueada» | El líder del proyecto |
 | `milestone_overdue` | Diario 09:00: hito pendiente con fecha pasada (una vez por hito) | El líder del proyecto |
+| `task_comment` | Al comentar una tarea | El responsable y el líder del proyecto (no a quien comenta ni a los mencionados, que reciben `task_mention`) |
+| `task_mention` | Al mencionar con `@correo` en un comentario nuevo | La persona mencionada (usuario activo) |
 | `project_at_risk` | Diario 09:00: proyecto que cumple la regla de riesgo de §6 (a lo más una vez por semana y proyecto) | El líder del proyecto |
 
 **Decisiones:**
@@ -371,7 +373,7 @@ Empresas con relación comercial; su trabajo es facturable.
 - Las tareas entran al backlog del proyecto elegido; el responsable se identifica por el correo del miembro, que debe estar asignado al proyecto (RF-42).
 - El archivo se lee en el navegador y se envía como texto (sin dependencia de carga de archivos).
 
-### 5.15 Comentarios y menciones (v0.4 — propuesta)
+### 5.15 Comentarios y menciones (v0.4)
 
 | ID | Requerimiento | Prioridad |
 |---|---|---|
@@ -381,7 +383,7 @@ Empresas con relación comercial; su trabajo es facturable.
 | RF-133 | Menciones: escribir `@correo` de un usuario activo (con el correo completo) le envía una notificación (v0.3). Al comentar también se avisa al responsable de la tarea y al líder del proyecto. Nadie recibe aviso de su propio comentario. | Alta |
 | RF-134 | La conversación se actualiza en vivo (SSE) en la ficha de la tarea. | Media |
 
-### 5.16 Adjuntos (v0.4 — propuesta)
+### 5.16 Adjuntos (v0.4)
 
 | ID | Requerimiento | Prioridad |
 |---|---|---|
@@ -391,7 +393,7 @@ Empresas con relación comercial; su trabajo es facturable.
 | RF-143 | Se valida la firma del archivo (no solo la extensión) y se rechazan los tipos fuera de la lista (p. ej. HTML, SVG, ejecutables). | Alta |
 | RF-144 | Los respaldos incluyen la carpeta de adjuntos (`npm run db:backup`). | Media |
 
-### 5.17 Búsqueda global y filtros guardados (v0.4 — propuesta)
+### 5.17 Búsqueda global y filtros guardados (v0.4)
 
 | ID | Requerimiento | Prioridad |
 |---|---|---|
@@ -400,13 +402,14 @@ Empresas con relación comercial; su trabajo es facturable.
 | RF-152 | Filtros guardados por usuario para los listados de proyectos, tareas del backlog y tiempo: nombre, ámbito y filtros; hasta 20 por persona; se aplican con un clic. | Media |
 | RF-153 | La búsqueda responde en < 300 ms (p95) con el volumen de RNF-01; si no, se evalúa FTS5. | Media |
 
-**Propuestas por confirmar (el plan las toma como base):**
+**Decisiones aprobadas (7 nov 2026):**
 
 1. **Comentarios** solo en texto plano (sin formato ni imágenes incrustadas), menciones solo con el correo completo.
 2. **Adjuntos** en disco (`data/uploads/`, `UPLOAD_DIR`), sin dependencias nuevas: subida con cuerpo binario (`express.raw`) y el nombre en un parámetro, que el navegador envía con `fetch`.
 3. Sin antivirus integrado: se documenta el riesgo y se limita por tipo, tamaño y descarga forzada.
 4. **Búsqueda** con `LIKE` escapado en esta versión; FTS5 solo si la prueba de rendimiento lo exige.
-5. Fuera de esta versión: hilos o respuestas anidadas, reacciones, adjuntos en proyectos o clientes, búsqueda dentro de adjuntos.
+5. Detalles de comentarios: editar un comentario no vuelve a avisar; eliminar un comentario no retira los avisos ya enviados; un mismo comentario genera un solo aviso por persona (la mención gana al aviso de comentario).
+6. Fuera de esta versión: hilos o respuestas anidadas, reacciones, adjuntos en proyectos o clientes, búsqueda dentro de adjuntos.
 
 ## 6. KPIs
 

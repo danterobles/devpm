@@ -30,7 +30,7 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 | 15 | Notificaciones (app y correo) | ✅ Completada |
 | 16 | Mi día (panel por rol) | ✅ Completada |
 | 17 | Importación por CSV | ✅ Completada |
-| 18 | Comentarios y menciones (v0.4) | ⏳ Planeada |
+| 18 | Comentarios y menciones (v0.4) | 🔄 En curso |
 | 19 | Adjuntos (v0.4) | ⏳ Planeada |
 | 20 | Búsqueda global y filtros guardados (v0.4) | ⏳ Planeada |
 | 21 | Manuales y versión 0.4.0 | ⏳ Planeada |
@@ -264,9 +264,9 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 
 ---
 
-# Versión 0.4.0 — Colaboración (plan; pendiente de confirmar las propuestas de PRD §5.17)
+# Versión 0.4.0 — Colaboración (plan aprobado el 7 nov 2026)
 
-Orden recomendado: 18 → 19 → 20 → 21. Cada etapa se cierra con `npm test` y `npm run lint` en verde y un commit por cambio lógico. Antes de empezar la 18, confirmar las cinco propuestas del PRD §5.17.
+Orden recomendado: 18 → 19 → 20 → 21. Cada etapa se cierra con `npm test` y `npm run lint` en verde y un commit por cambio lógico. Las propuestas de PRD §5.17 fueron aprobadas.
 
 ## Etapa 18 — Comentarios y menciones (RF-130–RF-134)
 

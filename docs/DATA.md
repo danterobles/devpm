@@ -334,7 +334,7 @@ Cambio de alcance del día (RF-82) = `total_points(d) − total_points(d−1)`.
 |---|---|---|---|
 | id | INTEGER | PK | |
 | user_id | INTEGER | NN, FK → users `ON DELETE CASCADE` | Destinatario |
-| type | TEXT | NN | `hours_midweek`, `hours_close`, `hours_to_review`, `hours_approved`, `hours_rejected`, `task_assigned`, `task_overdue`, `task_blocked`, `milestone_overdue`, `project_at_risk` (PRD §5.12.1) |
+| type | TEXT | NN | `hours_midweek`, `hours_close`, `hours_to_review`, `hours_approved`, `hours_rejected`, `task_assigned`, `task_comment`, `task_mention`, `task_overdue`, `task_blocked`, `milestone_overdue`, `project_at_risk` (PRD §5.12.1) |
 | title | TEXT | NN | |
 | body | TEXT | NN | Detalle en texto plano |
 | link | TEXT | | Ruta interna (p. ej. `/tasks/12`) |
