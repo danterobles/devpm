@@ -1,0 +1,30 @@
+<div class="flex flex-wrap items-center justify-between gap-3">
+  <h1 class="text-2xl font-bold sm:text-3xl">Notificaciones</h1>
+  <div class="flex flex-wrap items-center gap-3 text-sm">
+    <a class="underline" href="<%= unreadOnly ? '/notifications' : '/notifications?unread=1' %>"><%= unreadOnly ? 'Ver todas' : 'Ver solo sin leer' %></a>
+    <a class="underline" href="/account/notifications">Preferencias</a>
+    <% if (unread > 0) { %>
+      <form method="post" action="/notifications/read-all"><button type="submit" class="min-h-11 rounded-lg border px-4 py-2 hover:bg-slate-100">Marcar todas como leídas</button></form>
+    <% } %>
+  </div>
+</div>
+<p class="mt-1 text-sm text-slate-600"><%= unread %> sin leer.</p>
+
+<ul class="mt-4 divide-y rounded-2xl border border-navy-100 bg-white dark:border-white/10" id="notification-list">
+  <% items.forEach((n) => { %>
+    <li class="flex flex-wrap items-start justify-between gap-3 p-4">
+      <div class="min-w-0">
+        <p class="font-semibold"><% if (!n.isRead) { %><span class="mr-2 inline-block h-2 w-2 rounded-full bg-sky-500" aria-hidden="true"></span><span class="sr-only">Sin leer: </span><% } %><%= n.title %></p>
+        <p class="mt-0.5 text-sm text-slate-600"><%= n.body %></p>
+        <p class="mt-1 text-xs text-slate-600"><%= n.createdAt.slice(0, 16).replace('T', ' ') %> UTC</p>
+      </div>
+      <form method="post" action="/notifications/<%= n.id %>/open">
+        <button type="submit" class="min-h-11 rounded-lg border px-4 py-2 text-sm hover:bg-slate-100"><%= n.link ? 'Abrir' : (n.isRead ? 'Leída' : 'Marcar leída') %></button>
+      </form>
+    </li>
+  <% }) %>
+  <% if (items.length === 0) { %>
+    <li class="p-4 text-slate-600"><%= unreadOnly ? 'No tienes notificaciones sin leer.' : 'Aún no tienes notificaciones.' %></li>
+  <% } %>
+</ul>
+<%- include('../../partials/pagination', { meta, baseUrl: unreadOnly ? '/notifications?unread=1' : '/notifications' }) %>

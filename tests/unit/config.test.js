@@ -34,3 +34,41 @@ test('en producción se rechaza el SESSION_SECRET de ejemplo (aunque tenga 32+ c
     }),
   );
 });
+
+test('config: el correo es opcional; sin SMTP_HOST queda deshabilitado y APP_URL se deduce del puerto', () => {
+  const c = loadConfig({ SESSION_SECRET: 'a'.repeat(32), PORT: '4000' });
+  assert.equal(c.smtp.host, null);
+  assert.equal(c.smtp.port, 587);
+  assert.equal(c.smtp.secure, false);
+  assert.equal(c.appUrl, 'http://localhost:4000');
+});
+
+test('config: lee SMTP_* y APP_URL (sin barra final) y rechaza valores inválidos', () => {
+  const c = loadConfig({
+    SESSION_SECRET: 'a'.repeat(32),
+    APP_URL: 'https://devpm.ejemplo.com/',
+    SMTP_HOST: 'smtp.ejemplo.com',
+    SMTP_PORT: '465',
+    SMTP_USER: 'u',
+    SMTP_PASS: 'p',
+    SMTP_SECURE: 'true',
+    SMTP_FROM: 'DevPM <no-reply@ejemplo.com>',
+  });
+  assert.equal(c.appUrl, 'https://devpm.ejemplo.com');
+  assert.deepEqual(c.smtp, {
+    host: 'smtp.ejemplo.com',
+    port: 465,
+    user: 'u',
+    pass: 'p',
+    from: 'DevPM <no-reply@ejemplo.com>',
+    secure: true,
+  });
+  assert.throws(
+    () => loadConfig({ SESSION_SECRET: 'a'.repeat(32), APP_URL: 'no-es-url' }),
+    /APP_URL/,
+  );
+  assert.throws(
+    () => loadConfig({ SESSION_SECRET: 'a'.repeat(32), SMTP_SECURE: 'quizá' }),
+    /SMTP_SECURE/,
+  );
+});

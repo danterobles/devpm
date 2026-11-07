@@ -27,8 +27,8 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 | 12 | Rediseño visual (diseño D) | ✅ Completada |
 | 13 | Gantt en modo oscuro | ✅ Completada |
 | 14 | Endurecimiento de seguridad | ✅ Completada |
-| 15 | Notificaciones (app y correo) | 🔄 En curso |
-| 16 | Mi día (panel por rol) | ⏳ Pendiente |
+| 15 | Notificaciones (app y correo) | ✅ Completada |
+| 16 | Mi día (panel por rol) | 🔄 En curso |
 | 17 | Importación por CSV | ⏳ Pendiente |
 
 ---
@@ -227,17 +227,17 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 
 ## Etapa 15 — Notificaciones (v0.3, RF-100–RF-104)
 
-- [ ] Migración `005_notifications.sql`: tabla `notifications` y `users.email_notifications`
-- [ ] Config: `APP_URL` y `SMTP_*` opcionales; `lib/mailer.js` con `nodemailer` (deshabilitado sin SMTP)
-- [ ] Módulo `notifications`: repository, service (`notify` con deduplicación, listar, leer, `prune`) y API
-- [ ] Página `/notifications` y campana con contador en el encabezado (en vivo por SSE)
-- [ ] Preferencia de correo en `/account/notifications`
-- [ ] Avisos por evento: horas por aprobar, aprobadas/rechazadas, tarea asignada, tarea bloqueada
-- [ ] Job diario 09:00 y al arrancar: recordatorios de horas, tareas y hitos vencidos, proyectos en riesgo
-- [ ] Pruebas por tipo de aviso, deduplicación, correo (`jsonTransport`) y permisos
-- [ ] Documentar `SMTP_*` y `APP_URL` en README y `.env.example`
+- [x] Migración `005_notifications.sql`: tabla `notifications` y `users.email_notifications`
+- [x] Config: `APP_URL` y `SMTP_*` opcionales; `lib/mailer.js` con `nodemailer` (deshabilitado sin SMTP)
+- [x] Módulo `notifications`: repository, service (`notify` con deduplicación, listar, leer, `prune`) y API
+- [x] Página `/notifications` y campana con contador en el encabezado (en vivo por SSE)
+- [x] Preferencia de correo en `/account/notifications`
+- [x] Avisos por evento: horas por aprobar, aprobadas/rechazadas, tarea asignada, tarea bloqueada
+- [x] Job diario 09:00 y al arrancar: recordatorios de horas, tareas y hitos vencidos, proyectos en riesgo
+- [x] Pruebas por tipo de aviso, deduplicación, correo (`jsonTransport`) y permisos
+- [x] Documentar `SMTP_*` y `APP_URL` en README y `.env.example`
 
-**Criterio de cierre:** cada aviso de PRD §5.12.1 llega a su destinatario, sin duplicados, `npm test` y `npm run lint` en verde.
+**Criterio de cierre:** cada aviso de PRD §5.12.1 llega a su destinatario, sin duplicados, `npm test` y `npm run lint` en verde. ✅
 
 ## Etapa 16 — Mi día (v0.3, RF-110–RF-114)
 

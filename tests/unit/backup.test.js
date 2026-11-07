@@ -51,7 +51,12 @@ test('crea una copia consistente con los mismos datos y la integridad verificada
   const copy = new Database(result.file, { readonly: true });
   assert.equal(copy.pragma('integrity_check', { simple: true }), 'ok');
   assert.equal(copy.prepare('SELECT name FROM clients').pluck().get(), 'Finanzas');
-  assert.equal(copy.prepare('SELECT count(*) FROM schema_migrations').pluck().get(), 4);
+  assert.equal(
+    copy.prepare('SELECT count(*) FROM schema_migrations').pluck().get(),
+    fs
+      .readdirSync(new URL('../../src/db/migrations', import.meta.url))
+      .filter((f) => f.endsWith('.sql')).length,
+  );
   copy.close();
   db.close();
 });

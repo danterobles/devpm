@@ -11,6 +11,14 @@ import { requireAuth } from './middlewares/requireAuth.js';
 import { verifyOrigin } from './middlewares/verifyOrigin.js';
 import { layout } from './middlewares/layout.js';
 import { createSession } from './modules/auth/session.js';
+import { createMailer } from './lib/mailer.js';
+import { createNotificationsRepository } from './modules/notifications/notifications.repository.js';
+import { createNotificationsService } from './modules/notifications/notifications.service.js';
+import { createNotificationsRouter } from './modules/notifications/notifications.routes.js';
+import { createRemindersRepository } from './modules/notifications/reminders.repository.js';
+import { createRemindersService } from './modules/notifications/reminders.service.js';
+import { createKpiRepository } from './modules/dashboard/kpi.repository.js';
+import { createKpiService } from './modules/dashboard/kpi.service.js';
 import { createSettingsRouter } from './modules/settings/settings.routes.js';
 import { createSettingsService } from './modules/settings/settings.service.js';
 import { createDashboardRouter } from './modules/dashboard/dashboard.routes.js';
@@ -38,6 +46,7 @@ export function createApp({
   logger = createLogger(config),
   eventBus = createEventBus(),
   sseHeartbeatMs = 25_000,
+  mailer = null,
 }) {
   const app = express();
 
@@ -76,7 +85,18 @@ export function createApp({
   // El layout debe registrarse antes que el router de autenticación: /login se renderiza con él.
   app.use(layout());
 
+  let notifications = null;
   if (db) {
+    // Notificaciones (RF-100): el servicio se comparte con los services que generan avisos.
+    const mail = mailer ?? createMailer({ smtp: config.smtp, logger });
+    notifications = createNotificationsService({
+      repository: createNotificationsRepository(db),
+      events: eventBus,
+      mailer: mail,
+      appUrl: config.appUrl,
+    });
+    app.locals.mailer = mail;
+    app.locals.notifications = notifications;
     const { middleware, store } = createSession({ config, db });
     app.locals.sessionStore = store;
     app.use(middleware);
@@ -84,6 +104,9 @@ export function createApp({
       res.locals.currentUser = req.session?.userId
         ? { id: req.session.userId, fullName: req.session.fullName, role: req.session.role }
         : null;
+      res.locals.unreadNotifications = req.session?.userId
+        ? notifications.unreadCount(req.session.userId)
+        : 0;
       next();
     });
     app.use(createAuthRouter({ db, loginLimit: config.loginMaxAttempts, logger }));
@@ -116,12 +139,30 @@ export function createApp({
     const sse = createSse({ eventBus, heartbeatMs: sseHeartbeatMs });
     app.locals.sse = sse;
     app.use(sse.router);
+    app.use(createNotificationsRouter({ service: notifications }));
     app.use(createClientsRouter({ db, events: eventBus }));
     app.use(createTeamRouter({ db, events: eventBus }));
     app.use(createSprintsRouter({ db, timezone: config.timezone, events: eventBus }));
-    app.use(createTasksRouter({ db, timezone: config.timezone, events: eventBus }));
+    app.use(
+      createTasksRouter({
+        db,
+        timezone: config.timezone,
+        events: eventBus,
+        notifier: notifications,
+      }),
+    );
     const settings = createSettingsService({ db, events: eventBus });
     app.use(createSettingsRouter({ settings }));
+    app.locals.reminders = createRemindersService({
+      repository: createRemindersRepository(db),
+      notifications,
+      kpi: createKpiService({
+        repository: createKpiRepository(db),
+        timezone: config.timezone,
+        getThresholds: settings.getThresholds,
+      }),
+      timezone: config.timezone,
+    });
     app.use(
       createDashboardRouter({
         db,
@@ -131,7 +172,14 @@ export function createApp({
     );
     app.use(createBurndownRouter({ db, timezone: config.timezone }));
     app.use(createGanttRouter({ db, timezone: config.timezone }));
-    app.use(createTimeEntriesRouter({ db, timezone: config.timezone, events: eventBus }));
+    app.use(
+      createTimeEntriesRouter({
+        db,
+        timezone: config.timezone,
+        events: eventBus,
+        notifier: notifications,
+      }),
+    );
     app.use(createLoadRouter({ db, timezone: config.timezone }));
     app.use(createProjectsRouter({ db, timezone: config.timezone, events: eventBus }));
     app.use(

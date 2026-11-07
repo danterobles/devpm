@@ -3,6 +3,7 @@ import { createLogger } from './lib/logger.js';
 import { createApp } from './app.js';
 import { openDb } from './db/connection.js';
 import { createBurndownJob } from './jobs/burndownSnapshot.js';
+import { createRemindersJob } from './jobs/reminders.js';
 import { createSnapshotsService } from './modules/burndown/snapshots.service.js';
 
 const config = loadConfig();
@@ -22,6 +23,14 @@ const burndownJob = createBurndownJob({
 });
 burndownJob.start();
 
+// Avisos periódicos (recordatorios de horas, vencimientos y riesgo): al arrancar y a las 09:00
+const remindersJob = createRemindersJob({
+  reminders: app.locals.reminders,
+  timezone: config.timezone,
+  logger,
+});
+remindersJob.start();
+
 const server = app.listen(config.port, () => {
   logger.info(`DevPM escuchando en http://localhost:${config.port} (${config.env})`);
 });
@@ -29,6 +38,7 @@ const server = app.listen(config.port, () => {
 function shutdown(signal) {
   logger.info(`${signal} recibido, cerrando...`);
   burndownJob.stop();
+  remindersJob.stop();
   app.locals.sse?.closeAll(); // cierra las conexiones SSE para que server.close() termine
   server.close(() => {
     db.close();

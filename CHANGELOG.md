@@ -9,7 +9,11 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 
 ## [Sin publicar]
 
-_Sin cambios todavía._
+### Agregado
+
+- Notificaciones dentro de la aplicación (campana con contador, página `/notifications` y preferencias) y copia opcional por correo con `nodemailer` (`SMTP_*`, `APP_URL`).
+- Avisos: horas por aprobar, aprobadas o rechazadas, tarea asignada o bloqueada, y revisión diaria a las 09:00 (recordatorios de horas, tareas y hitos vencidos, proyectos en riesgo).
+- Migración `005_notifications.sql` (tabla `notifications` y `users.email_notifications`).
 
 ## [0.2.2] - 2026-11-07
 

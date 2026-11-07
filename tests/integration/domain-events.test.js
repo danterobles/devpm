@@ -56,7 +56,8 @@ async function login(app, who) {
     .send({ email: `${who}@test.local`, password: PASSWORD });
   return agent;
 }
-const types = (events) => events.map((e) => e.type);
+// Los avisos (`notification.*`) son un efecto aparte; aquí se comprueban los eventos de dominio.
+const types = (events) => events.map((e) => e.type).filter((t) => !t.startsWith('notification.'));
 
 test('proyectos: crear, editar y cambiar de estado', async () => {
   const { app, db, events } = setup();
@@ -175,7 +176,11 @@ test('tiempo: registrar, enviar, aprobar, rechazar, facturable y eliminar', asyn
     'time_entry.changed',
     'time_entry.changed', // facturable, editar, eliminar
   ]);
-  assert.ok(events.every((e) => e.projectId === pid && e.memberId));
+  assert.ok(
+    events
+      .filter((e) => !e.type.startsWith('notification.'))
+      .every((e) => e.projectId === pid && e.memberId),
+  );
 });
 
 test('enviar la semana emite un evento con el miembro; sin registros por enviar no emite', async () => {

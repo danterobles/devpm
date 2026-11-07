@@ -9,9 +9,9 @@ import { createTimeEntriesController } from './time-entries.controller.js';
  * Registro de tiempo: admin, pm y developer (con miembro vinculado). El viewer no accede.
  * La propiedad del registro y la aprobación las verifica el service.
  */
-export function createTimeEntriesRouter({ db, timezone, events }) {
+export function createTimeEntriesRouter({ db, timezone, events, notifier = null }) {
   const repository = createTimeEntriesRepository(db);
-  const service = createTimeEntriesService({ db, repository, timezone, events });
+  const service = createTimeEntriesService({ db, repository, timezone, events, notifier });
   const c = createTimeEntriesController({ service });
   const access = requireRole('admin', 'pm', 'developer');
 

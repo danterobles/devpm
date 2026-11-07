@@ -39,7 +39,26 @@ export function createTimeEntriesService({
   repository,
   timezone = 'America/Mexico_City',
   events = null,
+  notifier = null,
 }) {
+  /** Avisa al líder de cada proyecto que hay horas por revisar (RF-102). */
+  function notifyToReview(actor, rows) {
+    if (!notifier) return;
+    const byProject = new Map();
+    for (const row of rows) byProject.set(row.project_id, row);
+    for (const [projectId, row] of byProject) {
+      notifier.notify({
+        userIds: notifier.leaderUserIds(projectId),
+        type: 'hours_to_review',
+        title: 'Horas por aprobar',
+        body: `${row.member_name} envió horas de ${row.project_code}.`,
+        link: '/time/approvals',
+        dedupeKey: `to-review:${projectId}:${row.team_member_id}:${todayIn(timezone)}`,
+        exceptUserId: actor.id,
+      });
+    }
+  }
+
   const audit = (actorId, id, action, changes) =>
     recordAudit(db, { userId: actorId, entity: 'time_entry', entityId: id, action, changes });
 
@@ -182,6 +201,7 @@ export function createTimeEntriesService({
         projectId: before.project_id,
         memberId: before.team_member_id,
       });
+      notifyToReview(actor, [before]);
       return toDto(repository.findById(id));
     },
 
@@ -190,14 +210,17 @@ export function createTimeEntriesService({
       const memberId = ownMember(actor);
       const from = mondayOf(week);
       const ids = repository.weekEditableIds(memberId, from, addDays(from, 6));
+      const sent = [];
       db.transaction(() => {
         for (const id of ids) {
           const before = repository.findById(id);
+          sent.push(before);
           repository.setReview(id, { status: 'submitted' });
           audit(actor.id, id, 'status_change', { status: [before.status, 'submitted'] });
         }
       })();
       if (ids.length > 0) events?.emit('time_entry.changed', { memberId });
+      notifyToReview(actor, sent);
       return { submitted: ids.length, weekStart: from };
     },
 
@@ -264,6 +287,17 @@ export function createTimeEntriesService({
       events?.emit(approved ? 'time_entry.approved' : 'time_entry.changed', {
         projectId: row.project_id,
         memberId: row.team_member_id,
+      });
+      notifier?.notify({
+        userIds: [notifier.userOfMember(row.team_member_id)],
+        type: approved ? 'hours_approved' : 'hours_rejected',
+        title: approved ? 'Horas aprobadas' : 'Horas rechazadas',
+        body: `${row.project_code} · ${row.work_date} · ${Math.round((row.minutes / 60) * 100) / 100} h${
+          approved ? '' : `. Motivo: ${reason}`
+        }`,
+        link: approved ? '/time' : `/time/entries/${id}`,
+        dedupeKey: `review:${id}:${approved ? 'approved' : 'rejected'}`,
+        exceptUserId: actor.id,
       });
       return toDto(repository.findById(id));
     },

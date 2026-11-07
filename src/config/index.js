@@ -10,6 +10,17 @@ const schema = z.object({
   LOGIN_MAX_ATTEMPTS: z.coerce.number().int().min(1).default(10),
   BACKUP_RETENTION_DAYS: z.coerce.number().int().min(1).default(14),
   BACKUP_DIR: z.string().min(1).default('data/backups'),
+  // Notificaciones por correo (opcionales): sin SMTP_HOST solo hay avisos dentro de la aplicación.
+  APP_URL: z.string().url().optional(),
+  SMTP_HOST: z.string().optional(),
+  SMTP_PORT: z.coerce.number().int().min(1).max(65535).default(587),
+  SMTP_USER: z.string().optional(),
+  SMTP_PASS: z.string().optional(),
+  SMTP_FROM: z.string().min(3).default('DevPM <no-reply@localhost>'),
+  SMTP_SECURE: z
+    .enum(['true', 'false'])
+    .default('false')
+    .transform((v) => v === 'true'),
 });
 
 /** Valida variables de entorno; falla rápido con un mensaje claro. */
@@ -39,5 +50,14 @@ export function loadConfig(env = process.env) {
     loginMaxAttempts: c.LOGIN_MAX_ATTEMPTS,
     backupRetentionDays: c.BACKUP_RETENTION_DAYS,
     backupDir: c.BACKUP_DIR,
+    appUrl: (c.APP_URL ?? `http://localhost:${c.PORT}`).replace(/\/+$/, ''),
+    smtp: {
+      host: c.SMTP_HOST || null,
+      port: c.SMTP_PORT,
+      user: c.SMTP_USER || null,
+      pass: c.SMTP_PASS || null,
+      from: c.SMTP_FROM,
+      secure: c.SMTP_SECURE,
+    },
   });
 }

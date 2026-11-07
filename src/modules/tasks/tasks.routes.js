@@ -10,13 +10,15 @@ import { createTasksController } from './tasks.controller.js';
  * Tareas: lectura para todo usuario autenticado; crear/editar/borrar solo `admin` y `pm`.
  * El cambio de estado lo autoriza el service (un developer solo en sus propias tareas).
  */
-export function createTasksRouter({ db, timezone, events }) {
+export function createTasksRouter({ db, timezone, events, notifier = null }) {
   const c = createTasksController({
     service: createTasksService({
       db,
       repository: createTasksRepository(db),
       snapshots: createSnapshotsService({ db, timezone }),
       events,
+      notifier,
+      timezone,
     }),
   });
   const canWrite = requireRole('admin', 'pm');

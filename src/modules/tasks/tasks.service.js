@@ -1,6 +1,6 @@
 import { AppError } from '../../lib/AppError.js';
 import { diff, recordAudit } from '../../lib/audit.js';
-import { nowIso } from '../../lib/dates.js';
+import { nowIso, today as todayIn } from '../../lib/dates.js';
 import { recordTaskStatus } from '../../lib/taskHistory.js';
 
 export const toDto = (r) => ({
@@ -31,7 +31,27 @@ const BOARD_STATUSES = ['backlog', 'todo', 'in_progress', 'in_review', 'blocked'
 const DERIVED = ['assignee_name', 'sprint_name', 'subtask_count'];
 
 /** Casos de uso de tareas (RF-61, RF-62, RF-65, RF-42). */
-export function createTasksService({ db, repository, snapshots = null, events = null }) {
+export function createTasksService({
+  db,
+  repository,
+  snapshots = null,
+  events = null,
+  notifier = null,
+  timezone = 'America/Mexico_City',
+}) {
+  /** Avisa al responsable (RF-102) cuando otra persona le asigna una tarea. */
+  function notifyAssigned(actorId, taskId, title, assigneeId) {
+    if (!notifier || assigneeId === null || assigneeId === undefined) return;
+    notifier.notify({
+      userIds: [notifier.userOfMember(assigneeId)],
+      type: 'task_assigned',
+      title: 'Te asignaron una tarea',
+      body: title,
+      link: `/tasks/${taskId}`,
+      exceptUserId: actorId,
+    });
+  }
+
   function requireProject(projectId) {
     if (!repository.projectExists(projectId)) throw AppError.notFound('Proyecto no encontrado');
   }
@@ -358,6 +378,7 @@ export function createTasksService({ db, repository, snapshots = null, events = 
       })();
       snapshots?.recalculate([fields.sprintId]);
       events?.emit('task.created', { projectId, sprintId: fields.sprintId ?? null, taskId: id });
+      notifyAssigned(actorId, id, input.title, input.assigneeId);
       return toDto(repository.findById(id));
     },
 
@@ -409,6 +430,9 @@ export function createTasksService({ db, repository, snapshots = null, events = 
         sprintId: repository.findById(id).sprint_id,
         taskId: id,
       });
+      if (input.assigneeId !== undefined && input.assigneeId !== before.assignee_id) {
+        notifyAssigned(actorId, id, before.title, input.assigneeId);
+      }
       return toDto(repository.findById(id));
     },
 
@@ -446,6 +470,17 @@ export function createTasksService({ db, repository, snapshots = null, events = 
           sprintId: task.sprint_id,
           taskId: id,
         });
+        if (to === 'blocked' && notifier) {
+          notifier.notify({
+            userIds: notifier.leaderUserIds(task.project_id),
+            type: 'task_blocked',
+            title: 'Tarea bloqueada',
+            body: `«${task.title}» pasó a bloqueada.`,
+            link: `/tasks/${id}`,
+            dedupeKey: `blocked:${id}:${todayIn(timezone)}`,
+            exceptUserId: actor.id,
+          });
+        }
       }
       return toDto(repository.findById(id));
     },

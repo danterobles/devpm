@@ -67,6 +67,12 @@ Se leen de `.env` (ver `.env.example`) o del entorno.
 | `LOGIN_MAX_ATTEMPTS` | `10` | Intentos fallidos de inicio de sesión cada 15 min por IP (y el doble por cuenta). Los fallos y bloqueos se registran en el log |
 | `BACKUP_RETENTION_DAYS` | `14` | Días que se conservan los respaldos |
 | `BACKUP_DIR` | `data/backups` | Carpeta de los respaldos |
+| `APP_URL` | `http://localhost:PORT` | URL pública de la aplicación (enlaces de los correos) |
+| `SMTP_HOST` | — | Servidor SMTP. Sin él, las notificaciones solo aparecen dentro de la aplicación |
+| `SMTP_PORT` | `587` | Puerto SMTP |
+| `SMTP_USER`, `SMTP_PASS` | — | Credenciales SMTP (opcionales) |
+| `SMTP_FROM` | `DevPM <no-reply@localhost>` | Remitente de los correos |
+| `SMTP_SECURE` | `false` | `true` para TLS directo (puerto 465); con `false` se usa STARTTLS si el servidor lo ofrece |
 
 ## Scripts
 

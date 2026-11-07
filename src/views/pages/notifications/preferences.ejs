@@ -1,0 +1,20 @@
+<section class="max-w-xl">
+  <h1 class="text-2xl font-bold">Preferencias de notificaciones</h1>
+  <% if (done) { %>
+    <p role="status" class="mt-4 rounded border border-ok bg-green-50 px-4 py-3 text-sm text-green-800">Preferencias guardadas.</p>
+  <% } %>
+  <form method="post" action="/account/notifications" class="mt-4 space-y-4">
+    <label class="flex items-start gap-3">
+      <input type="checkbox" name="emailNotifications" value="1" class="mt-1 h-5 w-5" <%= emailEnabled ? 'checked' : '' %> />
+      <span>
+        <span class="block font-medium">Recibir una copia de los avisos por correo</span>
+        <span class="block text-sm text-slate-600">Los avisos siempre aparecen dentro de la aplicación.</span>
+      </span>
+    </label>
+    <% if (!mailAvailable) { %>
+      <p class="rounded border border-warn bg-amber-50 px-4 py-3 text-sm text-amber-900">Este servidor no tiene correo configurado: por ahora solo recibirás avisos dentro de la aplicación.</p>
+    <% } %>
+    <button type="submit" class="min-h-11 rounded-lg bg-brand-600 px-4 py-2 font-medium text-white hover:bg-brand-700">Guardar</button>
+  </form>
+  <p class="mt-4 text-sm"><a class="underline" href="/notifications">Volver a las notificaciones</a></p>
+</section>
