@@ -14,7 +14,7 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 - Rediseño visual D «Dashboard Enfoque» (RNF-12): riel de iconos, encabezado azul marino y tarjetas de KPI con barra de semáforo.
 - Modo oscuro que sigue la preferencia del sistema, con selector Sistema / Claro / Oscuro guardado en el navegador.
 - Las gráficas del tablero, Burndown y Burnup toman sus colores del tema activo.
-- Manuales en PDF (carta horizontal, con pantallas y pasos) para el usuario final y para el administrador, en `docs/manuales/`.
+- Manuales en PDF (carta horizontal, con pantallas y pasos, con el diseño nuevo y el tema claro/oscuro) para el usuario final y para el administrador, en `docs/manuales/`.
 
 ### Cambiado
 
