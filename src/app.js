@@ -27,6 +27,9 @@ import { createAttachmentsRepository } from './modules/attachments/attachments.r
 import { createAttachmentsService } from './modules/attachments/attachments.service.js';
 import { createAttachmentsRouter } from './modules/attachments/attachments.routes.js';
 import { createSearchRouter } from './modules/search/search.routes.js';
+import { createSavedFiltersRepository } from './modules/saved-filters/saved-filters.repository.js';
+import { createSavedFiltersService } from './modules/saved-filters/saved-filters.service.js';
+import { createSavedFiltersRouter } from './modules/saved-filters/saved-filters.routes.js';
 import { createHomeRouter } from './modules/home/home.routes.js';
 import { createSettingsRouter } from './modules/settings/settings.routes.js';
 import { createSettingsService } from './modules/settings/settings.service.js';
@@ -148,6 +151,16 @@ export function createApp({
     const sse = createSse({ eventBus, heartbeatMs: sseHeartbeatMs });
     app.locals.sse = sse;
     app.use(sse.router);
+    const savedFilters = createSavedFiltersService({
+      repository: createSavedFiltersRepository(db),
+    });
+    // Ayudantes para las vistas (partials/saved-filters): filtros de la persona y filtros actuales de la página.
+    app.use((req, res, next) => {
+      res.locals.savedFiltersFor = (scope) =>
+        req.session?.userId ? savedFilters.list(req.session.userId, scope) : [];
+      res.locals.currentFilterQuery = (scope) => savedFilters.canonical(scope, req.query);
+      next();
+    });
     app.use(createNotificationsRouter({ service: notifications }));
     const commentsRepository = createCommentsRepository(db);
     app.locals.comments = createCommentsService({
@@ -190,6 +203,7 @@ export function createApp({
       kpi,
       timezone: config.timezone,
     });
+    app.use(createSavedFiltersRouter({ service: savedFilters }));
     app.use(createSearchRouter({ db }));
     app.use(createImportRouter({ db, events: eventBus, timezone: config.timezone }));
     app.use(createHomeRouter({ db, notifications, kpi, timezone: config.timezone }));

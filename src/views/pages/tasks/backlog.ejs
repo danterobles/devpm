@@ -6,6 +6,40 @@
   <p role="alert" class="mt-4 rounded border border-danger bg-red-50 px-4 py-3 text-sm text-red-800"><%= error %></p>
 <% } %>
 
+<form method="get" action="/projects/<%= project.id %>/backlog" class="mt-4 flex flex-wrap items-end gap-3" aria-label="Filtros del backlog">
+  <div>
+    <label for="bf-q" class="block text-sm font-medium">Buscar</label>
+    <input id="bf-q" name="q" type="search" value="<%= filters.q || '' %>" maxlength="100" class="mt-1 min-h-11 rounded-lg border border-slate-300 bg-white px-3 py-2" />
+  </div>
+  <div>
+    <label for="bf-type" class="block text-sm font-medium">Tipo</label>
+    <select id="bf-type" name="type" class="mt-1 min-h-11 rounded-lg border border-slate-300 bg-white px-3 py-2">
+      <option value="">Todos</option>
+      <% types.forEach((t) => { %><option value="<%= t %>" <%= filters.type === t ? 'selected' : '' %>><%= t %></option><% }) %>
+    </select>
+  </div>
+  <div>
+    <label for="bf-priority" class="block text-sm font-medium">Prioridad</label>
+    <select id="bf-priority" name="priority" class="mt-1 min-h-11 rounded-lg border border-slate-300 bg-white px-3 py-2">
+      <option value="">Todas</option>
+      <% priorities.forEach((p) => { %><option value="<%= p %>" <%= filters.priority === p ? 'selected' : '' %>><%= p %></option><% }) %>
+    </select>
+  </div>
+  <div>
+    <label for="bf-assignee" class="block text-sm font-medium">Responsable</label>
+    <select id="bf-assignee" name="assigneeId" class="mt-1 min-h-11 rounded-lg border border-slate-300 bg-white px-3 py-2">
+      <option value="">Todos</option>
+      <% members.forEach((m) => { %><option value="<%= m.id %>" <%= filters.assigneeId === m.id ? 'selected' : '' %>><%= m.name %></option><% }) %>
+    </select>
+  </div>
+  <button type="submit" class="min-h-11 rounded-lg border px-4 py-2 text-sm hover:bg-slate-100">Filtrar</button>
+  <a href="/projects/<%= project.id %>/backlog" class="inline-flex min-h-11 items-center text-sm underline">Limpiar</a>
+</form>
+<%- include('../../partials/saved-filters', { scope: 'tasks', basePath: '/projects/' + project.id + '/backlog', projectId: project.id }) %>
+<% if (tasks.length !== allTasksCount) { %>
+  <p class="mt-2 text-sm text-slate-600" role="status">Mostrando <%= tasks.length %> de <%= allTasksCount %> tareas.</p>
+<% } %>
+
 <div class="mt-4 overflow-x-auto">
   <table class="w-full text-left text-sm">
     <caption class="sr-only">Tareas del backlog en orden de prioridad</caption>

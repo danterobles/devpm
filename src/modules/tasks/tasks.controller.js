@@ -135,11 +135,37 @@ export function createTasksController({ service }) {
     }
   };
 
+  /** Filtros del backlog (texto, tipo, prioridad y responsable); los valores inválidos se ignoran. */
+  function backlogFilters(query) {
+    const f = {};
+    const q = String(query.q ?? '')
+      .trim()
+      .slice(0, 100);
+    if (q) f.q = q;
+    if (TYPES.includes(query.type)) f.type = query.type;
+    if (PRIORITIES.includes(query.priority)) f.priority = query.priority;
+    const assigneeId = Number(query.assigneeId);
+    if (Number.isInteger(assigneeId) && assigneeId > 0) f.assigneeId = assigneeId;
+    return f;
+  }
+  function applyFilters(tasks, f) {
+    return tasks.filter(
+      (t) =>
+        (!f.q || t.title.toLowerCase().includes(f.q.toLowerCase())) &&
+        (!f.type || t.type === f.type) &&
+        (!f.priority || t.priority === f.priority) &&
+        (!f.assigneeId || t.assigneeId === f.assigneeId),
+    );
+  }
+
   function backlogPage(req, res, pid, { status = 200, error = null, form = {} } = {}) {
+    const filters = backlogFilters(req.query);
     res.status(status).render('pages/tasks/backlog', {
       title: 'Backlog',
       ...service.formOptions(pid),
-      tasks: service.backlog(pid),
+      tasks: applyFilters(service.backlog(pid), filters),
+      filters,
+      allTasksCount: service.backlog(pid).length,
       canWrite: canWriteRole(req),
       error,
       form,

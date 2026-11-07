@@ -1,0 +1,41 @@
+<%#
+  Uso: include('../partials/saved-filters', { scope: 'projects', basePath: '/projects', projectId: null })
+  Lista los filtros guardados de la persona (enlaces que aplican el filtro) y permite guardar el actual.
+%>
+<%
+  const items = savedFiltersFor(scope);
+  const current = currentFilterQuery(scope);
+  const id = `sf-${scope}`;
+  // En «time» los filtros son los campos del formulario de exportación, que trae su propio botón de guardado.
+  const allowSave = locals.canSave === undefined ? true : locals.canSave;
+%>
+<details class="mt-3 rounded-xl border border-navy-100 bg-white p-3 text-sm dark:border-white/10" data-saved-filters="<%= scope %>">
+  <summary class="min-h-11 cursor-pointer font-semibold">Filtros guardados (<%= items.length %>)</summary>
+  <ul class="mt-2 divide-y divide-navy-100 dark:divide-white/10">
+    <% items.forEach((f) => { %>
+      <li class="flex flex-wrap items-center justify-between gap-2 py-2">
+        <a class="font-medium underline" href="<%= basePath %>?<%= f.query %>"><%= f.name %></a>
+        <form method="post" action="/saved-filters/<%= f.id %>/delete">
+          <% if (projectId) { %><input type="hidden" name="projectId" value="<%= projectId %>" /><% } %>
+          <button type="submit" class="min-h-11 px-2 underline" aria-label="Eliminar el filtro <%= f.name %>">Eliminar</button>
+        </form>
+      </li>
+    <% }) %>
+    <% if (items.length === 0) { %><li class="py-2 text-slate-600">Aún no guardas filtros en este listado.</li><% } %>
+  </ul>
+  <% if (!allowSave) { %>
+  <% } else if (current) { %>
+    <form method="post" action="/saved-filters" class="mt-3 flex flex-wrap items-end gap-2">
+      <input type="hidden" name="scope" value="<%= scope %>" />
+      <input type="hidden" name="query" value="<%= current %>" />
+      <% if (projectId) { %><input type="hidden" name="projectId" value="<%= projectId %>" /><% } %>
+      <div>
+        <label for="<%= id %>-name" class="block text-xs font-semibold">Guardar el filtro actual como</label>
+        <input id="<%= id %>-name" name="name" required maxlength="60" class="mt-1 min-h-11 rounded-lg border border-slate-300 bg-white px-3 py-2" />
+      </div>
+      <button type="submit" class="min-h-11 rounded-lg border px-4 py-2 hover:bg-slate-100">Guardar</button>
+    </form>
+  <% } else { %>
+    <p class="mt-3 text-slate-600">Aplica algún filtro para poder guardarlo.</p>
+  <% } %>
+</details>

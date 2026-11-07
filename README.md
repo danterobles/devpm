@@ -86,6 +86,9 @@ Se leen de `.env` (ver `.env.example`) o del entorno.
 - **Importar datos** (`admin` y `pm`, menú «Importar»): clientes, miembros del equipo y tareas de un proyecto
   desde un CSV. Descarga la plantilla, valida (nada se guarda) e importa; si alguna fila falla no se guarda ninguna.
 
+- **Colaboración (0.4):** comentarios con menciones (`@correo`) y adjuntos en cada tarea; búsqueda global en el
+  encabezado; filtros guardados en proyectos, backlog y exportación de tiempo.
+
 ## Scripts
 
 | Comando | Qué hace |

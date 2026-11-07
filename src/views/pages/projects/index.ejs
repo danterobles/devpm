@@ -26,6 +26,7 @@
   </div>
   <button type="submit" class="rounded border px-4 py-2 text-sm hover:bg-slate-100">Filtrar</button>
 </form>
+<%- include('../../partials/saved-filters', { scope: 'projects', basePath: '/projects', projectId: null }) %>
 
 <div class="mt-4 overflow-x-auto">
   <table class="w-full text-left text-sm">

@@ -22,6 +22,13 @@ const parseId = (raw) => {
 
 const DECIMAL = /^\d+(\.\d{1,2})?$/;
 
+/** Valores iniciales del formulario de exportación (p. ej. al aplicar un filtro guardado). */
+function exportDefaults(query) {
+  const parsed = listQuerySchema.pick({ from: true, to: true, status: true }).safeParse(query);
+  const v = parsed.success ? parsed.data : {};
+  return { from: v.from ?? '', to: v.to ?? '', status: v.status ?? 'all' };
+}
+
 /** Formulario de la hoja → contrato de la API (horas decimales a minutos, vacíos a null). */
 function formToInput(body) {
   if (!DECIMAL.test(String(body.hours ?? '').trim())) {
@@ -88,6 +95,7 @@ export function createTimeEntriesController({ service }) {
       title: 'Aprobaciones de tiempo',
       entries: service.pending(actor(req)),
       canExport: ['admin', 'pm'].includes(req.session.role),
+      exportDefaults: exportDefaults(req.query),
       error,
       minutesToHours,
     });
