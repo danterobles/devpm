@@ -1,0 +1,38 @@
+<section class="mx-auto max-w-3xl">
+  <h1 class="text-2xl font-bold">Umbrales de los KPIs</h1>
+  <p class="mt-1 text-sm text-slate-600">
+    Definen cuándo cada indicador del tablero se muestra en verde, ámbar o rojo.
+    <% if (isDefault) { %>Se usan los valores iniciales del PRD.<% } else { %>Hay valores personalizados.<% } %>
+  </p>
+  <% if (saved) { %>
+    <p role="status" class="mt-4 rounded border border-ok bg-green-50 px-4 py-3 text-sm text-green-800">Umbrales guardados. Los tableros abiertos se actualizan solos.</p>
+  <% } %>
+  <% if (error) { %>
+    <p role="alert" class="mt-4 rounded border border-danger bg-red-50 px-4 py-3 text-sm text-red-800"><%= error %></p>
+  <% } %>
+  <form method="post" action="/admin/settings/kpis" class="mt-4 space-y-6">
+    <% groups.forEach((g) => { %>
+      <fieldset class="rounded border bg-white p-4">
+        <legend class="px-1 text-sm font-semibold"><%= g.title %></legend>
+        <p class="text-xs text-slate-600"><%= g.hint %></p>
+        <div class="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <% g.fields.forEach(([key, label]) => { %>
+            <% const v = values[g.id]?.[key]; %>
+            <div>
+              <label for="<%= g.id %>-<%= key %>" class="block text-xs font-medium"><%= label %></label>
+              <input id="<%= g.id %>-<%= key %>" name="<%= g.id %>.<%= key %>" type="number" step="any" min="0" required
+                value="<%= (v === undefined || Number.isNaN(v)) ? '' : v %>" class="mt-1 w-full rounded border border-slate-300 px-2 py-1" />
+            </div>
+          <% }) %>
+        </div>
+      </fieldset>
+    <% }) %>
+    <div class="flex gap-3">
+      <button type="submit" class="rounded bg-brand-600 px-4 py-2 font-medium text-white hover:bg-brand-700">Guardar umbrales</button>
+      <a href="/dashboard" class="rounded border px-4 py-2 hover:bg-slate-100">Volver al tablero</a>
+    </div>
+  </form>
+  <form method="post" action="/admin/settings/kpis/reset" class="mt-4">
+    <button type="submit" class="text-sm underline">Restablecer valores del PRD</button>
+  </form>
+</section>

@@ -271,6 +271,12 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   eventos de dominio (`data-live`, prefijos de evento y proyecto): el Kanban vuelve a pedir la página y
   reemplaza las columnas (sin perder el arrastre), el Gantt ignora el eco de sus propios cambios y el
   Burndown refleja la instantánea recalculada. Medido en un navegador real: ~0.5 s.
+- Umbrales de semáforo configurables (RF-93): `settings` clave `kpi.thresholds` (JSON validado con Zod:
+  estructura estricta y orden coherente de cada umbral), API `GET/PUT/DELETE /api/v1/settings/kpi-thresholds`
+  (lectura para cualquier usuario autenticado; escritura solo `admin`), página `/admin/settings/kpis` con
+  formulario y «Restablecer valores del PRD», bitácora con el antes y el después y evento
+  `settings.updated` que refresca los tableros abiertos. Un valor guardado inválido o corrupto no rompe el
+  tablero: se usan los de fábrica.
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y

@@ -26,6 +26,7 @@ export function createDashboardRouter({ db, timezone, getThresholds }) {
       filters,
       options: repository.filterOptions(),
       canSeeRevenue: ['admin', 'pm'].includes(req.session.role),
+      canConfigure: req.session.role === 'admin',
     });
   });
   return router;

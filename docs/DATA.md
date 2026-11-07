@@ -332,6 +332,8 @@ Cambio de alcance del día (RF-82) = `total_points(d) − total_points(d−1)`.
 | Tabla | Propósito |
 |---|---|
 | `settings` | `key TEXT PK`, `value TEXT` (JSON). Umbrales de KPIs (RF-93), zona horaria, días hábiles |
+
+Claves en uso de `settings`: `kpi.thresholds` (JSON con un objeto por KPI con semáforo: `k3`, `k4`, `k5`, `k6`, `k7`, `k9`, `k10`, `k11`, `k15`, `k16`); si no existe se usan los valores de fábrica de `src/modules/dashboard/thresholds.js` (PRD §6).
 | `sessions` | Creada en la migración `003_sessions.sql` y gestionada por el store propio de `express-session` (`sid` PK, `sess` JSON, `expires_at` en ms epoch, índice por `expires_at`) |
 | `schema_migrations` | `version TEXT PK`, `applied_at TEXT` — control del runner de migraciones |
 

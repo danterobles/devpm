@@ -1,6 +1,9 @@
 <% const sel = (cond) => (cond ? 'selected' : ''); %>
 <% const field = 'mt-1 rounded border border-slate-300 px-3 py-2'; %>
-<h1 class="text-2xl font-bold">Tablero de KPIs</h1>
+<div class="flex flex-wrap items-center justify-between gap-2">
+  <h1 class="text-2xl font-bold">Tablero de KPIs</h1>
+  <% if (canConfigure) { %><a class="text-sm underline" href="/admin/settings/kpis">Configurar umbrales</a><% } %>
+</div>
 <p class="mt-1 text-sm text-slate-600">Los indicadores se actualizan solos cuando cambian tareas, horas, asignaciones o proyectos.</p>
 
 <form id="dashboard-filters" method="get" action="/dashboard" class="mt-4 flex flex-wrap items-end gap-3">
