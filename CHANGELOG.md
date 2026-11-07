@@ -9,6 +9,16 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 
 ## [Sin publicar]
 
+_Sin cambios todavía._
+
+## [0.1.0] - 2026-11-06
+
+Primera versión (MVP) de **DevPM**: clientes internos y externos, equipo, proyectos con hitos y
+asignaciones, sprints y tareas con tablero Kanban, registro y aprobación de tiempo, diagrama de Gantt,
+Burndown/Burnup y tablero de KPIs en tiempo real; autenticación con roles, auditoría, respaldos y
+documentación. Cumple los criterios de aceptación del PRD §8 (ver `docs/PRD.md` §8.1) y los requerimientos
+no funcionales RNF-01 a RNF-11. Detalle por etapa:
+
 ### Agregado
 - Repositorio git inicializado en la rama `main` con `.gitignore` para Node.js y SQLite.
 - `CHANGELOG.md` para registrar los cambios del proyecto.
