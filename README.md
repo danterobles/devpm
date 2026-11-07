@@ -8,6 +8,46 @@ tareas, hitos), con **diagrama de Gantt**, **Burndown/Burnup** y un **tablero de
   Frappe Gantt (servidos localmente, sin CDN) · Server-Sent Events para el tiempo real.
 - **Sin servicios externos:** una sola base SQLite y un solo proceso Node.
 
+**Versión actual: 0.5.0** (ver [`CHANGELOG.md`](CHANGELOG.md)).
+
+## Funcionalidades
+
+| Área | Qué incluye |
+|---|---|
+| Clientes y equipo | Clientes internos y externos, miembros con habilidades y ausencias, usuarios con 4 roles |
+| Proyectos | Estados con transiciones válidas, resumen, asignaciones con aviso de sobreasignación (>100 %) |
+| Planeación | Backlog, tablero Kanban, sprints (uno activo), tareas con dependencias, hitos, historial |
+| Gantt y Burndown | Gantt por proyecto y de portafolio (dependencias Fin→Inicio), Burndown/Burnup con línea ideal por días hábiles |
+| Tiempo | Registro con tope de 1 440 min/día, hoja semanal, facturable, aprobación por el líder, exportación CSV |
+| KPIs | 16 indicadores (SPI, CPI, EV, PV…) con semáforos configurables, actualizados en tiempo real |
+| Colaboración | Comentarios con menciones `@correo`, adjuntos, búsqueda global, filtros guardados |
+| Avisos | Notificaciones en la aplicación y por correo (opcional), preferencias por tipo, recordatorios diarios |
+| Datos | Importación CSV todo-o-nada (clientes, equipo, tareas) y exportación de tiempo |
+| Cuentas y seguridad | Recuperación de contraseña, autenticación en dos pasos (TOTP), bitácora, eventos de seguridad, estado del sistema |
+| Interfaz | Diseño azul marino, tema claro/oscuro según el sistema (con selector), responsivo desde 360 px, accesible |
+
+### Apariencia
+
+El tema sigue la preferencia del sistema (`prefers-color-scheme`) y la persona puede fijarlo con el selector del
+encabezado; la elección se recuerda en el navegador. El Gantt y las gráficas tienen su propia paleta oscura.
+
+### Seguridad en resumen
+
+Contraseñas con bcrypt (8–72 bytes), sesiones en SQLite con identificador almacenado como hash, límite de intentos
+por IP y por cuenta, validación de `Origin`/`Referer`, CSP estricta sin CDN, secretos de 2FA cifrados (AES-256-GCM),
+adjuntos validados por firma y servidos como descarga forzada, consultas siempre parametrizadas y datos fiscales
+ocultos al rol `viewer`. Detalle en [`docs/ARQUITECTURA.md`](docs/ARQUITECTURA.md) §7.
+
+### Estructura
+
+```
+src/modules/<dominio>/   routes · controller · service · repository · schemas (Zod)
+src/{db,config,lib,jobs,realtime,middlewares,views,styles}/
+public/                  estáticos y librerías locales (Chart.js, Frappe Gantt)
+tests/                   unitarias, integración y rendimiento
+docs/                    PRD, arquitectura, datos y manuales
+```
+
 ## Instalación
 
 Requisitos: **Node.js 22 o superior** y npm.
