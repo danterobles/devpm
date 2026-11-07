@@ -9,6 +9,12 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 
 ## [Sin publicar]
 
+_Sin cambios todavía._
+
+## [0.2.0] - 2026-11-07
+
+Rediseño visual (diseño D, azul marino y modo oscuro), manuales en PDF y correcciones.
+
 ### Agregado
 
 - Rediseño visual D «Dashboard Enfoque» (RNF-12): riel de iconos, encabezado azul marino y tarjetas de KPI con barra de semáforo.
