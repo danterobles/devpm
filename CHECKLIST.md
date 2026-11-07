@@ -29,7 +29,7 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 | 14 | Endurecimiento de seguridad | ✅ Completada |
 | 15 | Notificaciones (app y correo) | ✅ Completada |
 | 16 | Mi día (panel por rol) | ✅ Completada |
-| 17 | Importación por CSV | 🔄 En curso |
+| 17 | Importación por CSV | ✅ Completada |
 
 ---
 
@@ -250,10 +250,10 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 
 ## Etapa 17 — Importación por CSV (v0.3, RF-120–RF-123)
 
-- [ ] `lib/csv.js`: lectura (comillas, saltos de línea, separador `,` o `;`, BOM) con pruebas
-- [ ] Esquemas por entidad (clientes, miembros, tareas) que reutilizan los de cada módulo
-- [ ] Service: validar fila por fila, detectar duplicados e importar todo-o-nada con eventos tras el commit
-- [ ] Vista `/import`: entidad, archivo o texto pegado, vista previa con errores, plantilla descargable
-- [ ] Pruebas: errores por fila, duplicados, límites, permisos, bitácora y eventos
+- [x] `lib/csv.js`: lectura (comillas, saltos de línea, separador `,` o `;`, BOM) con pruebas
+- [x] Esquemas por entidad (clientes, miembros, tareas) que reutilizan los de cada módulo
+- [x] Service: validar fila por fila, detectar duplicados e importar todo-o-nada con eventos tras el commit
+- [x] Vista `/import`: entidad, archivo o texto pegado, vista previa con errores, plantilla descargable
+- [x] Pruebas: errores por fila, duplicados, límites, permisos, bitácora y eventos
 
-**Criterio de cierre:** un CSV válido crea todos sus registros; uno con errores no crea ninguno. 
+**Criterio de cierre:** un CSV válido crea todos sus registros; uno con errores no crea ninguno.  ✅

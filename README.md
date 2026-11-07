@@ -74,6 +74,16 @@ Se leen de `.env` (ver `.env.example`) o del entorno.
 | `SMTP_FROM` | `DevPM <no-reply@localhost>` | Remitente de los correos |
 | `SMTP_SECURE` | `false` | `true` para TLS directo (puerto 465); con `false` se usa STARTTLS si el servidor lo ofrece |
 
+## Notificaciones, «Mi día» e importación
+
+- **Notificaciones:** campana en el encabezado y página `/notifications`. Si configuras `SMTP_HOST` (y `APP_URL`
+  para los enlaces) cada persona recibe además una copia por correo, que puede desactivar en
+  `/account/notifications`. Sin SMTP todo sigue funcionando dentro de la aplicación. Los recordatorios
+  periódicos (horas, tareas y hitos vencidos, proyectos en riesgo) se generan a las 09:00 (`TZ_APP`) y al arrancar.
+- **Mi día:** el inicio muestra un panel según el rol (tareas y horas, aprobaciones, riesgo, hitos).
+- **Importar datos** (`admin` y `pm`, menú «Importar»): clientes, miembros del equipo y tareas de un proyecto
+  desde un CSV. Descarga la plantilla, valida (nada se guarda) e importa; si alguna fila falla no se guarda ninguna.
+
 ## Scripts
 
 | Comando | Qué hace |

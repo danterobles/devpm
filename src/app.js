@@ -19,6 +19,7 @@ import { createRemindersRepository } from './modules/notifications/reminders.rep
 import { createRemindersService } from './modules/notifications/reminders.service.js';
 import { createKpiRepository } from './modules/dashboard/kpi.repository.js';
 import { createKpiService } from './modules/dashboard/kpi.service.js';
+import { createImportRouter } from './modules/import/import.routes.js';
 import { createHomeRouter } from './modules/home/home.routes.js';
 import { createSettingsRouter } from './modules/settings/settings.routes.js';
 import { createSettingsService } from './modules/settings/settings.service.js';
@@ -165,6 +166,7 @@ export function createApp({
       kpi,
       timezone: config.timezone,
     });
+    app.use(createImportRouter({ db, events: eventBus, timezone: config.timezone }));
     app.use(createHomeRouter({ db, notifications, kpi, timezone: config.timezone }));
     app.use(
       createDashboardRouter({
