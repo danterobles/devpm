@@ -294,6 +294,7 @@ Orden recomendado: 18 → 19 → 20 → 21. Cada etapa se cierra con `npm test` 
 
 ## Etapa 20 — Búsqueda global y filtros guardados (RF-150–RF-153)
 
+- [ ] Backlog con filtros (texto, tipo, prioridad, responsable) y formulario de la exportación que acepte `?from=&to=&status=` (base de los filtros guardados)
 - [ ] Módulo `search`: consultas de solo lectura por grupo con `LIKE` escapado y permisos (RF-150, RF-151)
 - [ ] Caja de búsqueda en el encabezado y página `/search` con grupos y «ver más»
 - [ ] Prueba de rendimiento de la búsqueda con el volumen de RNF-01 (`npm run test:perf`) y decisión sobre FTS5 (RF-153)

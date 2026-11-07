@@ -410,7 +410,9 @@ Empresas con relación comercial; su trabajo es facturable.
 4. **Búsqueda** con `LIKE` escapado en esta versión; FTS5 solo si la prueba de rendimiento lo exige.
 5. Detalles de comentarios: editar un comentario no vuelve a avisar; eliminar un comentario no retira los avisos ya enviados; un mismo comentario genera un solo aviso por persona (la mención gana al aviso de comentario).
 6. Adjuntos: el tamaño máximo es 5 MB (`UPLOAD_MAX_MB` solo puede bajarlo, de 1 a 5); la extensión debe coincidir con el contenido detectado; el nombre original se limpia (sin rutas ni caracteres de control, máx. 120 caracteres); los archivos huérfanos se eliminan al arrancar y al borrar una tarea; sin vista previa en línea (solo descarga).
-7. Fuera de esta versión: hilos o respuestas anidadas, reacciones, adjuntos en proyectos o clientes, búsqueda dentro de adjuntos.
+7. Búsqueda: mínimo 2 caracteres; se busca por texto (sin distinguir mayúsculas) en proyectos (código y nombre), tareas (título), clientes (nombre y razón social) y miembros (nombre y correo). Cada resultado muestra solo lo que ya enseñan los listados (nunca RFC, tarifas ni costos), los primeros 10 por grupo (los que empiezan por el texto, primero) y el total; «ver más» lleva al listado del grupo cuando existe (proyectos, clientes y equipo; las tareas no tienen listado global).
+8. Filtros guardados: el ámbito `projects` guarda los filtros de `/projects` (texto, estado, prioridad, cliente, líder); `tasks` guarda los del backlog (texto, tipo, prioridad, responsable) y se aplica al backlog del proyecto que se esté viendo; `time` guarda los de la exportación a CSV de `/time/approvals` (desde, hasta, estado). El nombre es único por persona y ámbito; no se guarda la página. El backlog gana esos filtros (texto, tipo, prioridad y responsable).
+9. Fuera de esta versión: hilos o respuestas anidadas, reacciones, adjuntos en proyectos o clientes, búsqueda dentro de adjuntos.
 
 ## 6. KPIs
 
