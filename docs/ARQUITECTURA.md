@@ -220,6 +220,9 @@ PRAGMA synchronous = NORMAL;      -- seguro con WAL y más rápido
     ajusta (móvil), encabezado azul marino y área de contenido. El enlace de la sección activa lleva
     `aria-current="page"` (`res.locals.currentPath`).
   - **Gráficas**: Chart.js toma los colores de texto y rejilla del tema activo.
+  - **Gantt (Frappe Gantt)**: la librería solo reconoce `html[data-theme=dark]`, que no existe cuando se sigue al sistema.
+    Por eso `input.css` redefine sus variables `--g-*` con la paleta `navy` bajo la variante `dark:` (sobre
+    `.gantt-container`), de modo que el diagrama cambia con el tema igual que el resto de la interfaz.
 - **JS del cliente**: módulos ES nativos en `public/js/pages/`, uno por vista, sin bundler.
   `public/js/lib/api.js` centraliza `fetch` (JSON, manejo de errores, cabecera de origen).
 - **Gráficas**: Chart.js (Burndown, barras, donas, sparklines) y Frappe Gantt. Ambas se copian

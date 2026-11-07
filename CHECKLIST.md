@@ -25,6 +25,7 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 | 10 | Tablero de KPIs en tiempo real | ✅ Completada |
 | 11 | Calidad, seguridad y despliegue | ✅ Completada |
 | 12 | Rediseño visual (diseño D) | ✅ Completada |
+| 13 | Gantt en modo oscuro | 🔄 En curso |
 
 ---
 
@@ -198,3 +199,12 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 - [x] Revisión de contraste AA en claro y oscuro y de 360 px sin desbordes
 
 **Criterio de cierre:** todas las pantallas se ven bien en ambos temas, `npm test` y `npm run lint` en verde. ✅
+
+## Etapa 13 — Gantt en modo oscuro (RNF-12)
+
+- [ ] Variables `--g-*` del Gantt con la paleta `navy` bajo la variante `dark:` en `input.css` (proyecto y portafolio)
+- [ ] Pruebas de contraste AA de los textos del Gantt en oscuro y de que `input.css` define las variables
+- [ ] Verificación en el navegador (claro, oscuro y 360 px) del Gantt de proyecto y del de portafolio
+- [ ] Regenerar la captura del Gantt en el manual de usuario (opcional, si el cambio es visible)
+
+**Criterio de cierre:** el Gantt se ve integrado en ambos temas, `npm test` y `npm run lint` en verde.
