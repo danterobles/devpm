@@ -387,11 +387,11 @@ Empresas con relación comercial; su trabajo es facturable.
 
 | ID | Requerimiento | Prioridad |
 |---|---|---|
-| RF-140 | Una tarea admite archivos adjuntos (hasta 5 MB cada uno y 10 por tarea) de una lista permitida: imágenes (PNG, JPEG, GIF, WebP), PDF, texto/CSV, Word, Excel y PowerPoint. | Alta |
+| RF-140 | Una tarea admite archivos adjuntos (hasta 5 MB cada uno y 10 por tarea) de una lista permitida: imágenes (PNG, JPEG, GIF, WebP), PDF, texto (`.txt`) y CSV, y Office (`.doc`, `.docx`, `.xls`, `.xlsx`, `.ppt`, `.pptx`). | Alta |
 | RF-141 | Suben `admin`, `pm` y los `developer` asignados al proyecto; todos los usuarios que ven la tarea pueden descargar. Quien subió el archivo (o un `admin`) lo elimina. | Alta |
 | RF-142 | Los archivos se guardan fuera de `public/`, con nombre aleatorio; solo se sirven por una ruta autenticada, siempre como descarga (`Content-Disposition: attachment`) y con `X-Content-Type-Options: nosniff`. El nombre original se conserva solo como texto. | Alta |
 | RF-143 | Se valida la firma del archivo (no solo la extensión) y se rechazan los tipos fuera de la lista (p. ej. HTML, SVG, ejecutables). | Alta |
-| RF-144 | Los respaldos incluyen la carpeta de adjuntos (`npm run db:backup`). | Media |
+| RF-144 | Los respaldos incluyen la carpeta de adjuntos (`npm run db:backup`): junto a cada `devpm-AAAAMMDD-HHmm.db` se guarda `devpm-AAAAMMDD-HHmm.uploads/`, con la misma retención. | Media |
 
 ### 5.17 Búsqueda global y filtros guardados (v0.4)
 
@@ -409,7 +409,8 @@ Empresas con relación comercial; su trabajo es facturable.
 3. Sin antivirus integrado: se documenta el riesgo y se limita por tipo, tamaño y descarga forzada.
 4. **Búsqueda** con `LIKE` escapado en esta versión; FTS5 solo si la prueba de rendimiento lo exige.
 5. Detalles de comentarios: editar un comentario no vuelve a avisar; eliminar un comentario no retira los avisos ya enviados; un mismo comentario genera un solo aviso por persona (la mención gana al aviso de comentario).
-6. Fuera de esta versión: hilos o respuestas anidadas, reacciones, adjuntos en proyectos o clientes, búsqueda dentro de adjuntos.
+6. Adjuntos: el tamaño máximo es 5 MB (`UPLOAD_MAX_MB` solo puede bajarlo, de 1 a 5); la extensión debe coincidir con el contenido detectado; el nombre original se limpia (sin rutas ni caracteres de control, máx. 120 caracteres); los archivos huérfanos se eliminan al arrancar y al borrar una tarea; sin vista previa en línea (solo descarga).
+7. Fuera de esta versión: hilos o respuestas anidadas, reacciones, adjuntos en proyectos o clientes, búsqueda dentro de adjuntos.
 
 ## 6. KPIs
 
