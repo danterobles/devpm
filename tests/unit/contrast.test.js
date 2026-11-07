@@ -96,6 +96,18 @@ const PAIRS = [
     hex('#33260b'),
   ],
   ['oscuro: botón Aplicar, navy-950 sobre sky-400', token('navy-950'), hex('#38bdf8')],
+  // Gantt en oscuro: texto de fechas y de tareas sobre el encabezado y las filas
+  [
+    'oscuro Gantt: texto atenuado (navy-200) sobre el encabezado navy-950',
+    token('navy-200'),
+    token('navy-950'),
+  ],
+  ['oscuro Gantt: texto (navy-50) sobre las filas navy-900', token('navy-50'), token('navy-900')],
+  [
+    'oscuro Gantt: etiqueta de fin de semana (navy-300) sobre navy-950',
+    token('navy-300'),
+    token('navy-950'),
+  ],
 ];
 
 for (const [label, fg, bg] of PAIRS) {
@@ -161,4 +173,18 @@ test('el CSS define el modo oscuro que sigue al sistema y puede forzarse con dat
   assert.match(css, /@custom-variant dark/);
   assert.match(css, /prefers-color-scheme:\s*dark/);
   assert.match(css, /data-theme='light'/);
+});
+
+test('el Gantt redefine sus variables --g-* en modo oscuro (la librería solo conoce html[data-theme=dark])', () => {
+  const block = /\.gantt-container\s*\{\s*@variant dark\s*\{([^}]*)\}/.exec(css);
+  assert.ok(block, 'input.css define las variables del Gantt bajo @variant dark');
+  for (const name of [
+    'header-background',
+    'row-color',
+    'text-dark',
+    'text-muted',
+    'border-color',
+    'arrow-color',
+  ])
+    assert.match(block[1], new RegExp(`--g-${name}:`), name);
 });

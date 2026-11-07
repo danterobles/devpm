@@ -9,7 +9,9 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 
 ## [Sin publicar]
 
-_Sin cambios todavía._
+### Cambiado
+
+- El diagrama de Gantt (proyecto y portafolio) sigue el tema claro/oscuro con la paleta azul marino.
 
 ## [0.2.0] - 2026-11-07
 

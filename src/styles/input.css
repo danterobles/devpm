@@ -99,6 +99,33 @@ header :focus-visible {
   --g-text-muted: #52525b;
 }
 
+/* Gantt en modo oscuro (RNF-12): la librería solo conoce html[data-theme=dark], así que sus variables
+   se redefinen aquí con la paleta navy para que siga el tema (incluido «Sistema»). */
+.gantt-container {
+  @variant dark {
+    --g-arrow-color: var(--color-navy-200);
+    --g-bar-color: var(--color-navy-800);
+    --g-bar-border: var(--color-navy-600);
+    --g-tick-color-thick: var(--color-navy-700);
+    --g-tick-color: var(--color-navy-800);
+    --g-actions-background: var(--color-navy-800);
+    --g-border-color: var(--color-navy-700);
+    --g-text-muted: var(--color-navy-200);
+    --g-text-light: #ffffff;
+    --g-text-dark: var(--color-navy-50);
+    --g-progress-color: var(--color-navy-500);
+    --g-handle-color: var(--color-navy-200);
+    --g-weekend-label-color: var(--color-navy-300);
+    --g-expected-progress: var(--color-navy-600);
+    --g-header-background: var(--color-navy-950);
+    --g-row-color: var(--color-navy-900);
+    --g-row-border-color: var(--color-navy-700);
+    --g-today-highlight: var(--color-navy-300);
+    --g-popup-actions: var(--color-navy-800);
+    --g-weekend-highlight-color: #0d1a36;
+  }
+}
+
 /* Las tablas anchas se desplazan dentro de su contenedor: el contenedor es el bloque de contención de
    los textos solo para lectores de pantalla (`sr-only` es absoluto), si no la página entera se desborda. */
 .overflow-x-auto {
