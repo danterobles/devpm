@@ -127,10 +127,8 @@ Detalle completo en `docs/ARQUITECTURA.md`.
 ### Contexto limpio entre tareas
 
 - Al terminar **cada tarea** del CHECKLIST (ya con pruebas en verde, CHECKLIST y CHANGELOG
-  actualizados y commit hecho), **detén el trabajo** y pide al usuario limpiar el contexto con
-  `/clear` para que la siguiente tarea empiece desde cero y con la atención fresca.
-  Claude no puede ejecutar `/clear` por sí mismo: debe pedirlo explícitamente y no continuar con
-  la siguiente tarea hasta que el usuario lo indique.
+  actualizados y commit hecho), 
+
 - Por eso **todo el estado vive en el repositorio, no en la conversación**: antes de pedir la
   limpieza, verifica que `CHECKLIST.md` (qué sigue), `CHANGELOG.md` y `docs/` (decisiones tomadas)
   estén al día y que `git status` esté limpio.
@@ -173,5 +171,4 @@ Ejemplos: `feat(clients): agrega CRUD de clientes externos`,
 - Las migraciones aplicadas **nunca se editan**: crea una nueva migración numerada.
 - Toda tarea termina con `npm test` y `npm run lint` en verde antes de su commit.
 - Ante cualquier duda de definición, se pregunta; no se asume.
-- Tras cada tarea terminada se pide `/clear` al usuario antes de empezar la siguiente.
 - Los KPIs se calculan en `src/modules/dashboard/` y sus fórmulas deben coincidir con `docs/PRD.md`.
