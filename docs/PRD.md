@@ -406,6 +406,8 @@ Los umbrales son valores iniciales y deben poder ajustarse en configuración (RF
   Ámbar | Rojo» (el color nunca es el único indicador). Los KPI sin umbral dicen «Sin semáforo».
 - El selector de tema tiene tres opciones: **Sistema** (por defecto), **Claro** y **Oscuro**. Se guarda en
   `localStorage` (`devpm.theme`); no se envía al servidor ni cambia el modelo de datos.
+- «Tiempo» del menú: un `admin` o `pm` sin miembro vinculado no tiene hoja propia, así que `/time` lo lleva a
+  `/time/approvals` (la API `/api/v1/time-sheet` sigue respondiendo 403). Un `developer` sin vínculo conserva el 403.
 - El cambio es solo de presentación: no modifica rutas, permisos, fórmulas de KPIs ni la API.
 
 ## 8. Criterios de aceptación del MVP
