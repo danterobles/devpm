@@ -31,7 +31,7 @@
           <% projects.forEach((p) => { %>
             <td class="py-2 pr-4"><%= m.cells[p.id] ? `${m.cells[p.id].percent} %` : '—' %></td>
           <% }) %>
-          <td class="py-2 pr-4 <%= m.totalPercent > 100 ? 'font-bold text-danger' : '' %>"><%= m.totalPercent %> %</td>
+          <td class="py-2 pr-4 <%= m.totalPercent > 100 ? 'font-bold text-red-700' : '' %>"><%= m.totalPercent %> %</td>
         </tr>
       <% }) %>
       <% if (members.length === 0) { %><tr><td colspan="<%= projects.length + 2 %>" class="py-3 text-slate-600">Sin asignaciones en el rango.</td></tr><% } %>

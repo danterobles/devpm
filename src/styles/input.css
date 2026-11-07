@@ -60,3 +60,35 @@
 .gantt-container .bar-wrapper.portfolio-critical .bar {
   fill: var(--color-danger);
 }
+
+/* Accesibilidad (RNF-07): indicador de foco visible para toda la navegación con teclado. */
+:focus-visible {
+  outline: 2px solid var(--color-brand-500);
+  outline-offset: 2px;
+}
+header :focus-visible {
+  outline-color: white; /* sobre el encabezado azul */
+}
+
+/* El texto atenuado del Gantt de la librería (#7c7c7c, 4,2:1) se oscurece para cumplir AA. */
+.gantt-container {
+  --g-text-muted: #52525b;
+}
+
+/* Las tablas anchas se desplazan dentro de su contenedor: el contenedor es el bloque de contención de
+   los textos solo para lectores de pantalla (`sr-only` es absoluto), si no la página entera se desborda. */
+.overflow-x-auto {
+  position: relative;
+}
+
+/* Botón «→» del Gantt de la librería: blanco sobre gris claro no se lee. */
+.gantt-container .extras button.adjust {
+  color: var(--g-text-dark);
+}
+
+/* Los selectores con opciones largas (p. ej. títulos de tareas) no deben ensanchar la página en móvil. */
+select,
+input,
+textarea {
+  max-width: 100%;
+}

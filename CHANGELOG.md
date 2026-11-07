@@ -64,6 +64,15 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   o funciones bajan de 80 % (RNF-08). Hoy: 97–100 % de líneas en los 20 services y 96,7 % de ramas en
   promedio.
 
+- Accesibilidad y diseño responsivo (RNF-07), tras auditar 25 páginas en un navegador real a 360 px:
+  la navegación se ajusta en varias líneas (antes medía 676 px y **toda página** tenía scroll horizontal),
+  las tablas anchas se desplazan dentro de su contenedor (los textos `sr-only` ensanchaban la página),
+  los campos no superan el ancho de su contenedor, el texto rojo usa `text-red-700` (el token `danger` daba
+  3,7:1; AA exige 4,5:1) y las fechas del Gantt se oscurecen (4,2:1 → AA); enlace «Saltar al contenido»,
+  `main` enfocable e indicador de foco visible global. Resultado de la auditoría: 0 desbordes, 0 fallos de
+  contraste, 0 campos sin etiqueta. Pruebas: contraste WCAG calculado desde los tokens, estructura del
+  diseño base, etiquetas y `scope` en tablas.
+
 ### Corregido (Etapa 11)
 - Gantt del proyecto: p95 de 538 ms con 100 000 registros de tiempo porque `time_entries.task_id` no
   tenía índice (el avance de cada tarea recorría todos los registros); la migración `004_time_task_index`

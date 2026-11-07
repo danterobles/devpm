@@ -28,7 +28,7 @@
         <tr class="border-b">
           <th scope="row" class="py-2 pr-4 font-medium"><%= m.name %></th>
           <% m.weeks.forEach((w) => { %>
-            <td class="py-2 pr-4 whitespace-nowrap <%= w.over ? 'font-bold text-danger' : '' %>">
+            <td class="py-2 pr-4 whitespace-nowrap <%= w.over ? 'font-bold text-red-700' : '' %>">
               <%= w.percent %> %<% if (w.over) { %> <span class="text-xs">(sobreasignado)</span><% } %>
               <% if (w.absenceDays > 0) { %><span class="block text-xs text-slate-500"><%= w.absenceDays %> d ausente</span><% } %>
             </td>
