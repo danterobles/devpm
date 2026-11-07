@@ -37,7 +37,7 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 | 22 | Integración continua y contenedor | ⏸ Fuera de la 0.5.0 |
 | 23 | Cuentas y acceso (v0.5) | ✅ Completada |
 | 24 | Bitácora, seguridad y estado (v0.5) | ✅ Completada |
-| 25 | Pulido y cierre (v0.5) | 🔄 En curso |
+| 25 | Pulido y cierre (v0.5) | ✅ Completada |
 
 ---
 
@@ -349,7 +349,7 @@ Se cierra con las etiquetas `etapa-23`, `etapa-24` y `etapa-25` en el último co
 - [x] Preferencias de notificación por tipo (en la aplicación y por correo)
 - [x] Favicon y ruta `/favicon.ico`
 - [x] Pruebas de accesibilidad sobre todas las páginas y recorrido de teclado
-- [ ] Fuentes de los manuales en `docs/manuales/fuente/` y manuales actualizados con la 0.5
-- [ ] README, CHANGELOG `[0.5.0]`, versión, etiquetas y publicación
+- [x] Fuentes de los manuales en `docs/manuales/fuente/` y manuales actualizados con la 0.5
+- [x] README, CHANGELOG `[0.5.0]`, versión, etiquetas y publicación
 
-**Criterio de cierre:** 0.5.0 aceptada y etiquetada; el sistema listo para usarse.
+**Criterio de cierre:** 0.5.0 aceptada y etiquetada; el sistema listo para usarse. ✅ (`etapa-25`, `v0.5.0`)

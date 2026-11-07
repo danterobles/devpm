@@ -9,6 +9,12 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 
 ## [Sin publicar]
 
+_Sin cambios todavía._
+
+## [0.5.0] - 2026-11-07
+
+Confianza y operación: recuperación de contraseña, dos pasos, bitácora, seguridad y estado, y pulido. Agrega la migración 007; **corre `npm run db:migrate` al actualizar**. Cambiar `SESSION_SECRET` invalida los secretos de dos pasos guardados. La integración continua y el contenedor (etapa 22) quedan fuera de esta versión.
+
 ### Agregado
 
 - «¿Olvidaste tu contraseña?»: enlace de un solo uso por correo (vence en 1 h), con respuesta idéntica exista o no la cuenta y límites por IP y por correo.
@@ -19,6 +25,7 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 - Preferencias de notificación por tipo de aviso (en la aplicación y por correo, por separado).
 - Ícono de la aplicación (favicon) y `/favicon.ico` sin errores 404.
 - Pruebas de accesibilidad sobre todas las páginas y roles (un `h1`, etiquetas, ids únicos, nombres de botones y enlaces, `scope` y `caption` en tablas).
+- Fuentes para regenerar los manuales en `docs/manuales/fuente/`; los manuales incluyen las novedades de la 0.5.
 - Migración `007_accounts_security.sql`.
 
 ## [0.4.0] - 2026-11-07
