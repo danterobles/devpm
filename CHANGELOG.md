@@ -75,6 +75,10 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   despliegue (HTTPS obligatorio, proxy con `Host` y `X-Forwarded-Proto`, ejemplo de nginx con SSE),
   respaldos con cron y restauración. Una prueba mantiene el README alineado con `package.json`,
   la configuración y el seed.
+- Recorrido de los criterios de aceptación del MVP (PRD §8): `acceptance-mvp.test.js` cubre el criterio 1
+  (cliente externo → proyecto → 3 miembros → sprint con tareas → Gantt y Kanban) y el 6 (un `viewer` recibe
+  403 en 22 operaciones de escritura y no ve ningún control de escritura en 10 pantallas); el mapa de
+  criterios a pruebas queda en `docs/PRD.md` §8.1.
 
 ### Cambiado (Etapa 11)
 - `npm run test:coverage` mide los services (`src/modules/**/*.service.js`) y **falla** si líneas, ramas

@@ -182,7 +182,7 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 - [x] Alta del primer administrador en producción: `npm run user:create` (descubierta: el seed solo existe en desarrollo)
 - [x] `postinstall` que compila el CSS para que `npm install && npm run db:migrate && npm start` funcione (RNF-10)
 - [x] `README.md` con instalación, uso y despliegue
-- [ ] Recorrido completo de los criterios de aceptación del MVP (PRD §8)
+- [x] Recorrido completo de los criterios de aceptación del MVP (PRD §8)
 - [ ] Publicar versión `0.1.0` en `CHANGELOG.md` y crear tag git `v0.1.0`
 
 **Criterio de cierre:** MVP aceptado y etiquetado.

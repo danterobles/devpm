@@ -408,6 +408,17 @@ Los umbrales son valores iniciales y deben poder ajustarse en configuración (RF
 5. Un proyecto con fecha fin vencida aparece en "Proyectos en riesgo" con la causa.
 6. Un `viewer` no puede crear ni modificar información (respuesta 403 en API, controles ocultos en UI).
 
+### 8.1 Verificación automatizada de los criterios
+
+| Criterio | Prueba |
+|---|---|
+| 1. Cliente externo, proyecto, 3 miembros, sprint con tareas, Gantt y Kanban | `tests/integration/acceptance-mvp.test.js` (§8.1) |
+| 2. Tarea a `done` → Burndown y KPIs en ≤ 2 s sin recargar | `tests/integration/acceptance-kpis.test.js` (§8.2, con SSE real); medido en un navegador: ~0,5 s |
+| 3. Horas registradas, enviadas y aprobadas → K4, K6 y K13 cambian | `tests/integration/acceptance-kpis.test.js` (§8.3) y `time-flow.test.js` |
+| 4. 60 % + 60 % → alerta de sobreasignación y K7 = 1 | `tests/integration/acceptance-kpis.test.js` (§8.4) |
+| 5. Proyecto con fecha fin vencida en «Proyectos en riesgo» con la causa | `tests/integration/acceptance-kpis.test.js` (§8.5) |
+| 6. Viewer: 403 en la API y controles ocultos en la UI | `tests/integration/acceptance-mvp.test.js` (§8.6) |
+
 ## 9. Fuera de alcance (v1)
 
 - Facturación electrónica, cobranza o integración contable.

@@ -83,3 +83,11 @@ export const timeEntry = (db, o = {}) =>
     is_billable: 0,
     ...o,
   });
+
+export const milestone = (db, o = {}) =>
+  insert(db, 'milestones', {
+    project_id: o.project_id ?? project(db),
+    name: `Hito ${n()}`,
+    due_date: '2026-06-30',
+    ...o,
+  });
