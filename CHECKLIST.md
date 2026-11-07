@@ -174,7 +174,7 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 
 ## Etapa 11 — Calidad, seguridad y despliegue
 
-- [ ] Revisión de seguridad (ARQUITECTURA §7): CSP, cookies, permisos por pertenencia
+- [x] Revisión de seguridad (ARQUITECTURA §7): CSP, cookies, permisos por pertenencia
 - [ ] Prueba de rendimiento con volumen de RNF-01 y revisión de `EXPLAIN QUERY PLAN`
 - [ ] Cobertura ≥ 80 % en services (RNF-08)
 - [ ] Revisión de accesibilidad y diseño responsivo (RNF-07)

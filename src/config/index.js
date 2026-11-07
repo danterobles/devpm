@@ -21,6 +21,11 @@ export function loadConfig(env = process.env) {
     throw new Error(`Configuración inválida:\n${detail}`);
   }
   const c = parsed.data;
+  if (c.NODE_ENV === 'production' && c.SESSION_SECRET.startsWith('cambia-este-secreto')) {
+    throw new Error(
+      'Configuración inválida:\n  - SESSION_SECRET: en producción no se permite el valor de ejemplo de .env.example',
+    );
+  }
   return Object.freeze({
     env: c.NODE_ENV,
     isProduction: c.NODE_ENV === 'production',

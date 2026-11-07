@@ -7,6 +7,7 @@ import { createErrorHandler } from './middlewares/errorHandler.js';
 import { createLogger } from './lib/logger.js';
 import { createEventBus } from './realtime/eventBus.js';
 import { createSse } from './realtime/sse.js';
+import { requireAuth } from './middlewares/requireAuth.js';
 import { verifyOrigin } from './middlewares/verifyOrigin.js';
 import { layout } from './middlewares/layout.js';
 import { createSession } from './modules/auth/session.js';
@@ -50,6 +51,9 @@ export function createApp({
       // «same-origin» (no «no-referrer»): el navegador envía Origin en los formularios propios
       // y verifyOrigin puede comprobarlo, sin filtrar el referrer a otros sitios.
       referrerPolicy: { policy: 'same-origin' },
+      // HSTS y «upgrade-insecure-requests» solo en producción (con HTTPS): en HTTP plano de
+      // desarrollo o intranet harían que el navegador intentara cargar los recursos por HTTPS.
+      strictTransportSecurity: config.isProduction,
       contentSecurityPolicy: {
         directives: {
           defaultSrc: ["'self'"],
@@ -59,6 +63,7 @@ export function createApp({
           connectSrc: ["'self'"],
           objectSrc: ["'none'"],
           frameAncestors: ["'none'"],
+          upgradeInsecureRequests: config.isProduction ? [] : null,
         },
       },
     }),
@@ -84,6 +89,27 @@ export function createApp({
   app.locals.appName = 'DevPM';
   app.locals.eventBus = eventBus;
   app.use(layout());
+
+  app.get('/health', (_req, res) => {
+    let dbStatus = 'n/a';
+    if (db) {
+      try {
+        db.prepare('SELECT 1').get();
+        dbStatus = 'ok';
+      } catch {
+        dbStatus = 'error';
+      }
+    }
+    res.status(dbStatus === 'error' ? 503 : 200).json({
+      status: dbStatus === 'error' ? 'degraded' : 'ok',
+      db: dbStatus,
+      uptime: Math.round(process.uptime()),
+    });
+  });
+
+  // Autorización global: todo lo que sigue exige sesión (ARQUITECTURA §7). Quedan públicos solo
+  // los estáticos, /health, /login y /logout, que se registran antes.
+  if (db) app.use(requireAuth);
 
   if (db) {
     const sse = createSse({ eventBus, heartbeatMs: sseHeartbeatMs });
@@ -115,23 +141,6 @@ export function createApp({
       }),
     );
   }
-
-  app.get('/health', (_req, res) => {
-    let dbStatus = 'n/a';
-    if (db) {
-      try {
-        db.prepare('SELECT 1').get();
-        dbStatus = 'ok';
-      } catch {
-        dbStatus = 'error';
-      }
-    }
-    res.status(dbStatus === 'error' ? 503 : 200).json({
-      status: dbStatus === 'error' ? 'degraded' : 'ok',
-      db: dbStatus,
-      uptime: Math.round(process.uptime()),
-    });
-  });
 
   app.get('/', (_req, res) => {
     res.render('pages/home', { title: 'Inicio' });

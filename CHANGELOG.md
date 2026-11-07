@@ -45,6 +45,16 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 - Helpers de prueba (`testDb`, `factories`) y 37 pruebas nuevas (esquema, vistas, auditoría, fechas, seed).
 - El servidor abre la BD y `/health` reporta su estado.
 
+### Seguridad
+- Revisión de seguridad (Etapa 11, ARQUITECTURA §7): `requireAuth` ahora es **global** (todo exige
+  sesión salvo estáticos, `/health`, `/login` y `/logout`; una prueba recorre las 157 rutas registradas y
+  comprueba 401/redirección sin sesión); HSTS y `upgrade-insecure-requests` solo en producción; en
+  producción se rechaza el `SESSION_SECRET` de ejemplo; pruebas de CSP sin CDNs, cabeceras, cookie
+  (`HttpOnly`, `SameSite=Strict`, `Secure`, sin fijación de sesión), CSRF con `Origin` ajeno o nulo,
+  XSS por escapado, inyección SQL, errores sin trazas, hashes ausentes de la API y pérdida inmediata de
+  acceso de un usuario desactivado. `npm audit --omit=dev`: 0 vulnerabilidades (las 4 moderadas
+  restantes son de ESLint, solo desarrollo).
+
 ### Corregido
 - CHECK de fechas: `col = date(col)` aceptaba formatos inválidos (daba NULL); ahora `col IS date(col)`.
 
