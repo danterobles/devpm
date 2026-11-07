@@ -1,5 +1,5 @@
 import Database from 'better-sqlite3';
-import { existsSync, mkdirSync, readdirSync, rmSync, statSync } from 'node:fs';
+import { chmodSync, existsSync, mkdirSync, readdirSync, rmSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
 /** Nombre de un respaldo: `devpm-AAAAMMDD-HHmm.db` en UTC (más `-N` si hay otro del mismo minuto). */
@@ -34,7 +34,9 @@ function integrityOf(file) {
  * @returns {{ file: string, bytes: number, removed: string[] }}
  */
 export function backupDatabase({ db, dir, retentionDays, now = new Date(), verify = integrityOf }) {
-  mkdirSync(dir, { recursive: true });
+  // Los respaldos contienen los hashes de contraseña: solo el usuario del servicio puede leerlos.
+  mkdirSync(dir, { recursive: true, mode: 0o700 });
+  chmodSync(dir, 0o700);
   let copy = 1;
   let file = join(dir, backupName(now, copy));
   while (existsSync(file)) {
@@ -43,6 +45,7 @@ export function backupDatabase({ db, dir, retentionDays, now = new Date(), verif
   }
 
   db.prepare('VACUUM INTO ?').run(file);
+  chmodSync(file, 0o600);
   const verdict = verify(file);
   if (verdict !== 'ok') {
     rmSync(file, { force: true });

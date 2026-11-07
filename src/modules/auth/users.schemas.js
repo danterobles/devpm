@@ -5,7 +5,9 @@ export const ROLES = ['admin', 'pm', 'developer', 'viewer'];
 export const passwordSchema = z
   .string()
   .min(8, 'La contraseña debe tener al menos 8 caracteres')
-  .max(200, 'La contraseña no puede exceder 200 caracteres');
+  .max(200, 'La contraseña no puede exceder 200 caracteres')
+  // bcrypt solo usa los primeros 72 bytes: se rechaza en lugar de truncarla en silencio.
+  .refine((v) => Buffer.byteLength(v, 'utf8') <= 72, 'La contraseña no puede exceder 72 bytes');
 
 // Los formularios HTML envían '' para campos vacíos.
 const emptyToNull = (v) => (v === '' ? null : v);

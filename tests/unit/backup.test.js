@@ -231,3 +231,18 @@ test('CLI: sin base de datos existente falla con código 1 y sin crear una vací
   assert.match(res.stderr, /no existe/i);
   assert.equal(fs.existsSync(path.join(dir, 'no-existe.db')), false);
 });
+
+test(
+  'el respaldo y su carpeta son privados (contienen hashes de contraseña): 0600 y 0700',
+  { skip: process.platform === 'win32' },
+  () => {
+    const dir = tmp();
+    const db = fileDb(dir);
+    const backups = path.join(dir, 'backups');
+    fs.mkdirSync(backups, { mode: 0o755 }); // carpeta preexistente y abierta
+    const result = backupDatabase({ db, dir: backups, retentionDays: 14, now: NOW });
+    assert.equal(fs.statSync(result.file).mode & 0o777, 0o600);
+    assert.equal(fs.statSync(backups).mode & 0o777, 0o700);
+    db.close();
+  },
+);

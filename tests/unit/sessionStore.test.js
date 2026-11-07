@@ -74,3 +74,12 @@ test('store: un error de BD llega al callback', async () => {
     /boom/,
   );
 });
+
+test('store: el ID de sesión se guarda con hash SHA-256, nunca en claro', async () => {
+  await call(store.set, 'sid-secreto', { ...future(), userId: 1 });
+  const stored = db.prepare('SELECT sid FROM sessions').pluck().all();
+  assert.equal(stored.length, 1);
+  assert.notEqual(stored[0], 'sid-secreto');
+  assert.match(stored[0], /^[0-9a-f]{64}$/);
+  assert.equal((await call(store.get, 'sid-secreto')).userId, 1); // se sigue encontrando por el ID original
+});

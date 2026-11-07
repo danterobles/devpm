@@ -1,6 +1,10 @@
+import { createHash } from 'node:crypto';
 import session from 'express-session';
 
 const DEFAULT_TTL_MS = 8 * 60 * 60 * 1000;
+
+/** El ID de sesión se guarda con hash: una copia de la base no sirve para suplantar sesiones. */
+const keyOf = (sid) => createHash('sha256').update(sid).digest('hex');
 
 /** Store de express-session sobre better-sqlite3 (síncrono, sin dependencias extra). */
 export class SqliteSessionStore extends session.Store {
@@ -38,26 +42,26 @@ export class SqliteSessionStore extends session.Store {
 
   get(sid, cb) {
     this.#run(cb, () => {
-      const row = this.q.get.get(sid, Date.now());
+      const row = this.q.get.get(keyOf(sid), Date.now());
       return row ? JSON.parse(row.sess) : null;
     });
   }
 
   set(sid, sess, cb) {
     this.#run(cb, () => {
-      this.q.set.run(sid, JSON.stringify(sess), this.#expiry(sess));
+      this.q.set.run(keyOf(sid), JSON.stringify(sess), this.#expiry(sess));
     });
   }
 
   touch(sid, sess, cb) {
     this.#run(cb, () => {
-      this.q.touch.run(this.#expiry(sess), sid);
+      this.q.touch.run(this.#expiry(sess), keyOf(sid));
     });
   }
 
   destroy(sid, cb) {
     this.#run(cb, () => {
-      this.q.destroy.run(sid);
+      this.q.destroy.run(keyOf(sid));
     });
   }
 

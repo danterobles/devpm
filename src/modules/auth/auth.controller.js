@@ -4,7 +4,7 @@ import { SESSION_COOKIE } from './session.js';
 const call = (fn, target) =>
   new Promise((resolve, reject) => fn.call(target, (err) => (err ? reject(err) : resolve())));
 
-export function createAuthController({ service }) {
+export function createAuthController({ service, logger = null }) {
   return {
     showLogin(req, res) {
       if (req.session?.userId) return res.redirect('/');
@@ -18,6 +18,7 @@ export function createAuthController({ service }) {
         user = await service.authenticate(email, password);
       } catch (err) {
         if (err instanceof AppError && err.status === 401) {
+          logger?.warn({ event: 'login.failed', ip: req.ip, email }, 'Inicio de sesión fallido');
           return res
             .status(401)
             .render('pages/auth/login', { title: 'Iniciar sesión', error: err.message, email });

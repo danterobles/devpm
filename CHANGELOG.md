@@ -9,7 +9,14 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 
 ## [Sin publicar]
 
-_Sin cambios todavía._
+### Seguridad
+
+- Los inicios de sesión fallidos y los bloqueos se registran en el log (IP y correo, nunca la contraseña).
+- Límite de intentos también por cuenta (el doble que por IP), contra ataques repartidos entre varias IP.
+- Las contraseñas no pueden pasar de 72 bytes (bcrypt ignoraba el resto sin avisar).
+- Se rechazan las peticiones que modifican datos y que el navegador marca `Sec-Fetch-Site: cross-site`.
+- El ID de sesión se guarda con hash SHA-256: **al actualizar se cierran las sesiones abiertas**.
+- Los respaldos se crean con permisos `0600` y su carpeta con `0700`.
 
 ## [0.2.1] - 2026-11-07
 

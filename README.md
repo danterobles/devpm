@@ -64,7 +64,7 @@ Se leen de `.env` (ver `.env.example`) o del entorno.
 | `SESSION_SECRET` | — (obligatoria) | Mínimo 32 caracteres; en producción no puede ser el valor de ejemplo. Genera uno con `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"` |
 | `TZ_APP` | `America/Mexico_City` | Zona horaria de las fechas de calendario (las marcas de tiempo son UTC) |
 | `LOG_LEVEL` | `info` | `fatal`, `error`, `warn`, `info`, `debug`, `trace` o `silent` |
-| `LOGIN_MAX_ATTEMPTS` | `10` | Intentos fallidos de inicio de sesión por IP cada 15 min |
+| `LOGIN_MAX_ATTEMPTS` | `10` | Intentos fallidos de inicio de sesión cada 15 min por IP (y el doble por cuenta). Los fallos y bloqueos se registran en el log |
 | `BACKUP_RETENTION_DAYS` | `14` | Días que se conservan los respaldos |
 | `BACKUP_DIR` | `data/backups` | Carpeta de los respaldos |
 
@@ -118,7 +118,8 @@ Se leen de `.env` (ver `.env.example`) o del entorno.
 3. Mantén el proceso con un supervisor (systemd, pm2…). La aplicación atiende `SIGTERM`/`SIGINT` cerrando
    las conexiones y la base de datos de forma ordenada. Para monitoreo usa `GET /health` (público).
 4. **Actualizar:** `git pull && npm install && npm run db:migrate` y reinicia el servicio. Las migraciones
-   aplicadas nunca se editan; los cambios llegan como migraciones nuevas.
+   aplicadas nunca se editan; los cambios llegan como migraciones nuevas. Al pasar a una versión que cambia
+   el almacén de sesiones (0.2.2) se cierran las sesiones abiertas y cada persona vuelve a iniciar sesión.
 5. Un solo proceso de aplicación por base de datos (SQLite en modo WAL admite los 50 usuarios simultáneos
    previstos).
 
@@ -131,6 +132,8 @@ y borra los respaldos con más de `BACKUP_RETENTION_DAYS` días. Prográmalo a d
 ```cron
 15 2 * * *  cd /opt/devpm && /usr/bin/npm run db:backup >> /var/log/devpm-backup.log 2>&1
 ```
+
+Los respaldos y su carpeta se crean con permisos restringidos (`0600` / `0700`): contienen los hashes de contraseña.
 
 **Restaurar:** detén la aplicación, copia el respaldo elegido sobre `DATABASE_PATH`, borra los archivos
 `-wal` y `-shm` si existen, ejecuta `npm run db:migrate` (por si el respaldo es de una versión anterior) y
