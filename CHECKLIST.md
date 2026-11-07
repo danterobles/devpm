@@ -22,8 +22,8 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 | 7 | Registro de tiempo | ✅ Completada |
 | 8 | Diagrama de Gantt | ✅ Completada |
 | 9 | Burndown Chart | ✅ Completada |
-| 10 | Tablero de KPIs en tiempo real | ⏳ Siguiente |
-| 11 | Calidad, seguridad y despliegue | Pendiente |
+| 10 | Tablero de KPIs en tiempo real | ✅ Completada |
+| 11 | Calidad, seguridad y despliegue | ⏳ Siguiente |
 
 ---
 
@@ -166,11 +166,11 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 - [x] Cliente `public/js/lib/live.js` con debounce, indicador de conexión y última actualización (RF-95)
 - [x] Burndown, Kanban y Gantt escuchan eventos y se refrescan solos
 - [x] Umbrales configurables en `settings` (RF-93)
-- [ ] Prueba de integración: cambio de tarea → evento SSE recibido
-- [ ] Verificar PRD §8.3 (parte de KPIs): al aprobar las horas del developer, K4, K6 y K13 cambian
-- [ ] Verificar PRD §8.4: con dos asignaciones traslapadas al 60 % del mismo miembro, K7 = 1
+- [x] Prueba de integración: cambio de tarea → evento SSE recibido
+- [x] Verificar PRD §8.3 (parte de KPIs): al aprobar las horas del developer, K4, K6 y K13 cambian
+- [x] Verificar PRD §8.4: con dos asignaciones traslapadas al 60 % del mismo miembro, K7 = 1
 
-**Criterio de cierre:** criterios de aceptación PRD §8.2, §8.3 y §8.5 verificados.
+**Criterio de cierre:** criterios de aceptación PRD §8.2, §8.3 y §8.5 verificados. ✅
 
 ## Etapa 11 — Calidad, seguridad y despliegue
 

@@ -277,6 +277,10 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   formulario y «Restablecer valores del PRD», bitácora con el antes y el después y evento
   `settings.updated` que refresca los tableros abiertos. Un valor guardado inválido o corrupto no rompe el
   tablero: se usan los de fábrica.
+- Pruebas de aceptación del MVP con el tablero (PRD §8.2 a §8.5): un cambio de tarea llega por SSE y
+  actualiza KPIs y Burndown en ≤ 2 s; las horas registradas, enviadas, aprobadas y reclasificadas como no
+  facturables mueven K4, K6, K13 y K14; 60 % + 60 % da la alerta de sobreasignación y K7 = 1; un
+  proyecto con fecha fin vencida aparece en «Proyectos en riesgo» con su causa.
 
 ### Cambiado
 - `CLAUDE.md`: regla de contexto limpio: tras cada tarea terminada se pide `/clear` al usuario y
