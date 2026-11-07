@@ -19,6 +19,7 @@ import { createRemindersRepository } from './modules/notifications/reminders.rep
 import { createRemindersService } from './modules/notifications/reminders.service.js';
 import { createKpiRepository } from './modules/dashboard/kpi.repository.js';
 import { createKpiService } from './modules/dashboard/kpi.service.js';
+import { createHomeRouter } from './modules/home/home.routes.js';
 import { createSettingsRouter } from './modules/settings/settings.routes.js';
 import { createSettingsService } from './modules/settings/settings.service.js';
 import { createDashboardRouter } from './modules/dashboard/dashboard.routes.js';
@@ -153,16 +154,18 @@ export function createApp({
     );
     const settings = createSettingsService({ db, events: eventBus });
     app.use(createSettingsRouter({ settings }));
+    const kpi = createKpiService({
+      repository: createKpiRepository(db),
+      timezone: config.timezone,
+      getThresholds: settings.getThresholds,
+    });
     app.locals.reminders = createRemindersService({
       repository: createRemindersRepository(db),
       notifications,
-      kpi: createKpiService({
-        repository: createKpiRepository(db),
-        timezone: config.timezone,
-        getThresholds: settings.getThresholds,
-      }),
+      kpi,
       timezone: config.timezone,
     });
+    app.use(createHomeRouter({ db, notifications, kpi, timezone: config.timezone }));
     app.use(
       createDashboardRouter({
         db,

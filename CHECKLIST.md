@@ -28,8 +28,8 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 | 13 | Gantt en modo oscuro | ✅ Completada |
 | 14 | Endurecimiento de seguridad | ✅ Completada |
 | 15 | Notificaciones (app y correo) | ✅ Completada |
-| 16 | Mi día (panel por rol) | 🔄 En curso |
-| 17 | Importación por CSV | ⏳ Pendiente |
+| 16 | Mi día (panel por rol) | ✅ Completada |
+| 17 | Importación por CSV | 🔄 En curso |
 
 ---
 
@@ -241,12 +241,12 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 
 ## Etapa 16 — Mi día (v0.3, RF-110–RF-114)
 
-- [ ] Service y repository de solo lectura del panel por rol
-- [ ] Vista de inicio para `developer`, `pm`/`admin` y `viewer`, con notificaciones sin leer
-- [ ] Actualización en vivo con `live.js`
-- [ ] Pruebas por rol (contenido y permisos)
+- [x] Service y repository de solo lectura del panel por rol
+- [x] Vista de inicio para `developer`, `pm`/`admin` y `viewer`, con notificaciones sin leer
+- [x] Actualización en vivo con `live.js`
+- [x] Pruebas por rol (contenido y permisos)
 
-**Criterio de cierre:** cada rol ve en su inicio lo que necesita para empezar el día. 
+**Criterio de cierre:** cada rol ve en su inicio lo que necesita para empezar el día.  ✅
 
 ## Etapa 17 — Importación por CSV (v0.3, RF-120–RF-123)
 

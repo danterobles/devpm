@@ -31,6 +31,8 @@
     'time_off.changed',
     'client.updated',
     'settings.updated',
+    'notification.created',
+    'notification.read',
   ];
 
   const config = host.dataset;
