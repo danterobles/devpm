@@ -70,6 +70,11 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 - `postinstall` (`scripts/postinstall.js`): además de copiar las librerías compila el CSS de Tailwind, de modo
   que `npm install && npm run db:migrate && npm start` (RNF-10) deje la aplicación con estilos; con
   `--omit=dev` avisa que hay que compilar con `npm run build:css`.
+- `README.md`: instalación (verificada desde un clon limpio: `npm install`, migrar, crear el primer
+  administrador y arrancar), desarrollo y usuarios de ejemplo, roles, variables de entorno, scripts,
+  despliegue (HTTPS obligatorio, proxy con `Host` y `X-Forwarded-Proto`, ejemplo de nginx con SSE),
+  respaldos con cron y restauración. Una prueba mantiene el README alineado con `package.json`,
+  la configuración y el seed.
 
 ### Cambiado (Etapa 11)
 - `npm run test:coverage` mide los services (`src/modules/**/*.service.js`) y **falla** si líneas, ramas
