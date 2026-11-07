@@ -10,6 +10,7 @@ const config = loadConfig();
 const logger = createLogger(config);
 const db = openDb(config.databasePath);
 const app = createApp({ config, db, logger });
+app.locals.attachments?.sweep(); // archivos adjuntos sin registro (p. ej. tras restaurar una copia)
 
 // Limpieza periódica de sesiones vencidas
 const pruneTimer = setInterval(() => app.locals.sessionStore.prune(), 60 * 60 * 1000);

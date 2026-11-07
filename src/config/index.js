@@ -10,6 +10,9 @@ const schema = z.object({
   LOGIN_MAX_ATTEMPTS: z.coerce.number().int().min(1).default(10),
   BACKUP_RETENTION_DAYS: z.coerce.number().int().min(1).default(14),
   BACKUP_DIR: z.string().min(1).default('data/backups'),
+  // Adjuntos de tareas (PRD §5.16): carpeta fuera de public/ y tamaño máximo (1 a 5 MB).
+  UPLOAD_DIR: z.string().min(1).default('data/uploads'),
+  UPLOAD_MAX_MB: z.coerce.number().int().min(1).max(5).default(5),
   // Notificaciones por correo (opcionales): sin SMTP_HOST solo hay avisos dentro de la aplicación.
   APP_URL: z.string().url().optional(),
   SMTP_HOST: z.string().optional(),
@@ -50,6 +53,8 @@ export function loadConfig(env = process.env) {
     loginMaxAttempts: c.LOGIN_MAX_ATTEMPTS,
     backupRetentionDays: c.BACKUP_RETENTION_DAYS,
     backupDir: c.BACKUP_DIR,
+    uploadDir: c.UPLOAD_DIR,
+    uploadMaxBytes: c.UPLOAD_MAX_MB * 1024 * 1024,
     appUrl: (c.APP_URL ?? `http://localhost:${c.PORT}`).replace(/\/+$/, ''),
     smtp: {
       host: c.SMTP_HOST || null,

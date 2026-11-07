@@ -67,6 +67,8 @@ Se leen de `.env` (ver `.env.example`) o del entorno.
 | `LOGIN_MAX_ATTEMPTS` | `10` | Intentos fallidos de inicio de sesión cada 15 min por IP (y el doble por cuenta). Los fallos y bloqueos se registran en el log |
 | `BACKUP_RETENTION_DAYS` | `14` | Días que se conservan los respaldos |
 | `BACKUP_DIR` | `data/backups` | Carpeta de los respaldos |
+| `UPLOAD_DIR` | `data/uploads` | Carpeta de los adjuntos de las tareas (fuera de `public/`; se incluye en los respaldos) |
+| `UPLOAD_MAX_MB` | `5` | Tamaño máximo de un adjunto, de 1 a 5 MB |
 | `APP_URL` | `http://localhost:PORT` | URL pública de la aplicación (enlaces de los correos) |
 | `SMTP_HOST` | — | Servidor SMTP. Sin él, las notificaciones solo aparecen dentro de la aplicación |
 | `SMTP_PORT` | `587` | Puerto SMTP |
@@ -150,8 +152,11 @@ y borra los respaldos con más de `BACKUP_RETENTION_DAYS` días. Prográmalo a d
 ```
 
 Los respaldos y su carpeta se crean con permisos restringidos (`0600` / `0700`): contienen los hashes de contraseña.
+Junto a cada `devpm-AAAAMMDD-HHmm.db` se guarda `devpm-AAAAMMDD-HHmm.uploads/` con una copia de los adjuntos de las
+tareas (`UPLOAD_DIR`), con la misma retención.
 
-**Restaurar:** detén la aplicación, copia el respaldo elegido sobre `DATABASE_PATH`, borra los archivos
+**Restaurar:** detén la aplicación, copia el respaldo elegido sobre `DATABASE_PATH` y la carpeta `.uploads` del mismo
+respaldo sobre `UPLOAD_DIR` (si falta algún archivo, esa descarga responde 404; los archivos sin registro se limpian al arrancar), borra los archivos
 `-wal` y `-shm` si existen, ejecuta `npm run db:migrate` (por si el respaldo es de una versión anterior) y
 arranca de nuevo. Guarda además una copia de `data/backups/` fuera del servidor.
 

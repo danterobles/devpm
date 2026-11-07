@@ -12,6 +12,7 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 ### Agregado
 
 - Comentarios en las tareas, en vivo, con menciones por `@correo` que avisan a la persona (y avisos al responsable y al líder del proyecto).
+- Adjuntos en las tareas (hasta 5 MB y 10 por tarea; imágenes, PDF, texto, CSV y Office): tipo verificado por el contenido, almacenamiento fuera de `public/`, descarga siempre como archivo y copia en los respaldos (`UPLOAD_DIR`, `UPLOAD_MAX_MB`).
 - Migración `006_collaboration.sql` (comentarios, adjuntos y filtros guardados).
 
 ## [0.3.0] - 2026-11-07

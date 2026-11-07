@@ -72,3 +72,13 @@ test('config: lee SMTP_* y APP_URL (sin barra final) y rechaza valores inválido
     /SMTP_SECURE/,
   );
 });
+
+test('config: adjuntos con valores por defecto y UPLOAD_MAX_MB limitado de 1 a 5', () => {
+  const base = { SESSION_SECRET: 'a'.repeat(32) };
+  const c = loadConfig(base);
+  assert.equal(c.uploadDir, 'data/uploads');
+  assert.equal(c.uploadMaxBytes, 5 * 1024 * 1024);
+  assert.equal(loadConfig({ ...base, UPLOAD_MAX_MB: '2' }).uploadMaxBytes, 2 * 1024 * 1024);
+  for (const bad of ['0', '6', 'mucho'])
+    assert.throws(() => loadConfig({ ...base, UPLOAD_MAX_MB: bad }), /UPLOAD_MAX_MB/, bad);
+});

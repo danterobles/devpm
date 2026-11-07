@@ -38,6 +38,7 @@ export function createTasksService({
   events = null,
   notifier = null,
   timezone = 'America/Mexico_City',
+  onRemoved = null,
 }) {
   /** Avisa al responsable (RF-102) cuando otra persona le asigna una tarea. */
   function notifyAssigned(actorId, taskId, title, assigneeId) {
@@ -493,6 +494,7 @@ export function createTasksService({
         audit(actorId, id, 'delete', { title: [before.title, null] });
       })();
       snapshots?.recalculate([before.sprint_id]);
+      onRemoved?.(id); // p. ej. limpiar los archivos adjuntos que quedaron sin registro
       events?.emit('task.deleted', {
         projectId: before.project_id,
         sprintId: before.sprint_id,

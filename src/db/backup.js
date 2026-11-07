@@ -1,5 +1,5 @@
 import Database from 'better-sqlite3';
-import { chmodSync, existsSync, mkdirSync, readdirSync, rmSync, statSync } from 'node:fs';
+import { chmodSync, cpSync, existsSync, mkdirSync, readdirSync, rmSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
 /** Nombre de un respaldo: `devpm-AAAAMMDD-HHmm.db` en UTC (más `-N` si hay otro del mismo minuto). */
@@ -33,7 +33,14 @@ function integrityOf(file) {
  * @param {{ db: import('better-sqlite3').Database, dir: string, retentionDays: number, now?: Date, verify?: (file: string) => string }} options
  * @returns {{ file: string, bytes: number, removed: string[] }}
  */
-export function backupDatabase({ db, dir, retentionDays, now = new Date(), verify = integrityOf }) {
+export function backupDatabase({
+  db,
+  dir,
+  retentionDays,
+  now = new Date(),
+  verify = integrityOf,
+  uploadsDir = null,
+}) {
   // Los respaldos contienen los hashes de contraseña: solo el usuario del servicio puede leerlos.
   mkdirSync(dir, { recursive: true, mode: 0o700 });
   chmodSync(dir, 0o700);
@@ -44,6 +51,13 @@ export function backupDatabase({ db, dir, retentionDays, now = new Date(), verif
     file = join(dir, backupName(now, copy));
   }
 
+  // Adjuntos (RF-144): se copian ANTES que la base, así la copia de la base nunca apunta a un archivo
+  // que no esté en la copia de los adjuntos. Junto a `devpm-….db` queda `devpm-….uploads/`.
+  const uploads = uploadsDir && existsSync(uploadsDir) ? file.replace(/\.db$/, '.uploads') : null;
+  if (uploads) {
+    cpSync(uploadsDir, uploads, { recursive: true });
+    chmodSync(uploads, 0o700);
+  }
   db.prepare('VACUUM INTO ?').run(file);
   chmodSync(file, 0o600);
   const verdict = verify(file);
@@ -57,11 +71,12 @@ export function backupDatabase({ db, dir, retentionDays, now = new Date(), verif
   const limit = retentionDays * 24 * 60 * 60 * 1000;
   const removed = [];
   for (const name of readdirSync(dir)) {
-    const date = backupDate(name);
-    if (date && join(dir, name) !== file && minute - date > limit) {
-      rmSync(join(dir, name), { force: true });
+    const date = backupDate(name.replace(/\.uploads$/, '.db'));
+    const current = join(dir, name) === file || join(dir, name) === uploads;
+    if (date && !current && minute - date > limit) {
+      rmSync(join(dir, name), { force: true, recursive: true });
       removed.push(name);
     }
   }
-  return { file, bytes: statSync(file).size, removed };
+  return { file, uploads, bytes: statSync(file).size, removed };
 }

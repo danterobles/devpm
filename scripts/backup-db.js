@@ -14,12 +14,14 @@ if (!existsSync(config.databasePath)) {
 
 const db = openDb(config.databasePath);
 try {
-  const { file, bytes, removed } = backupDatabase({
+  const { file, uploads, bytes, removed } = backupDatabase({
     db,
     dir: config.backupDir,
     retentionDays: config.backupRetentionDays,
+    uploadsDir: config.uploadDir,
   });
   console.log(`Respaldo creado: ${file} (${(bytes / 1024).toFixed(1)} KB)`);
+  if (uploads) console.log(`Adjuntos copiados: ${uploads}`);
   console.log(
     `Eliminados por retención: ${removed.length}${removed.length ? ` (${removed.join(', ')})` : ''}`,
   );

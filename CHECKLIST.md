@@ -31,8 +31,8 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 | 16 | Mi día (panel por rol) | ✅ Completada |
 | 17 | Importación por CSV | ✅ Completada |
 | 18 | Comentarios y menciones (v0.4) | ✅ Completada |
-| 19 | Adjuntos (v0.4) | 🔄 En curso |
-| 20 | Búsqueda global y filtros guardados (v0.4) | ⏳ Planeada |
+| 19 | Adjuntos (v0.4) | ✅ Completada |
+| 20 | Búsqueda global y filtros guardados (v0.4) | 🔄 En curso |
 | 21 | Manuales y versión 0.4.0 | ⏳ Planeada |
 
 ---
@@ -281,16 +281,16 @@ Orden recomendado: 18 → 19 → 20 → 21. Cada etapa se cierra con `npm test` 
 
 ## Etapa 19 — Adjuntos (RF-140–RF-144)
 
-- [ ] Config `UPLOAD_DIR` y `UPLOAD_MAX_MB`; carpeta con permisos `0700` y archivos `0600`; ignorada por git
-- [ ] Módulo `attachments`: límites (5 MB, 10 por tarea), lista de tipos y verificación de firma (RF-140, RF-143)
-- [ ] Subida con `express.raw` y `fetch`; descarga autenticada siempre como `attachment` con `nosniff` (RF-142)
-- [ ] Baja del archivo y de su registro en una sola operación (sin archivos huérfanos); limpieza al eliminar la tarea
-- [ ] Interfaz en la ficha de la tarea (lista, subir, descargar, eliminar) con avisos de error claros
-- [ ] `db:backup` incluye la carpeta de adjuntos y la restauración está documentada (RF-144)
-- [ ] Pruebas: tipos permitidos y rechazados (HTML, SVG, ejecutable, extensión falsa), tamaño, permisos, ruta no manipulable (`../`), nombre con caracteres especiales, descarga forzada
-- [ ] Revisión de seguridad de la etapa (ARQUITECTURA §7) y documentar el riesgo de no tener antivirus
+- [x] Config `UPLOAD_DIR` y `UPLOAD_MAX_MB`; carpeta con permisos `0700` y archivos `0600`; ignorada por git
+- [x] Módulo `attachments`: límites (5 MB, 10 por tarea), lista de tipos y verificación de firma (RF-140, RF-143)
+- [x] Subida con `express.raw` y `fetch`; descarga autenticada siempre como `attachment` con `nosniff` (RF-142)
+- [x] Baja del archivo y de su registro en una sola operación (sin archivos huérfanos); limpieza al eliminar la tarea
+- [x] Interfaz en la ficha de la tarea (lista, subir, descargar, eliminar) con avisos de error claros
+- [x] `db:backup` incluye la carpeta de adjuntos y la restauración está documentada (RF-144)
+- [x] Pruebas: tipos permitidos y rechazados (HTML, SVG, ejecutable, extensión falsa), tamaño, permisos, ruta no manipulable (`../`), nombre con caracteres especiales, descarga forzada
+- [x] Revisión de seguridad de la etapa (ARQUITECTURA §7) y documentar el riesgo de no tener antivirus
 
-**Criterio de cierre:** se adjunta, descarga y elimina un archivo sin que pueda ejecutarse en el navegador ni salir de `UPLOAD_DIR`.
+**Criterio de cierre:** se adjunta, descarga y elimina un archivo sin que pueda ejecutarse en el navegador ni salir de `UPLOAD_DIR`. ✅
 
 ## Etapa 20 — Búsqueda global y filtros guardados (RF-150–RF-153)
 

@@ -20,11 +20,9 @@ export function createCommentsController({ service, repository }) {
   return {
     apiList: (req, res) => res.json({ data: service.list(taskId(req)) }),
     apiCreate: (req, res) =>
-      res
-        .status(201)
-        .json({
-          data: service.create(actor(req), taskId(req), parseWith(commentSchema, req.body)),
-        }),
+      res.status(201).json({
+        data: service.create(actor(req), taskId(req), parseWith(commentSchema, req.body)),
+      }),
     apiUpdate: (req, res) =>
       res.json({
         data: service.update(actor(req), commentId(req), parseWith(commentSchema, req.body)),

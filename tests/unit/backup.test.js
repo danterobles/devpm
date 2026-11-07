@@ -208,6 +208,7 @@ test('CLI scripts/backup-db.js: respalda, informa el archivo y aplica la retenci
         DATABASE_PATH: path.join(dir, 'devpm.db'),
         BACKUP_DIR: out,
         BACKUP_RETENTION_DAYS: '7',
+        UPLOAD_DIR: path.join(dir, 'sin-adjuntos'),
       },
       encoding: 'utf8',
     });
@@ -251,3 +252,43 @@ test(
     db.close();
   },
 );
+
+test('RF-144: el respaldo incluye la carpeta de adjuntos junto a la base, con la misma retención', () => {
+  const dir = tmp();
+  const db = fileDb(dir);
+  const uploads = path.join(dir, 'uploads');
+  fs.mkdirSync(uploads);
+  fs.writeFileSync(path.join(uploads, 'a'.repeat(32)), 'contenido', { mode: 0o600 });
+  const backups = path.join(dir, 'backups');
+  fs.mkdirSync(backups);
+  // respaldo viejo (base y adjuntos) que la retención debe eliminar
+  fs.writeFileSync(path.join(backups, 'devpm-20200101-0000.db'), 'viejo');
+  fs.mkdirSync(path.join(backups, 'devpm-20200101-0000.uploads'));
+  fs.writeFileSync(path.join(backups, 'devpm-20200101-0000.uploads', 'x'), 'viejo');
+
+  const result = backupDatabase({
+    db,
+    dir: backups,
+    retentionDays: 14,
+    now: NOW,
+    uploadsDir: uploads,
+  });
+  assert.equal(path.basename(result.uploads), 'devpm-20260513-1504.uploads');
+  assert.equal(fs.readFileSync(path.join(result.uploads, 'a'.repeat(32)), 'utf8'), 'contenido');
+  assert.equal(fs.statSync(result.uploads).mode & 0o777, 0o700);
+  assert.deepEqual(result.removed.sort(), [
+    'devpm-20200101-0000.db',
+    'devpm-20200101-0000.uploads',
+  ]);
+  assert.equal(fs.existsSync(path.join(backups, 'devpm-20200101-0000.uploads')), false);
+  // sin carpeta de adjuntos no se crea nada
+  const none = backupDatabase({
+    db,
+    dir: backups,
+    retentionDays: 14,
+    now: new Date(NOW.getTime() + 60_000),
+    uploadsDir: path.join(dir, 'no-existe'),
+  });
+  assert.equal(none.uploads, null);
+  db.close();
+});

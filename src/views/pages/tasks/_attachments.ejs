@@ -1,0 +1,33 @@
+<% if (attachments) { %>
+<%
+  const size = (b) => (b >= 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB');
+%>
+<section id="adjuntos" class="mt-10" aria-labelledby="attachments-title" data-attachments data-task-id="<%= task.id %>" data-max-bytes="<%= attachments.maxBytes %>">
+  <h2 id="attachments-title" class="text-xl font-semibold">Adjuntos <span class="text-base font-medium text-slate-600">(<%= attachments.items.length %> de <%= attachments.maxPerTask %>)</span></h2>
+  <ul class="mt-3 divide-y divide-navy-100 rounded-xl border border-navy-100 bg-white dark:divide-white/10 dark:border-white/10">
+    <% attachments.items.forEach((a) => { %>
+      <li class="flex flex-wrap items-center justify-between gap-2 p-3 text-sm">
+        <span class="min-w-0">
+          <a class="font-semibold underline break-all" href="/attachments/<%= a.id %>"><%= a.name %></a>
+          <span class="block text-slate-600"><%= size(a.sizeBytes) %> · <%= a.uploaderName %> · <%= a.createdAt.slice(0, 16).replace('T', ' ') %> UTC</span>
+        </span>
+        <% if (a.canDelete) { %>
+          <form method="post" action="/attachments/<%= a.id %>/delete"><button type="submit" class="min-h-11 px-2 underline">Eliminar</button></form>
+        <% } %>
+      </li>
+    <% }) %>
+    <% if (attachments.items.length === 0) { %><li class="p-3 text-sm text-slate-600">Esta tarea no tiene archivos adjuntos.</li><% } %>
+  </ul>
+  <% if (attachments.canUpload) { %>
+    <div class="mt-3">
+      <label for="attachment-file" class="block text-sm font-medium">Adjuntar un archivo (máx. <%= Math.round(attachments.maxBytes / 1048576) %> MB)</label>
+      <input id="attachment-file" type="file" data-attachment-input accept="<%= attachments.extensions.join(',') %>" class="mt-1 min-h-11 w-full max-w-md rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm" />
+      <p class="mt-1 text-xs text-slate-600">Permitidos: <%= attachments.extensions.join(', ') %>. Los archivos se descargan, no se abren en el navegador.</p>
+      <p id="attachment-message" data-attachment-message class="mt-1 text-sm" role="status" aria-live="polite"></p>
+    </div>
+  <% } else { %>
+    <p class="mt-3 text-sm text-slate-600">Solo el equipo asignado al proyecto puede adjuntar archivos.</p>
+  <% } %>
+</section>
+<script src="/js/pages/attachments.js" defer></script>
+<% } %>

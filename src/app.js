@@ -23,6 +23,9 @@ import { createImportRouter } from './modules/import/import.routes.js';
 import { createCommentsRepository } from './modules/comments/comments.repository.js';
 import { createCommentsService } from './modules/comments/comments.service.js';
 import { createCommentsRouter } from './modules/comments/comments.routes.js';
+import { createAttachmentsRepository } from './modules/attachments/attachments.repository.js';
+import { createAttachmentsService } from './modules/attachments/attachments.service.js';
+import { createAttachmentsRouter } from './modules/attachments/attachments.routes.js';
 import { createHomeRouter } from './modules/home/home.routes.js';
 import { createSettingsRouter } from './modules/settings/settings.routes.js';
 import { createSettingsService } from './modules/settings/settings.service.js';
@@ -153,6 +156,14 @@ export function createApp({
       notifier: notifications,
     });
     app.use(createCommentsRouter({ service: app.locals.comments, repository: commentsRepository }));
+    app.locals.attachments = createAttachmentsService({
+      db,
+      repository: createAttachmentsRepository(db),
+      uploadDir: config.uploadDir,
+      maxBytes: config.uploadMaxBytes,
+      events: eventBus,
+    });
+    app.use(createAttachmentsRouter({ service: app.locals.attachments }));
     app.use(createClientsRouter({ db, events: eventBus }));
     app.use(createTeamRouter({ db, events: eventBus }));
     app.use(createSprintsRouter({ db, timezone: config.timezone, events: eventBus }));
@@ -162,6 +173,7 @@ export function createApp({
         timezone: config.timezone,
         events: eventBus,
         notifier: notifications,
+        onRemoved: () => app.locals.attachments?.sweep(),
       }),
     );
     const settings = createSettingsService({ db, events: eventBus });
