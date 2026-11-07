@@ -381,7 +381,18 @@ Cambio de alcance del día (RF-82) = `total_points(d) − total_points(d−1)`.
 
 Índices previstos: `ix_task_comments_task (task_id, id)`, `ix_task_attachments_task (task_id)`, `ix_saved_filters_user (user_id, scope)`. Máximo 20 filtros por usuario (regla de negocio, no de esquema).
 
-### 3.20 Tablas de soporte
+### 3.20 Cuentas y seguridad (v0.5, migración `007_accounts_security.sql`)
+
+`users` gana `totp_secret TEXT` (cifrado), `totp_enabled INTEGER NN default 0`, `totp_last_step INTEGER` (último intervalo aceptado, contra reutilización).
+
+| Tabla | Columnas | Propósito |
+|---|---|---|
+| `password_resets` | `id` PK, `user_id` FK → users CASCADE, `token_hash` TEXT NN UQ, `expires_at` TEXT NN, `used_at` TEXT, `created_at` | Enlaces de restablecimiento de un solo uso (solo el hash) |
+| `recovery_codes` | `id` PK, `user_id` FK → users CASCADE, `code_hash` TEXT NN, `used_at` TEXT, `created_at`; UQ `(user_id, code_hash)` | Códigos de recuperación del 2FA (solo el hash) |
+| `security_events` | `id` PK, `type` TEXT NN, `user_id` FK → users SET NULL, `email` TEXT, `ip` TEXT, `detail` TEXT, `created_at` | Eventos de seguridad (RF-171); índices por `created_at` y `(type, created_at)` |
+| `notification_preferences` | `user_id` FK → users CASCADE, `type` TEXT NN, `in_app` INTEGER NN default 1, `email` INTEGER NN default 1, PK `(user_id, type)` | Preferencias por tipo de aviso (RF-180); sin fila = todo activo |
+
+### 3.21 Tablas de soporte
 
 | Tabla | Propósito |
 |---|---|

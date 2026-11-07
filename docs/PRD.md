@@ -414,6 +414,45 @@ Empresas con relación comercial; su trabajo es facturable.
 8. Filtros guardados: el ámbito `projects` guarda los filtros de `/projects` (texto, estado, prioridad, cliente, líder); `tasks` guarda los del backlog (texto, tipo, prioridad, responsable) y se aplica al backlog del proyecto que se esté viendo; `time` guarda los de la exportación a CSV de `/time/approvals` (desde, hasta, estado). El nombre es único por persona y ámbito; no se guarda la página. El backlog gana esos filtros (texto, tipo, prioridad y responsable).
 9. Fuera de esta versión: hilos o respuestas anidadas, reacciones, adjuntos en proyectos o clientes, búsqueda dentro de adjuntos.
 
+### 5.18 Cuentas y acceso (v0.5)
+
+| ID | Requerimiento | Prioridad |
+|---|---|---|
+| RF-160 | «Olvidé mi contraseña»: la persona pide un enlace con su correo; si el servidor tiene correo (SMTP) y la cuenta existe y está activa, recibe un enlace de un solo uso que vence en 1 hora. La respuesta es siempre la misma exista o no la cuenta. | Alta |
+| RF-161 | Al restablecer la contraseña se invalidan los enlaces pendientes y se cierran todas sus sesiones. Las reglas de la contraseña son las de siempre (8 a 72 bytes). | Alta |
+| RF-162 | Autenticación en dos pasos (TOTP, compatible con Google Authenticator, Microsoft Authenticator, 1Password, Authy…): cada persona la activa en `/account/security` con su clave y un código de verificación, y recibe 10 códigos de recuperación de un solo uso (se muestran una vez). | Alta |
+| RF-163 | Con 2FA activa, tras la contraseña se pide el código de 6 dígitos (o un código de recuperación). Un código TOTP no puede usarse dos veces. Los intentos fallidos cuentan para el límite de acceso. | Alta |
+| RF-164 | Desactivar el 2FA exige la contraseña y un código vigente. | Alta |
+| RF-165 | El `admin` puede quitar el 2FA de una persona que perdió su dispositivo y sus códigos, y **desbloquear** una cuenta bloqueada por intentos fallidos. Ambas acciones quedan en la bitácora y en los eventos de seguridad. | Alta |
+
+**Decisiones:**
+
+- El 2FA es **opcional para todos** (se recomienda activarlo a los administradores); no hay exigencia automática en esta versión.
+- La recuperación de contraseña **depende de SMTP**: sin correo configurado la página lo dice y la persona debe pedir al administrador que restablezca su contraseña (como hasta ahora).
+- El secreto TOTP se guarda cifrado (AES-256-GCM con una clave derivada de `SESSION_SECRET`); los códigos de recuperación y los enlaces, solo como hash.
+- No se muestra un código QR (no se agrega una dependencia): se ofrece la clave para teclearla y el enlace `otpauth://`.
+- Cambiar `SESSION_SECRET` invalida los secretos 2FA guardados; el administrador debe quitar el 2FA a esas cuentas.
+
+### 5.19 Bitácora, seguridad y estado (v0.5)
+
+| ID | Requerimiento | Prioridad |
+|---|---|---|
+| RF-170 | Pantalla «Bitácora» (solo `admin`): quién cambió qué y cuándo, con filtros por entidad, acción, usuario y fechas, paginada; los cambios se muestran como «campo: antes → después». Nunca contiene contraseñas. | Alta |
+| RF-171 | Eventos de seguridad guardados y consultables (solo `admin`): inicios de sesión correctos y fallidos, bloqueos, restablecimientos y cambios de contraseña, activación y desactivación del 2FA, desbloqueos, con fecha, IP y correo. Se conservan 90 días. | Alta |
+| RF-172 | Pantalla «Estado del sistema» (solo `admin`): versión, tiempo activo, estado de la base y su tamaño, migraciones, conexiones en vivo, solicitudes y errores recientes con latencia (p50 y p95), último respaldo, adjuntos, correo configurado y último ciclo de avisos, con alertas visibles (base con error, respaldo con más de 48 h, errores recientes). | Alta |
+| RF-173 | `npm run health` consulta `/health` y termina con código distinto de cero si falla, para usarlo desde un monitor o el cron del servidor. | Media |
+
+**Decisiones:** las métricas viven en memoria del proceso (se reinician con él); no se envían a ningún servicio externo. La bitácora de datos (`audit_log`) no se purga.
+
+### 5.20 Pulido (v0.5)
+
+| ID | Requerimiento | Prioridad |
+|---|---|---|
+| RF-180 | Preferencias de notificación por tipo de aviso: cada persona elige, por tipo, si lo quiere dentro de la aplicación y por correo. Por omisión todo está activo. | Media |
+| RF-181 | Ícono de la aplicación (favicon) y sin errores 404 por él. | Baja |
+| RF-182 | Revisión de accesibilidad: pruebas automáticas sobre todas las páginas (un `h1`, campos con etiqueta, ids únicos, idioma, landmarks) y recorrido manual de teclado. | Media |
+| RF-183 | Los manuales en PDF incluyen las novedades de la 0.5 y las fuentes para regenerarlos viven en el repositorio (`docs/manuales/fuente/`). | Media |
+
 ## 6. KPIs
 
 Todos los KPIs respetan los filtros del tablero. Horas = minutos / 60 (redondeo a 1 decimal en UI).
@@ -574,3 +613,4 @@ Las etapas detalladas y su estado viven en `CHECKLIST.md`.
 | F7 | Endurecimiento: seguridad, rendimiento, respaldo y despliegue |
 | F8 (v0.3) | Adopción: notificaciones, «Mi día» e importación por CSV |
 | F9 (v0.4) | Colaboración: comentarios y menciones, adjuntos, búsqueda global y filtros guardados |
+| F10 (v0.5) | Confianza y operación: cuentas y acceso (recuperación y 2FA), bitácora, seguridad y estado, pulido. La integración continua y el contenedor quedan para después |

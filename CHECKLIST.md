@@ -34,6 +34,10 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 | 19 | Adjuntos (v0.4) | ✅ Completada |
 | 20 | Búsqueda global y filtros guardados (v0.4) | ✅ Completada |
 | 21 | Manuales y versión 0.4.0 | ✅ Completada |
+| 22 | Integración continua y contenedor | ⏸ Fuera de la 0.5.0 |
+| 23 | Cuentas y acceso (v0.5) | 🔄 En curso |
+| 24 | Bitácora, seguridad y estado (v0.5) | ⏳ Planeada |
+| 25 | Pulido y cierre (v0.5) | ⏳ Planeada |
 
 ---
 
@@ -311,3 +315,41 @@ Orden recomendado: 18 → 19 → 20 → 21. Cada etapa se cierra con `npm test` 
 - [x] CHANGELOG `[0.4.0]`, versión en `package.json`, etiqueta `v0.4.0` y publicación
 
 **Criterio de cierre:** 0.4.0 aceptada y etiquetada. ✅ (`v0.4.0`)
+
+---
+
+# Versión 0.5.0 — Confianza y operación (la etapa 22, integración continua y contenedor, queda fuera)
+
+Se cierra con las etiquetas `etapa-23`, `etapa-24` y `etapa-25` en el último commit de cada etapa y `v0.5.0` al final.
+
+## Etapa 23 — Cuentas y acceso (RF-160–RF-165)
+
+- [ ] Migración `007_accounts_security.sql` (columnas TOTP, `password_resets`, `recovery_codes`, `security_events`, `notification_preferences`)
+- [ ] `totp.js` y `secretBox.js` con pruebas (vectores de RFC 6238, cifrado y manipulación)
+- [ ] Recuperación de contraseña: solicitud (genérica y con límite), enlace de un solo uso con vencimiento, restablecimiento que cierra sesiones
+- [ ] 2FA: activar en `/account/security`, códigos de recuperación, inicio de sesión en dos pasos sin sesión autenticada intermedia, desactivar con contraseña y código
+- [ ] Administración: quitar el 2FA y desbloquear una cuenta desde la ficha del usuario
+- [ ] Eventos de seguridad registrados en todos los pasos (`security_events`)
+- [ ] Pruebas: reutilización de códigos y tokens, enumeración de cuentas, fuerza bruta del código, sesión intermedia, permisos
+
+**Criterio de cierre:** se recupera una contraseña por correo y se inicia sesión con 2FA, sin fugas de información ni accesos intermedios.
+
+## Etapa 24 — Bitácora, seguridad y estado (RF-170–RF-173)
+
+- [ ] Pantalla «Bitácora» con filtros y paginación (solo admin)
+- [ ] Pantalla «Seguridad» con los eventos y poda de 90 días
+- [ ] Métricas en memoria y pantalla «Estado del sistema» con alertas
+- [ ] `npm run health` y su documentación para monitores y cron
+- [ ] Pruebas: permisos, filtros, legibilidad sin contraseñas, métricas y alertas
+
+**Criterio de cierre:** el administrador ve quién hizo qué, qué ataques ocurrieron y si el sistema está sano.
+
+## Etapa 25 — Pulido y cierre (RF-180–RF-183)
+
+- [ ] Preferencias de notificación por tipo (en la aplicación y por correo)
+- [ ] Favicon y ruta `/favicon.ico`
+- [ ] Pruebas de accesibilidad sobre todas las páginas y recorrido de teclado
+- [ ] Fuentes de los manuales en `docs/manuales/fuente/` y manuales actualizados con la 0.5
+- [ ] README, CHANGELOG `[0.5.0]`, versión, etiquetas y publicación
+
+**Criterio de cierre:** 0.5.0 aceptada y etiquetada; el sistema listo para usarse.

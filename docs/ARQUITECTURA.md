@@ -239,13 +239,24 @@ PRAGMA synchronous = NORMAL;      -- seguro con WAL y más rápido
 - **`modules/import/`**: parser CSV propio (`lib/csv.js`, sin dependencia), esquemas por entidad y service que valida fila por fila y, al importar, usa los services existentes dentro de **una** transacción; los eventos se acumulan y se emiten al confirmar.
 - **Configuración** (opcional): `APP_URL` (enlaces de los correos), `SMTP_HOST`, `SMTP_PORT` (587), `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`, `SMTP_SECURE`.
 
-### 3.8 Colaboración (v0.4 — propuesta)
+### 3.8 Colaboración (v0.4)
 
 - **`modules/comments/`**: repository (`task_comments`), service (crear, editar, eliminar con permisos y bitácora; menciones y avisos mediante el notificador de la v0.3), rutas anidadas en la tarea (`/api/v1/tasks/:id/comments`) y fragmento en la ficha de la tarea que se refresca con SSE (`comment.changed`).
 - **`modules/attachments/`**: repository (`task_attachments`), service (límites, lista de tipos, verificación de firma por *magic bytes*, nombre aleatorio) y rutas (`POST /api/v1/tasks/:id/attachments?name=…` con `express.raw({ limit })`, `GET /attachments/:id` autenticada y siempre como descarga, `DELETE`). Los archivos viven en `UPLOAD_DIR` (por defecto `data/uploads/`, ignorada por git, permisos `0700`/`0600`). `db:backup` copia también esa carpeta (`devpm-AAAAMMDD-HHmm.uploads/`, antes de la base para que la copia de la base nunca apunte a un archivo ausente). Los huérfanos se barren al arrancar y al eliminar tareas. Sin dependencias nuevas.
 - **`modules/search/`**: service y repository de solo lectura que reutilizan las reglas de visibilidad de cada listado; `LIKE` con escape (y FTS5 solo si la prueba de rendimiento lo exige). Filtros guardados en `saved_filters`.
 - **Seguridad**: los adjuntos nunca se sirven desde `public/`; la CSP no cambia; un archivo no se interpreta nunca como HTML (descarga forzada, `nosniff`, tipos permitidos por lista); las menciones y los comentarios se escapan como el resto del contenido.
 - **Configuración**: `UPLOAD_DIR` y `UPLOAD_MAX_MB` (1 a 5; 5 por defecto).
+
+### 3.9 Cuentas, bitácora y estado (v0.5)
+
+- **`modules/account-security/`**: `totp.js` (RFC 6238 con `node:crypto`: base32, HMAC-SHA1, intervalo de 30 s, ventana ±1, comparación en tiempo constante), `secretBox.js` (AES-256-GCM con clave derivada de `SESSION_SECRET`), repository, service (activar, verificar, desactivar, códigos de recuperación, restablecimiento de contraseña con token aleatorio guardado como SHA-256) y rutas públicas (`/forgot-password`, `/reset-password`, `/login/2fa`) y autenticadas (`/account/security`).
+- **Inicio de sesión en dos pasos**: tras validar la contraseña, si la cuenta tiene 2FA se guarda en la sesión solo `twoFactorUserId` (sin `userId`): la sesión no queda autenticada hasta superar `/login/2fa`, y se regenera el ID al completarla.
+- **`modules/security-events/`**: `record(type, { userId, email, ip, detail })` (también escribe en el log de `pino`), consulta paginada y poda diaria de 90 días.
+- **`modules/audit/`**: consulta de solo lectura de `audit_log` con filtros y presentación legible.
+- **`modules/status/`**: `lib/metrics.js` (middleware con un anillo en memoria de las últimas 1 000 solicitudes: contadores, errores 5xx, p50 y p95) y el servicio que arma la pantalla de estado.
+- **`scripts/healthcheck.js`** (`npm run health`): consulta `/health` y devuelve código 0 o 1.
+- **Preferencias por tipo**: `notification_preferences`, consultada por `notify` antes de insertar o enviar.
+- **Sin dependencias nuevas.**
 
 ## 4. Tiempo real (SSE)
 
@@ -348,7 +359,8 @@ los services reciben el bus como dependencia opcional (`events`) y emiten solo t
 | CSRF | `SameSite=Strict` + `verifyOrigin` (global, antes de las rutas): en POST/PUT/PATCH/DELETE el host de `Origin` (o `Referer` si falta) debe coincidir con `Host`, si no responde 403; `Origin: null` se rechaza; sin ambas cabeceras pasa, salvo que el navegador declare `Sec-Fetch-Site: cross-site`, que se rechaza con 403 |
 | Cabeceras | `helmet` con CSP: `default-src 'self'`, `script-src 'self'` (sin `unsafe-inline` en scripts; `style-src` sí lo admite porque Chart.js y Frappe Gantt aplican estilos en línea) y `Referrer-Policy: same-origin`; `upgrade-insecure-requests` y HSTS **solo en producción** (en HTTP plano romperían la carga de recursos) |
 | Fuerza bruta | `express-rate-limit` en `/login`: `LOGIN_MAX_ATTEMPTS` intentos fallidos / 15 min **por IP** y el doble **por cuenta** (correo), para frenar ataques repartidos entre varias IP. Detrás de un proxy depende de `trust proxy`: la aplicación no debe ser accesible sin pasar por él |
-| Registro de seguridad | `pino` registra en nivel `warn` los inicios de sesión fallidos (`login.failed`) y los bloqueos (`login.blocked`) con IP y correo, nunca la contraseña |
+| Registro de seguridad | `pino` registra en nivel `warn` los inicios de sesión fallidos (`login.failed`) y los bloqueos (`login.blocked`) con IP y correo, nunca la contraseña; desde la v0.5 también se guardan en `security_events` (90 días) y el administrador los consulta |
+| Dos pasos y recuperación | TOTP (RFC 6238) con secreto cifrado en reposo, un código no se reutiliza, códigos de recuperación y enlaces de restablecimiento guardados solo como hash, un solo uso y vencimiento de 1 h; la respuesta de «olvidé mi contraseña» no revela si la cuenta existe; la sesión de 2FA pendiente no concede acceso |
 | Adjuntos | Fuera de `public/`, con nombre aleatorio (`0600`, carpeta `0700`); tipo decidido por la firma del archivo y extensión coincidente (sin HTML, SVG ni ejecutables); descarga solo autenticada, siempre `attachment` con `nosniff` y `Content-Security-Policy: sandbox`; 5 MB y 10 por tarea; el nombre original se limpia y nunca forma parte de una ruta; riesgo aceptado: sin antivirus |
 | Comentarios y búsqueda | Texto plano escapado al mostrarse; menciones solo a usuarios activos por correo completo; la búsqueda usa `LIKE` con escape, mínimo 2 caracteres y solo columnas que los listados ya muestran (nunca RFC, tarifas ni costos) |
 | Respaldos | `data/backups` con permisos `0700` y cada copia `0600` (contienen los hashes de contraseña) |
