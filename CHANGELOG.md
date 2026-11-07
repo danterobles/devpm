@@ -9,6 +9,12 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 
 ## [Sin publicar]
 
+_Sin cambios todavía._
+
+## [0.2.1] - 2026-11-07
+
+Gantt adaptado al modo oscuro.
+
 ### Cambiado
 
 - El diagrama de Gantt (proyecto y portafolio) sigue el tema claro/oscuro con la paleta azul marino.
