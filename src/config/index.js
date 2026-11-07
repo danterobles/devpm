@@ -9,6 +9,7 @@ const schema = z.object({
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
   LOGIN_MAX_ATTEMPTS: z.coerce.number().int().min(1).default(10),
   BACKUP_RETENTION_DAYS: z.coerce.number().int().min(1).default(14),
+  BACKUP_DIR: z.string().min(1).default('data/backups'),
 });
 
 /** Valida variables de entorno; falla rápido con un mensaje claro. */
@@ -37,5 +38,6 @@ export function loadConfig(env = process.env) {
     logLevel: c.LOG_LEVEL,
     loginMaxAttempts: c.LOGIN_MAX_ATTEMPTS,
     backupRetentionDays: c.BACKUP_RETENTION_DAYS,
+    backupDir: c.BACKUP_DIR,
   });
 }

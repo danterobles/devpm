@@ -59,6 +59,12 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   (límite 300 ms); y una revisión de `EXPLAIN QUERY PLAN` de las 124 consultas que ejecutan esos flujos
   comprueba que ninguna recorre por completo una tabla de crecimiento ilimitado.
 
+### Agregado (Etapa 11)
+- Respaldo en caliente (RNF-09): `npm run db:backup` (`scripts/backup-db.js`, `src/db/backup.js`) genera una
+  copia consistente de un solo archivo con `VACUUM INTO` (`data/backups/devpm-AAAAMMDD-HHmm.db`, UTC),
+  verifica su integridad (y la elimina si falla), no pisa respaldos del mismo minuto y aplica la retención
+  de `BACKUP_RETENTION_DAYS` días solo a archivos con ese patrón. Nueva variable `BACKUP_DIR`.
+
 ### Cambiado (Etapa 11)
 - `npm run test:coverage` mide los services (`src/modules/**/*.service.js`) y **falla** si líneas, ramas
   o funciones bajan de 80 % (RNF-08). Hoy: 97–100 % de líneas en los 20 services y 96,7 % de ramas en
