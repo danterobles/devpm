@@ -36,8 +36,8 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 | 21 | Manuales y versión 0.4.0 | ✅ Completada |
 | 22 | Integración continua y contenedor | ⏸ Fuera de la 0.5.0 |
 | 23 | Cuentas y acceso (v0.5) | ✅ Completada |
-| 24 | Bitácora, seguridad y estado (v0.5) | 🔄 En curso |
-| 25 | Pulido y cierre (v0.5) | ⏳ Planeada |
+| 24 | Bitácora, seguridad y estado (v0.5) | ✅ Completada |
+| 25 | Pulido y cierre (v0.5) | 🔄 En curso |
 
 ---
 
@@ -336,13 +336,13 @@ Se cierra con las etiquetas `etapa-23`, `etapa-24` y `etapa-25` en el último co
 
 ## Etapa 24 — Bitácora, seguridad y estado (RF-170–RF-173)
 
-- [ ] Pantalla «Bitácora» con filtros y paginación (solo admin)
-- [ ] Pantalla «Seguridad» con los eventos y poda de 90 días
-- [ ] Métricas en memoria y pantalla «Estado del sistema» con alertas
-- [ ] `npm run health` y su documentación para monitores y cron
-- [ ] Pruebas: permisos, filtros, legibilidad sin contraseñas, métricas y alertas
+- [x] Pantalla «Bitácora» con filtros y paginación (solo admin)
+- [x] Pantalla «Seguridad» con los eventos y poda de 90 días
+- [x] Métricas en memoria y pantalla «Estado del sistema» con alertas
+- [x] `npm run health` y su documentación para monitores y cron
+- [x] Pruebas: permisos, filtros, legibilidad sin contraseñas, métricas y alertas
 
-**Criterio de cierre:** el administrador ve quién hizo qué, qué ataques ocurrieron y si el sistema está sano.
+**Criterio de cierre:** el administrador ve quién hizo qué, qué ataques ocurrieron y si el sistema está sano. ✅
 
 ## Etapa 25 — Pulido y cierre (RF-180–RF-183)
 

@@ -1,0 +1,86 @@
+<%
+  const card = 'rounded-2xl border border-navy-100 bg-white p-5 dark:border-white/10';
+  const kb = (b) => (b === null ? '—' : b >= 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB');
+  const time = (iso) => (iso ? iso.slice(0, 16).replace('T', ' ') + ' UTC' : '—');
+  const dur = (s) => (s >= 86400 ? Math.floor(s / 86400) + ' d ' + Math.floor((s % 86400) / 3600) + ' h' : s >= 3600 ? Math.floor(s / 3600) + ' h ' + Math.floor((s % 3600) / 60) + ' min' : Math.floor(s / 60) + ' min');
+%>
+<%- include('../../../partials/admin-tabs', { current: 'status' }) %>
+<h1 class="text-2xl font-bold sm:text-3xl">Estado del sistema</h1>
+<p class="mt-1 text-sm text-slate-600">Generado el <%= time(s.generatedAt) %>. Las métricas de solicitudes se reinician con el servicio.</p>
+
+<section class="mt-4" aria-labelledby="alerts-title" data-status-alerts>
+  <h2 id="alerts-title" class="sr-only">Alertas</h2>
+  <% if (s.alerts.length === 0) { %>
+    <p role="status" class="rounded border border-ok bg-green-50 px-4 py-3 text-sm font-semibold text-green-800">Todo en orden: sin alertas.</p>
+  <% } %>
+  <% s.alerts.forEach((a) => { %>
+    <p role="<%= a.level === 'error' ? 'alert' : 'status' %>" class="mb-2 rounded border px-4 py-3 text-sm <%= a.level === 'error' ? 'border-danger bg-red-50 text-red-800' : 'border-warn bg-amber-50 text-amber-900' %>">
+      <strong><%= a.level === 'error' ? 'Error' : 'Atención' %>:</strong> <%= a.message %>
+    </p>
+  <% }) %>
+</section>
+
+<div class="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+  <section class="<%= card %>" aria-labelledby="app-title">
+    <h2 id="app-title" class="text-lg font-bold">Aplicación</h2>
+    <dl class="mt-2 grid grid-cols-2 gap-y-1 text-sm">
+      <dt class="text-slate-600">Versión</dt><dd><%= s.version %></dd>
+      <dt class="text-slate-600">Node.js</dt><dd><%= s.node %></dd>
+      <dt class="text-slate-600">Entorno</dt><dd><%= s.environment %></dd>
+      <dt class="text-slate-600">Activa desde hace</dt><dd><%= dur(s.requests.uptimeSeconds) %></dd>
+      <dt class="text-slate-600">Conexiones en vivo</dt><dd><%= s.liveConnections %></dd>
+      <dt class="text-slate-600">Correo (SMTP)</dt><dd><%= s.mail.configured ? 'Configurado' : 'No configurado' %></dd>
+    </dl>
+  </section>
+
+  <section class="<%= card %>" aria-labelledby="db-title">
+    <h2 id="db-title" class="text-lg font-bold">Base de datos</h2>
+    <% if (s.database.ok) { %>
+      <dl class="mt-2 grid grid-cols-2 gap-y-1 text-sm">
+        <dt class="text-slate-600">Estado</dt><dd class="font-semibold text-green-800">Responde</dd>
+        <dt class="text-slate-600">Tamaño</dt><dd><%= kb(s.database.bytes) %></dd>
+        <dt class="text-slate-600">Migraciones</dt><dd><%= s.database.migrations %> (última <%= s.database.lastMigration %>)</dd>
+        <dt class="text-slate-600">Usuarios</dt><dd><%= s.database.counts.users %></dd>
+        <dt class="text-slate-600">Proyectos</dt><dd><%= s.database.counts.projects %></dd>
+        <dt class="text-slate-600">Tareas</dt><dd><%= s.database.counts.tasks %></dd>
+        <dt class="text-slate-600">Registros de tiempo</dt><dd><%= s.database.counts.timeEntries %></dd>
+      </dl>
+    <% } else { %>
+      <p class="mt-2 text-sm font-semibold text-red-700">No responde.</p>
+    <% } %>
+  </section>
+
+  <section class="<%= card %>" aria-labelledby="req-title">
+    <h2 id="req-title" class="text-lg font-bold">Solicitudes (últimos <%= s.requests.windowMinutes %> min)</h2>
+    <dl class="mt-2 grid grid-cols-2 gap-y-1 text-sm">
+      <dt class="text-slate-600">Solicitudes</dt><dd><%= s.requests.recentRequests %></dd>
+      <dt class="text-slate-600">Errores del servidor</dt><dd><%= s.requests.recentServerErrors %></dd>
+      <dt class="text-slate-600">Errores de petición</dt><dd><%= s.requests.recentClientErrors %></dd>
+      <dt class="text-slate-600">Latencia p50</dt><dd><%= s.requests.p50Ms === null ? '—' : s.requests.p50Ms + ' ms' %></dd>
+      <dt class="text-slate-600">Latencia p95</dt><dd><%= s.requests.p95Ms === null ? '—' : s.requests.p95Ms + ' ms' %></dd>
+      <dt class="text-slate-600">Máxima</dt><dd><%= s.requests.maxMs === null ? '—' : s.requests.maxMs + ' ms' %></dd>
+      <dt class="text-slate-600">Total desde el arranque</dt><dd><%= s.requests.totalRequests %></dd>
+    </dl>
+  </section>
+
+  <section class="<%= card %>" aria-labelledby="backup-title">
+    <h2 id="backup-title" class="text-lg font-bold">Respaldos y adjuntos</h2>
+    <dl class="mt-2 grid grid-cols-2 gap-y-1 text-sm">
+      <dt class="text-slate-600">Último respaldo</dt><dd><%= s.backup.last ? time(s.backup.last.at) : 'Ninguno' %></dd>
+      <dt class="text-slate-600">Carpeta</dt><dd class="break-all"><%= s.backup.directory %></dd>
+      <dt class="text-slate-600">Adjuntos</dt><dd><%= s.attachments.count %> (<%= kb(s.attachments.bytes) %>)</dd>
+    </dl>
+  </section>
+
+  <section class="<%= card %>" aria-labelledby="rem-title">
+    <h2 id="rem-title" class="text-lg font-bold">Avisos periódicos</h2>
+    <% if (s.reminders) { %>
+      <dl class="mt-2 grid grid-cols-2 gap-y-1 text-sm">
+        <dt class="text-slate-600">Última ejecución</dt><dd><%= time(s.reminders.at) %></dd>
+        <dt class="text-slate-600">Avisos generados</dt><dd><%= s.reminders.counts.hours + s.reminders.counts.tasks + s.reminders.counts.milestones + s.reminders.counts.risk %></dd>
+      </dl>
+    <% } else { %>
+      <p class="mt-2 text-sm text-slate-600">Aún no se ha ejecutado desde el arranque.</p>
+    <% } %>
+  </section>
+</div>

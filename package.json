@@ -23,7 +23,8 @@
     "db:reset": "node --env-file-if-exists=.env src/db/cli.js reset",
     "test:perf": "node --test --test-reporter=spec \"tests/perf/*.perf.js\"",
     "db:backup": "node --env-file-if-exists=.env scripts/backup-db.js",
-    "user:create": "node --env-file-if-exists=.env scripts/create-admin.js"
+    "user:create": "node --env-file-if-exists=.env scripts/create-admin.js",
+    "health": "node scripts/healthcheck.js"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",

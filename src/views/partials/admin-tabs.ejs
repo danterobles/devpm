@@ -1,0 +1,16 @@
+<%# Navegación de la administración. Uso: include('../../partials/admin-tabs', { current: 'audit' }) %>
+<%
+  const tabs = [
+    ['users', 'Usuarios', '/admin/users'],
+    ['audit', 'Bitácora', '/admin/audit'],
+    ['security', 'Seguridad', '/admin/security'],
+    ['status', 'Estado', '/admin/status'],
+    ['kpis', 'Umbrales de KPIs', '/admin/settings/kpis'],
+  ];
+%>
+<nav aria-label="Administración" class="mb-5 flex flex-wrap gap-2 text-sm">
+  <% tabs.forEach(([key, label, href]) => { %>
+    <a href="<%= href %>" <%- key === current ? 'aria-current="page"' : '' %>
+       class="inline-flex min-h-11 items-center rounded-lg border px-4 <%= key === current ? 'border-navy-800 bg-navy-800 font-semibold text-white dark:border-sky-400 dark:bg-sky-400 dark:text-navy-950' : 'border-navy-200 hover:bg-slate-100 dark:border-white/20' %>"><%= label %></a>
+  <% }) %>
+</nav>

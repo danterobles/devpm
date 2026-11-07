@@ -14,6 +14,8 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 - «¿Olvidaste tu contraseña?»: enlace de un solo uso por correo (vence en 1 h), con respuesta idéntica exista o no la cuenta y límites por IP y por correo.
 - Autenticación en dos pasos (TOTP) opcional, con códigos de recuperación, y desactivación con contraseña y código; el administrador puede quitarla o desbloquear cuentas.
 - Eventos de seguridad guardados (accesos, bloqueos, restablecimientos y cambios de dos pasos).
+- Pantallas del administrador: **Bitácora** (cambios con «antes → después», sin secretos), **Seguridad** (eventos de 90 días) y **Estado del sistema** (base, solicitudes con p50/p95, respaldos, adjuntos, avisos y alertas), con su navegación.
+- `npm run health` para monitores y cron.
 - Migración `007_accounts_security.sql`.
 
 ## [0.4.0] - 2026-11-07

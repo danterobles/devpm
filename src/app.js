@@ -1,5 +1,6 @@
 import express from 'express';
 import helmet from 'helmet';
+import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { notFound } from './middlewares/notFound.js';
@@ -39,6 +40,11 @@ import {
   createAccountPublicRouter,
   createAccountSecurityRouter,
 } from './modules/account-security/account-security.routes.js';
+import { createMetrics } from './lib/metrics.js';
+import { createAuditRepository } from './modules/audit/audit.repository.js';
+import { createAuditService } from './modules/audit/audit.service.js';
+import { createStatusService } from './modules/status/status.service.js';
+import { createAdminToolsRouter } from './modules/status/status.routes.js';
 import { createHomeRouter } from './modules/home/home.routes.js';
 import { createSettingsRouter } from './modules/settings/settings.routes.js';
 import { createSettingsService } from './modules/settings/settings.service.js';
@@ -56,6 +62,7 @@ import { createUsersRouter } from './modules/auth/users.routes.js';
 import { createAuthRouter } from './modules/auth/auth.routes.js';
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
+const appVersion = JSON.parse(readFileSync(path.join(root, 'package.json'), 'utf8')).version;
 
 /**
  * Fábrica de la aplicación Express (sin listen) para poder probarla.
@@ -101,6 +108,9 @@ export function createApp({
   app.use(express.json({ limit: '1mb' }));
   app.use(express.urlencoded({ extended: false, limit: '1mb' }));
   app.use(express.static(path.join(root, 'public')));
+  const metrics = createMetrics();
+  app.locals.metrics = metrics;
+  app.use(metrics.middleware); // solicitudes dinámicas (no estáticos ni SSE)
   app.use(verifyOrigin);
 
   // El layout debe registrarse antes que el router de autenticación: /login se renderiza con él.
@@ -241,6 +251,21 @@ export function createApp({
       kpi,
       timezone: config.timezone,
     });
+    app.use(
+      createAdminToolsRouter({
+        audit: createAuditService({ repository: createAuditRepository(db) }),
+        securityEvents: app.locals.securityEvents,
+        status: createStatusService({
+          db,
+          config,
+          metrics,
+          version: appVersion,
+          mailerEnabled: () => app.locals.mailer?.enabled,
+          sseClients: () => app.locals.sse?.clientCount() ?? 0,
+          remindersLastRun: () => app.locals.reminders?.lastRun ?? null,
+        }),
+      }),
+    );
     app.use(createSavedFiltersRouter({ service: savedFilters }));
     app.use(
       createAccountSecurityRouter({

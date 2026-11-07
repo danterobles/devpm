@@ -1,4 +1,4 @@
-import { addDays, today as todayIn, weekday } from '../../lib/dates.js';
+import { addDays, nowIso, today as todayIn, weekday } from '../../lib/dates.js';
 
 const hours = (minutes) => Math.round((minutes / 60) * 10) / 10;
 
@@ -56,6 +56,8 @@ export function createRemindersService({
   }
 
   return {
+    /** Resultado de la última ejecución (para la pantalla de estado). */
+    lastRun: null,
     /** Genera los avisos del día y limpia las notificaciones leídas antiguas. */
     run(date = todayIn(timezone)) {
       const counts = { hours: 0, tasks: 0, milestones: 0, risk: 0, pruned: 0 };
@@ -94,6 +96,7 @@ export function createRemindersService({
         });
       }
       counts.pruned = notifications.prune(date);
+      this.lastRun = { at: nowIso(), counts };
       return counts;
     },
   };

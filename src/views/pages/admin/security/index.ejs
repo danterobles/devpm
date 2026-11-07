@@ -1,0 +1,58 @@
+<% const field = 'mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm'; %>
+<%- include('../../../partials/admin-tabs', { current: 'security' }) %>
+<h1 class="text-2xl font-bold sm:text-3xl">Seguridad</h1>
+<p class="mt-1 text-sm text-slate-600">Accesos, bloqueos y cambios de credenciales de los últimos 90 días. Nunca se guardan contraseñas ni códigos.</p>
+
+<form method="get" action="/admin/security" aria-label="Filtros de seguridad" class="mt-4 grid grid-cols-2 items-end gap-3 rounded-2xl border border-navy-100 bg-white p-4 md:grid-cols-4 xl:grid-cols-5 dark:border-white/10">
+  <div>
+    <label for="s-type" class="block text-xs font-semibold">Evento</label>
+    <select id="s-type" name="type" class="<%= field %>">
+      <option value="">Todos</option>
+      <% Object.entries(types).forEach(([key, label]) => { %><option value="<%= key %>" <%= filters.type === key ? 'selected' : '' %>><%= label %></option><% }) %>
+    </select>
+  </div>
+  <div>
+    <label for="s-q" class="block text-xs font-semibold">Correo o IP</label>
+    <input id="s-q" name="q" type="search" value="<%= filters.q || '' %>" maxlength="100" class="<%= field %>" />
+  </div>
+  <div>
+    <label for="s-from" class="block text-xs font-semibold">Desde</label>
+    <input id="s-from" name="from" type="date" value="<%= filters.from || '' %>" class="<%= field %>" />
+  </div>
+  <div>
+    <label for="s-to" class="block text-xs font-semibold">Hasta</label>
+    <input id="s-to" name="to" type="date" value="<%= filters.to || '' %>" class="<%= field %>" />
+  </div>
+  <div class="flex items-center gap-3">
+    <button type="submit" class="min-h-11 rounded-lg bg-navy-800 px-4 text-sm font-semibold text-white hover:bg-navy-700 dark:bg-sky-400 dark:text-navy-950 dark:hover:bg-sky-300">Filtrar</button>
+    <a href="/admin/security" class="inline-flex min-h-11 items-center text-sm underline">Limpiar</a>
+  </div>
+</form>
+
+<div class="mt-4 overflow-x-auto">
+  <table class="w-full text-left text-sm">
+    <caption class="sr-only">Eventos de seguridad</caption>
+    <thead>
+      <tr class="border-b">
+        <th scope="col" class="py-2 pr-4">Fecha (UTC)</th>
+        <th scope="col" class="py-2 pr-4">Evento</th>
+        <th scope="col" class="py-2 pr-4">Cuenta</th>
+        <th scope="col" class="py-2 pr-4">IP</th>
+        <th scope="col" class="py-2 pr-4">Detalle</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% items.forEach((e) => { %>
+        <tr class="border-b align-top">
+          <td class="py-2 pr-4 whitespace-nowrap tabular-nums"><%= e.createdAt.slice(0, 19).replace('T', ' ') %></td>
+          <td class="py-2 pr-4 font-medium"><%= e.label %></td>
+          <td class="py-2 pr-4"><%= e.email || e.userName || '—' %></td>
+          <td class="py-2 pr-4 tabular-nums"><%= e.ip || '—' %></td>
+          <td class="py-2 pr-4 text-slate-600"><%= e.detail || '' %></td>
+        </tr>
+      <% }) %>
+      <% if (items.length === 0) { %><tr><td colspan="5" class="py-4 text-slate-600">No hay eventos con estos filtros.</td></tr><% } %>
+    </tbody>
+  </table>
+</div>
+<%- include('../../../partials/pagination', { meta, baseUrl: '/admin/security' + (query ? '?' + query : '') }) %>

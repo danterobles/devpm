@@ -90,6 +90,9 @@ Se leen de `.env` (ver `.env.example`) o del entorno.
   `SMTP_HOST`; sin correo el administrador restablece la contraseña). Cada persona puede activar la
   **autenticación en dos pasos** (TOTP) en «Seguridad», con códigos de recuperación; el administrador puede quitarla o
   desbloquear una cuenta desde su ficha. Cambiar `SESSION_SECRET` invalida los secretos de dos pasos guardados.
+- **Administración (0.5):** el administrador ve la **Bitácora** (quién cambió qué), los eventos de **Seguridad** (accesos,
+  bloqueos, restablecimientos; 90 días) y el **Estado** del sistema (base, solicitudes, respaldos y alertas) en el menú
+  «Usuarios» → pestañas de administración. `npm run health` sirve para monitores y cron.
 - **Colaboración (0.4):** comentarios con menciones (`@correo`) y adjuntos en cada tarea; búsqueda global en el
   encabezado; filtros guardados en proyectos, backlog y exportación de tiempo.
 
@@ -104,6 +107,7 @@ Se leen de `.env` (ver `.env.example`) o del entorno.
 | `npm run db:seed` | Carga datos de ejemplo (solo desarrollo) |
 | `npm run db:reset` | Borra la base local, migra y siembra (solo desarrollo) |
 | `npm run db:backup` | Respaldo en caliente con retención |
+| `npm run health` | Consulta `/health` y sale con código 1 si falla (para monitores y cron; `HEALTH_URL` o `PORT`) |
 | `npm run user:create` | Crea un administrador |
 | `npm test` | Pruebas de unidad e integración |
 | `npm run test:coverage` | Pruebas con cobertura; falla si los services bajan de 80 % |
