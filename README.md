@@ -149,6 +149,8 @@ npm run lint
 
 | Documento | Contenido |
 |---|---|
+| [`docs/manuales/Manual-Usuario.pdf`](docs/manuales/Manual-Usuario.pdf) | Manual del usuario (líderes, desarrolladores y observadores) con pantallas y pasos |
+| [`docs/manuales/Manual-Administrador.pdf`](docs/manuales/Manual-Administrador.pdf) | Manual del administrador: usuarios, catálogos, umbrales, despliegue y respaldos |
 | [`docs/PRD.md`](docs/PRD.md) | Requerimientos, roles, KPIs y criterios de aceptación |
 | [`docs/ARQUITECTURA.md`](docs/ARQUITECTURA.md) | Arquitectura, convenciones, seguridad y tiempo real |
 | [`docs/DATA.md`](docs/DATA.md) | Entidades, relaciones, índices y vistas |

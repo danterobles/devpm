@@ -9,6 +9,10 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 
 ## [Sin publicar]
 
+### Agregado
+
+- Manuales en PDF (carta horizontal, con pantallas y pasos) para el usuario final y para el administrador, en `docs/manuales/`.
+
 _Sin cambios todavía._
 
 ## [0.1.0] - 2026-11-06
