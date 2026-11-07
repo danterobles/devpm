@@ -20,6 +20,9 @@ import { createRemindersService } from './modules/notifications/reminders.servic
 import { createKpiRepository } from './modules/dashboard/kpi.repository.js';
 import { createKpiService } from './modules/dashboard/kpi.service.js';
 import { createImportRouter } from './modules/import/import.routes.js';
+import { createCommentsRepository } from './modules/comments/comments.repository.js';
+import { createCommentsService } from './modules/comments/comments.service.js';
+import { createCommentsRouter } from './modules/comments/comments.routes.js';
 import { createHomeRouter } from './modules/home/home.routes.js';
 import { createSettingsRouter } from './modules/settings/settings.routes.js';
 import { createSettingsService } from './modules/settings/settings.service.js';
@@ -142,6 +145,14 @@ export function createApp({
     app.locals.sse = sse;
     app.use(sse.router);
     app.use(createNotificationsRouter({ service: notifications }));
+    const commentsRepository = createCommentsRepository(db);
+    app.locals.comments = createCommentsService({
+      db,
+      repository: commentsRepository,
+      events: eventBus,
+      notifier: notifications,
+    });
+    app.use(createCommentsRouter({ service: app.locals.comments, repository: commentsRepository }));
     app.use(createClientsRouter({ db, events: eventBus }));
     app.use(createTeamRouter({ db, events: eventBus }));
     app.use(createSprintsRouter({ db, timezone: config.timezone, events: eventBus }));

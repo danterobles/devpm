@@ -9,7 +9,10 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 
 ## [Sin publicar]
 
-_Sin cambios todavía._
+### Agregado
+
+- Comentarios en las tareas, en vivo, con menciones por `@correo` que avisan a la persona (y avisos al responsable y al líder del proyecto).
+- Migración `006_collaboration.sql` (comentarios, adjuntos y filtros guardados).
 
 ## [0.3.0] - 2026-11-07
 

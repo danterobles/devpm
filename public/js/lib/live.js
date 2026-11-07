@@ -31,6 +31,7 @@
     'time_off.changed',
     'client.updated',
     'settings.updated',
+    'comment.changed',
     'notification.created',
     'notification.read',
   ];

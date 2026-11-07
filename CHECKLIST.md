@@ -30,8 +30,8 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 | 15 | Notificaciones (app y correo) | ✅ Completada |
 | 16 | Mi día (panel por rol) | ✅ Completada |
 | 17 | Importación por CSV | ✅ Completada |
-| 18 | Comentarios y menciones (v0.4) | 🔄 En curso |
-| 19 | Adjuntos (v0.4) | ⏳ Planeada |
+| 18 | Comentarios y menciones (v0.4) | ✅ Completada |
+| 19 | Adjuntos (v0.4) | 🔄 En curso |
 | 20 | Búsqueda global y filtros guardados (v0.4) | ⏳ Planeada |
 | 21 | Manuales y versión 0.4.0 | ⏳ Planeada |
 
@@ -270,14 +270,14 @@ Orden recomendado: 18 → 19 → 20 → 21. Cada etapa se cierra con `npm test` 
 
 ## Etapa 18 — Comentarios y menciones (RF-130–RF-134)
 
-- [ ] Migración `006_collaboration.sql`: `task_comments`, `task_attachments` y `saved_filters` con sus índices (una sola migración para la v0.4)
-- [ ] Módulo `comments`: repository, service con permisos (RF-131, RF-132) y bitácora, schemas Zod y API
-- [ ] Menciones por correo completo y avisos al responsable y al líder con el notificador (RF-133); tipo de aviso `task_comment`/`task_mention` en PRD §5.12.1 y DATA §3.16
-- [ ] Conversación en la ficha de la tarea (formulario, editar, eliminar) escapada y accesible
-- [ ] Actualización en vivo: evento `comment.changed` en `live.js` y en la ficha (RF-134)
-- [ ] Pruebas: permisos por rol y por proyecto, edición/baja propia y de admin, menciones, XSS, avisos sin autoavisar, evento
+- [x] Migración `006_collaboration.sql`: `task_comments`, `task_attachments` y `saved_filters` con sus índices (una sola migración para la v0.4)
+- [x] Módulo `comments`: repository, service con permisos (RF-131, RF-132) y bitácora, schemas Zod y API
+- [x] Menciones por correo completo y avisos al responsable y al líder con el notificador (RF-133); tipo de aviso `task_comment`/`task_mention` en PRD §5.12.1 y DATA §3.16
+- [x] Conversación en la ficha de la tarea (formulario, editar, eliminar) escapada y accesible
+- [x] Actualización en vivo: evento `comment.changed` en `live.js` y en la ficha (RF-134)
+- [x] Pruebas: permisos por rol y por proyecto, edición/baja propia y de admin, menciones, XSS, avisos sin autoavisar, evento
 
-**Criterio de cierre:** una conversación completa en una tarea, con avisos a quien corresponde y sin fugas de permisos.
+**Criterio de cierre:** una conversación completa en una tarea, con avisos a quien corresponde y sin fugas de permisos. ✅
 
 ## Etapa 19 — Adjuntos (RF-140–RF-144)
 

@@ -105,6 +105,7 @@ export function createTasksController({ service }) {
       task: form ? { ...task, ...form } : task,
       parent,
       history: service.history(id),
+      comments: req.app.locals.comments?.view(actor(req), id) ?? null,
       subtasks: service.subtasks(id),
       dependencies: service.dependencies(id),
       options: service.taskOptions(task.projectId, id),
