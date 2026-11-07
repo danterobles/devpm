@@ -9,8 +9,15 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 
 ## [Sin publicar]
 
+_Sin cambios todavía._
+
+## [0.4.0] - 2026-11-07
+
+Colaboración: comentarios y menciones, adjuntos, búsqueda global y filtros guardados. Agrega la migración 006; **corre `npm run db:migrate` al actualizar**. Los adjuntos se guardan en `UPLOAD_DIR` (por defecto `data/uploads`): inclúyelo en tus respaldos (`npm run db:backup` ya lo hace) y, con nginx, permite cuerpos de al menos 6 MB.
+
 ### Agregado
 
+- Manuales en PDF actualizados con las versiones 0.3 y 0.4 (Mi día, notificaciones, comentarios, adjuntos, búsqueda, filtros guardados, importación y correo).
 - Comentarios en las tareas, en vivo, con menciones por `@correo` que avisan a la persona (y avisos al responsable y al líder del proyecto).
 - Adjuntos en las tareas (hasta 5 MB y 10 por tarea; imágenes, PDF, texto, CSV y Office): tipo verificado por el contenido, almacenamiento fuera de `public/`, descarga siempre como archivo y copia en los respaldos (`UPLOAD_DIR`, `UPLOAD_MAX_MB`).
 - Búsqueda global (caja en el encabezado y página `/search`): proyectos, tareas, clientes y miembros, con permisos y sin exponer RFC, tarifas ni costos.

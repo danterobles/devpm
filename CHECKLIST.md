@@ -33,7 +33,7 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 | 18 | Comentarios y menciones (v0.4) | ✅ Completada |
 | 19 | Adjuntos (v0.4) | ✅ Completada |
 | 20 | Búsqueda global y filtros guardados (v0.4) | ✅ Completada |
-| 21 | Manuales y versión 0.4.0 | 🔄 En curso |
+| 21 | Manuales y versión 0.4.0 | ✅ Completada |
 
 ---
 
@@ -305,9 +305,9 @@ Orden recomendado: 18 → 19 → 20 → 21. Cada etapa se cierra con `npm test` 
 
 ## Etapa 21 — Manuales y versión 0.4.0
 
-- [ ] Actualizar los manuales en PDF con lo de las versiones 0.3 y 0.4: notificaciones, «Mi día», importación, comentarios, adjuntos, búsqueda y filtros guardados (usuario y administrador, `SMTP_*` y `UPLOAD_DIR`)
-- [ ] README: nuevas variables, restauración de adjuntos y guía de actualización
+- [x] Actualizar los manuales en PDF con lo de las versiones 0.3 y 0.4: notificaciones, «Mi día», importación, comentarios, adjuntos, búsqueda y filtros guardados (usuario y administrador, `SMTP_*` y `UPLOAD_DIR`)
+- [x] README: nuevas variables, restauración de adjuntos y guía de actualización
 - [x] Recorrido de aceptación de la v0.4 (comentar con mención → aviso; adjuntar y descargar; buscar y guardar un filtro) y revisión de seguridad completa: `tests/integration/acceptance-v04.test.js` y ARQUITECTURA §7
-- [ ] CHANGELOG `[0.4.0]`, versión en `package.json`, etiqueta `v0.4.0` y publicación
+- [x] CHANGELOG `[0.4.0]`, versión en `package.json`, etiqueta `v0.4.0` y publicación
 
-**Criterio de cierre:** 0.4.0 aceptada y etiquetada.
+**Criterio de cierre:** 0.4.0 aceptada y etiquetada. ✅ (`v0.4.0`)
