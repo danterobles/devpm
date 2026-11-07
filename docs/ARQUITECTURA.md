@@ -207,6 +207,19 @@ PRAGMA synchronous = NORMAL;      -- seguro con WAL y más rápido
   Compilación: `npx @tailwindcss/cli -i src/styles/input.css -o public/css/output.css --minify`.
   Componentes repetidos (botón, tarjeta, badge de estado) se crean como **parciales EJS**, no
   con `@apply` masivo.
+- **Sistema de diseño (Etapa 12, RNF-12)**:
+  - Paleta `navy` (50–950) definida en `@theme`; azul marino predominante en encabezado, riel y acentos.
+    `brand-*`, `ok`, `warn` y `danger` se conservan para estados y bordes.
+  - **Modo oscuro**: variante `dark:` personalizada que sigue `prefers-color-scheme` y se anula con
+    `data-theme="light|dark"` en `<html>`. Las vistas existentes usan los tokens de Tailwind
+    (`white`, `slate-*`, `red-*`…): en modo oscuro esos tokens se **redefinen** en `input.css`, así que las
+    vistas no necesitan clases `dark:` una por una.
+  - **Tema**: `public/js/lib/theme.js` (externo, la CSP prohíbe scripts en línea) aplica el tema guardado
+    en `localStorage` antes de pintar y gestiona el selector Sistema / Claro / Oscuro del encabezado.
+  - **Layout**: `layouts/main.ejs` + `partials/nav.ejs`: riel de iconos (≥ `md`) o barra superior que se
+    ajusta (móvil), encabezado azul marino y área de contenido. El enlace de la sección activa lleva
+    `aria-current="page"` (`res.locals.currentPath`).
+  - **Gráficas**: Chart.js toma los colores de texto y rejilla del tema activo.
 - **JS del cliente**: módulos ES nativos en `public/js/pages/`, uno por vista, sin bundler.
   `public/js/lib/api.js` centraliza `fetch` (JSON, manejo de errores, cabecera de origen).
 - **Gráficas**: Chart.js (Burndown, barras, donas, sparklines) y Frappe Gantt. Ambas se copian

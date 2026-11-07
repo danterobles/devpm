@@ -24,6 +24,7 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 | 9 | Burndown Chart | ✅ Completada |
 | 10 | Tablero de KPIs en tiempo real | ✅ Completada |
 | 11 | Calidad, seguridad y despliegue | ✅ Completada |
+| 12 | Rediseño visual (diseño D) | 🔄 En curso |
 
 ---
 
@@ -186,3 +187,14 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 - [x] Publicar versión `0.1.0` en `CHANGELOG.md` y crear tag git `v0.1.0`
 
 **Criterio de cierre:** MVP aceptado y etiquetado. ✅ (`v0.1.0`)
+
+## Etapa 12 — Rediseño visual (diseño D «Dashboard Enfoque», RNF-12)
+
+- [ ] Paleta `navy`, variante `dark:` y redefinición de tokens para el modo oscuro en `input.css`
+- [ ] `public/js/lib/theme.js` y selector Sistema / Claro / Oscuro con persistencia en el navegador
+- [ ] Layout nuevo: riel de iconos, encabezado azul marino y navegación con `aria-current`
+- [ ] Tablero: tarjetas de KPI con barra de semáforo, filtros y paneles al estilo D
+- [ ] Gráficas (Chart.js) con colores según el tema
+- [ ] Revisión de contraste AA en claro y oscuro y de 360 px sin desbordes
+
+**Criterio de cierre:** todas las pantallas se ven bien en ambos temas, `npm test` y `npm run lint` en verde.

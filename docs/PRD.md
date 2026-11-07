@@ -396,6 +396,17 @@ Los umbrales son valores iniciales y deben poder ajustarse en configuración (RF
 | RNF-09 | Respaldo | Script de respaldo en caliente de la BD (`VACUUM INTO`) con retención configurable. |
 | RNF-10 | Portabilidad | Se ejecuta con `npm install && npm run db:migrate && npm start`, sin servicios externos. |
 | RNF-11 | Zona horaria | Marcas de tiempo en UTC; fechas de calendario según la zona configurada (por defecto `America/Mexico_City`). |
+| RNF-12 | Apariencia | Identidad visual en **azul marino** (paleta `navy`). Modo claro y oscuro: por defecto sigue la preferencia del sistema (`prefers-color-scheme`) y el usuario puede forzar «Claro» u «Oscuro» desde el encabezado; la elección se guarda solo en su navegador. Ambos modos cumplen contraste AA (RNF-07). |
+
+### 7.1 Decisiones de definición del rediseño visual (Etapa 12)
+
+- Se adopta el diseño **D «Dashboard Enfoque»**: riel de iconos a la izquierda, encabezado azul marino con
+  el título de la página y los controles de sesión, y tarjetas de KPI con barra de color lateral.
+- Las tarjetas de KPI muestran etiqueta en mayúsculas, valor grande, detalle y la línea «Semáforo: Verde |
+  Ámbar | Rojo» (el color nunca es el único indicador). Los KPI sin umbral dicen «Sin semáforo».
+- El selector de tema tiene tres opciones: **Sistema** (por defecto), **Claro** y **Oscuro**. Se guarda en
+  `localStorage` (`devpm.theme`); no se envía al servidor ni cambia el modelo de datos.
+- El cambio es solo de presentación: no modifica rutas, permisos, fórmulas de KPIs ni la API.
 
 ## 8. Criterios de aceptación del MVP
 
