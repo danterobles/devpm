@@ -64,6 +64,12 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   copia consistente de un solo archivo con `VACUUM INTO` (`data/backups/devpm-AAAAMMDD-HHmm.db`, UTC),
   verifica su integridad (y la elimina si falla), no pisa respaldos del mismo minuto y aplica la retención
   de `BACKUP_RETENTION_DAYS` días solo a archivos con ese patrón. Nueva variable `BACKUP_DIR`.
+- Alta del primer administrador (`npm run user:create`, `scripts/create-admin.js`): en producción no hay
+  seed. Correo y nombre por argumentos; la contraseña (mínimo 8) por `ADMIN_PASSWORD`, entrada estándar o
+  pregunta sin eco; bcrypt costo 12, rechaza correos repetidos y deja la creación en la bitácora.
+- `postinstall` (`scripts/postinstall.js`): además de copiar las librerías compila el CSS de Tailwind, de modo
+  que `npm install && npm run db:migrate && npm start` (RNF-10) deje la aplicación con estilos; con
+  `--omit=dev` avisa que hay que compilar con `npm run build:css`.
 
 ### Cambiado (Etapa 11)
 - `npm run test:coverage` mide los services (`src/modules/**/*.service.js`) y **falla** si líneas, ramas

@@ -179,6 +179,8 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 - [x] Cobertura ≥ 80 % en services (RNF-08)
 - [x] Revisión de accesibilidad y diseño responsivo (RNF-07)
 - [x] Script de respaldo `scripts/backup-db.js` con retención (RNF-09)
+- [x] Alta del primer administrador en producción: `npm run user:create` (descubierta: el seed solo existe en desarrollo)
+- [x] `postinstall` que compila el CSS para que `npm install && npm run db:migrate && npm start` funcione (RNF-10)
 - [ ] `README.md` con instalación, uso y despliegue
 - [ ] Recorrido completo de los criterios de aceptación del MVP (PRD §8)
 - [ ] Publicar versión `0.1.0` en `CHANGELOG.md` y crear tag git `v0.1.0`
