@@ -9,6 +9,12 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 
 ## [Sin publicar]
 
+_Sin cambios todavía._
+
+## [0.2.2] - 2026-11-07
+
+Endurecimiento de seguridad tras la revisión del código. Al actualizar se cierran las sesiones abiertas.
+
 ### Seguridad
 
 - Los inicios de sesión fallidos y los bloqueos se registran en el log (IP y correo, nunca la contraseña).

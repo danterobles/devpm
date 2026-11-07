@@ -1,6 +1,6 @@
 {
   "name": "devpm",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "DevPM - Gestión de proyectos de desarrollo de software con KPIs en tiempo real",
   "private": true,
   "type": "module",
