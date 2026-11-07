@@ -9,6 +9,10 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 
 ## [Sin publicar]
 
+### Corregido
+
+- La pantalla de inicio de sesión se mostraba sin estilos: el layout se registraba después del router de autenticación.
+
 ### Agregado
 
 - Manuales en PDF (carta horizontal, con pantallas y pasos) para el usuario final y para el administrador, en `docs/manuales/`.

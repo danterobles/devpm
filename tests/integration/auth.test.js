@@ -27,6 +27,12 @@ test('GET /login muestra el formulario', async () => {
   assert.match(res.text, /<form method="post" action="\/login"/);
 });
 
+test('GET /login se renderiza dentro del layout (hoja de estilos incluida)', async () => {
+  const res = await request(setup().app).get('/login');
+  assert.match(res.text, /<!doctype html>/i);
+  assert.match(res.text, /href="\/css\/output\.css"/);
+});
+
 test('login correcto: redirige, guarda la sesión y registra last_login_at', async () => {
   const { app, db, id } = setup();
   const agent = request.agent(app);

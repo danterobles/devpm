@@ -73,6 +73,9 @@ export function createApp({
   app.use(express.static(path.join(root, 'public')));
   app.use(verifyOrigin);
 
+  // El layout debe registrarse antes que el router de autenticación: /login se renderiza con él.
+  app.use(layout());
+
   if (db) {
     const { middleware, store } = createSession({ config, db });
     app.locals.sessionStore = store;
@@ -88,8 +91,6 @@ export function createApp({
 
   app.locals.appName = 'DevPM';
   app.locals.eventBus = eventBus;
-  app.use(layout());
-
   app.get('/health', (_req, res) => {
     let dbStatus = 'n/a';
     if (db) {
