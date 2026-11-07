@@ -36,6 +36,8 @@ const contrast = (a, b) => {
   return (hi + 0.05) / (lo + 0.05);
 };
 const token = (name) => {
+  const h = new RegExp(`--color-${name}:\\s*(#[0-9a-fA-F]{6})`).exec(css);
+  if (h) return hex(h[1]);
   const m = new RegExp(`--color-${name}:\\s*oklch\\(([\\d.]+)\\s+([\\d.]+)\\s+([\\d.]+)\\)`).exec(
     css,
   );
@@ -65,6 +67,35 @@ const PAIRS = [
   ['semáforo verde en tarjetas: green-900 sobre green-50', hex('#14532d'), hex('#f0fdf4')],
   ['semáforo ámbar en tarjetas: amber-900 sobre amber-50', hex('#78350f'), hex('#fffbeb')],
   ['semáforo rojo en tarjetas: red-900 sobre red-50', hex('#7f1d1d'), hex('#fef2f2')],
+  // Rediseño D (RNF-12), modo claro: tarjetas de KPI y encabezado azul marino
+  ['tarjeta: etiqueta navy-600 sobre blanco', token('navy-600'), WHITE],
+  ['tarjeta: semáforo verde (emerald-800) sobre blanco', hex('#065f46'), WHITE],
+  ['tarjeta: semáforo ámbar (amber-800) sobre blanco', hex('#92400e'), WHITE],
+  ['tarjeta: semáforo rojo (rose-700) sobre blanco', hex('#be123c'), WHITE],
+  ['encabezado: texto blanco sobre navy-900', WHITE, token('navy-900')],
+  ['encabezado: navy-200 sobre navy-900', token('navy-200'), token('navy-900')],
+  ['selector de tema activo: navy-900 sobre blanco', token('navy-900'), WHITE],
+  ['botón Aplicar: blanco sobre navy-800', WHITE, token('navy-800')],
+  // Modo oscuro: tokens redefinidos en input.css y colores de las tarjetas
+  ['oscuro: texto navy-50 sobre navy-950', token('navy-50'), token('navy-950')],
+  ['oscuro: texto secundario navy-300 sobre navy-900', token('navy-300'), token('navy-900')],
+  ['oscuro: texto secundario navy-300 sobre navy-950', token('navy-300'), token('navy-950')],
+  ['oscuro: navy-200 sobre navy-900', token('navy-200'), token('navy-900')],
+  ['oscuro: semáforo verde (emerald-300) sobre navy-900', hex('#6ee7b7'), token('navy-900')],
+  ['oscuro: semáforo ámbar (amber-300) sobre navy-900', hex('#fcd34d'), token('navy-900')],
+  ['oscuro: semáforo rojo (rose-300) sobre navy-900', hex('#fda4af'), token('navy-900')],
+  ['oscuro: error (red-800 redefinido) sobre red-50 redefinido', hex('#fecdd3'), hex('#3a1420')],
+  [
+    'oscuro: éxito (green-800 redefinido) sobre green-50 redefinido',
+    hex('#a7f3d0'),
+    hex('#0f2d22'),
+  ],
+  [
+    'oscuro: alerta (amber-900 redefinido) sobre amber-50 redefinido',
+    hex('#fde68a'),
+    hex('#33260b'),
+  ],
+  ['oscuro: botón Aplicar, navy-950 sobre sky-400', token('navy-950'), hex('#38bdf8')],
 ];
 
 for (const [label, fg, bg] of PAIRS) {
@@ -124,4 +155,10 @@ test('el botón de ajuste del Gantt se lee (texto oscuro sobre su fondo gris cla
 
 test('los campos de formulario no superan el ancho de su contenedor (móvil)', () => {
   assert.match(css, /select,\s*input,\s*textarea\s*\{[^}]*max-width:\s*100%/);
+});
+
+test('el CSS define el modo oscuro que sigue al sistema y puede forzarse con data-theme', () => {
+  assert.match(css, /@custom-variant dark/);
+  assert.match(css, /prefers-color-scheme:\s*dark/);
+  assert.match(css, /data-theme='light'/);
 });

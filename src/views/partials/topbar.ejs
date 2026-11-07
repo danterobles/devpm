@@ -1,0 +1,26 @@
+<%
+  const user = typeof currentUser !== 'undefined' ? currentUser : null;
+  const focus = 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-white';
+  const choice = 'min-h-9 rounded-md px-3 py-1.5 text-xs font-medium text-navy-100 hover:bg-white/10 aria-pressed:bg-white aria-pressed:font-semibold aria-pressed:text-navy-900 ' + focus;
+%>
+<header class="bg-navy-900 text-white dark:border-b dark:border-white/10">
+  <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3 sm:px-6">
+    <p class="min-w-0 truncate text-sm text-navy-200"><span class="font-semibold text-white"><%= appName %></span> <span aria-hidden="true">/</span> <%= title %></p>
+    <div class="flex flex-wrap items-center gap-3">
+      <div role="group" aria-label="Tema de color" class="flex rounded-lg border border-white/20 p-0.5">
+        <button type="button" data-theme-choice="system" aria-pressed="true" class="<%= choice %>">Sistema</button>
+        <button type="button" data-theme-choice="light" aria-pressed="false" class="<%= choice %>">Claro</button>
+        <button type="button" data-theme-choice="dark" aria-pressed="false" class="<%= choice %>">Oscuro</button>
+      </div>
+      <% if (user) { %>
+        <form method="post" action="/logout" class="flex items-center gap-3 text-sm">
+          <a href="/account/password" class="flex items-center gap-2 underline <%= focus %>">
+            <span class="flex h-9 w-9 items-center justify-center rounded-full bg-navy-200 text-xs font-bold text-navy-900" aria-hidden="true"><%= user.fullName.split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase() %></span>
+            <%= user.fullName %>
+          </a>
+          <button type="submit" class="min-h-9 underline <%= focus %>">Salir</button>
+        </form>
+      <% } %>
+    </div>
+  </div>
+</header>

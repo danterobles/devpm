@@ -4,7 +4,8 @@
  * Usar { layout: false } para renderizar sin layout (parciales/fragmentos).
  */
 export function layout(defaultLayout = 'layouts/main') {
-  return function layoutMiddleware(_req, res, next) {
+  return function layoutMiddleware(req, res, next) {
+    res.locals.currentPath = req.path; // para marcar la sección activa del menú
     const render = res.render.bind(res);
     res.render = (view, options = {}, callback) => {
       const { layout: layoutName = defaultLayout, ...data } = options;

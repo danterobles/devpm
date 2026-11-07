@@ -4,14 +4,18 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title><%= title %> · <%= appName %></title>
+    <script src="/js/lib/theme.js"></script>
     <link rel="stylesheet" href="/css/output.css" />
   </head>
-  <body class="min-h-screen bg-slate-50 text-slate-800">
+  <body class="min-h-screen bg-slate-50 font-sans text-slate-800 md:flex">
     <a href="#contenido" class="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:rounded focus:bg-white focus:px-3 focus:py-2 focus:text-brand-700">Saltar al contenido</a>
     <%- include('../partials/nav') %>
-    <main id="contenido" tabindex="-1" class="mx-auto max-w-7xl px-4 py-6">
-      <%- include('../partials/flash') %>
-      <%- body %>
-    </main>
+    <div class="flex min-w-0 flex-1 flex-col">
+      <%- include('../partials/topbar') %>
+      <main id="contenido" tabindex="-1" class="w-full max-w-7xl flex-1 px-4 py-6 sm:px-6">
+        <%- include('../partials/flash') %>
+        <%- body %>
+      </main>
+    </div>
   </body>
 </html>

@@ -1,22 +1,22 @@
 <% const sel = (cond) => (cond ? 'selected' : ''); %>
-<% const field = 'mt-1 rounded border border-slate-300 px-3 py-2'; %>
+<% const field = 'mt-1 min-h-11 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-normal'; %>
 <div class="flex flex-wrap items-center justify-between gap-2">
-  <h1 class="text-2xl font-bold">Tablero de KPIs</h1>
-  <% if (canConfigure) { %><a class="text-sm underline" href="/admin/settings/kpis">Configurar umbrales</a><% } %>
+  <h1 class="text-2xl font-bold sm:text-3xl">Tablero de KPIs</h1>
+  <% if (canConfigure) { %><a class="inline-flex min-h-11 items-center text-sm underline" href="/admin/settings/kpis">Configurar umbrales</a><% } %>
 </div>
 <p class="mt-1 text-sm text-slate-600">Los indicadores se actualizan solos cuando cambian tareas, horas, asignaciones o proyectos.</p>
 
-<form id="dashboard-filters" method="get" action="/dashboard" class="mt-4 flex flex-wrap items-end gap-3">
+<form id="dashboard-filters" method="get" action="/dashboard" aria-label="Filtros" class="mt-4 grid grid-cols-2 items-end gap-3 rounded-2xl border border-navy-100 bg-white p-4 md:grid-cols-4 xl:grid-cols-8 dark:border-white/10">
   <div>
-    <label for="from" class="block text-sm font-medium">Desde</label>
+    <label for="from" class="block text-xs font-semibold text-navy-700 dark:text-navy-200">Desde</label>
     <input id="from" name="from" type="date" value="<%= filters.from || '' %>" class="<%= field %>" />
   </div>
   <div>
-    <label for="to" class="block text-sm font-medium">Hasta</label>
+    <label for="to" class="block text-xs font-semibold text-navy-700 dark:text-navy-200">Hasta</label>
     <input id="to" name="to" type="date" value="<%= filters.to || '' %>" class="<%= field %>" />
   </div>
   <div>
-    <label for="clientType" class="block text-sm font-medium">Tipo de cliente</label>
+    <label for="clientType" class="block text-xs font-semibold text-navy-700 dark:text-navy-200">Tipo de cliente</label>
     <select id="clientType" name="clientType" class="<%= field %>">
       <option value="">Todos</option>
       <option value="internal" <%= sel(filters.clientType === 'internal') %>>Interno</option>
@@ -24,28 +24,28 @@
     </select>
   </div>
   <div>
-    <label for="clientId" class="block text-sm font-medium">Cliente</label>
+    <label for="clientId" class="block text-xs font-semibold text-navy-700 dark:text-navy-200">Cliente</label>
     <select id="clientId" name="clientId" class="<%= field %>">
       <option value="">Todos</option>
       <% options.clients.forEach((c) => { %><option value="<%= c.id %>" <%= sel(filters.clientId === c.id) %>><%= c.name %> (<%= c.type === 'internal' ? 'interno' : 'externo' %>)</option><% }) %>
     </select>
   </div>
   <div>
-    <label for="projectId" class="block text-sm font-medium">Proyecto</label>
+    <label for="projectId" class="block text-xs font-semibold text-navy-700 dark:text-navy-200">Proyecto</label>
     <select id="projectId" name="projectId" class="<%= field %>">
       <option value="">Todos</option>
       <% options.projects.forEach((p) => { %><option value="<%= p.id %>" <%= sel(filters.projectId === p.id) %>><%= p.code %> · <%= p.name %></option><% }) %>
     </select>
   </div>
   <div>
-    <label for="managerId" class="block text-sm font-medium">Líder</label>
+    <label for="managerId" class="block text-xs font-semibold text-navy-700 dark:text-navy-200">Líder</label>
     <select id="managerId" name="managerId" class="<%= field %>">
       <option value="">Todos</option>
       <% options.managers.forEach((m) => { %><option value="<%= m.id %>" <%= sel(filters.managerId === m.id) %>><%= m.name %></option><% }) %>
     </select>
   </div>
-  <button type="submit" class="rounded border px-4 py-2 text-sm hover:bg-slate-100">Aplicar</button>
-  <a href="/dashboard" class="text-sm underline">Limpiar</a>
+  <button type="submit" class="min-h-11 rounded-lg bg-navy-800 px-4 text-sm font-semibold text-white hover:bg-navy-700 dark:bg-sky-400 dark:text-navy-950 dark:hover:bg-sky-300">Aplicar</button>
+  <a href="/dashboard" class="inline-flex min-h-11 items-center text-sm underline">Limpiar</a>
 </form>
 
 <div data-dashboard data-live data-can-see-revenue="<%= canSeeRevenue ? 'true' : 'false' %>">
@@ -55,31 +55,31 @@
 
   <section class="mt-4" aria-labelledby="kpis-title">
     <h2 id="kpis-title" class="sr-only">Indicadores</h2>
-    <div id="kpi-cards" class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4"></div>
+    <div id="kpi-cards" class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4"></div>
   </section>
 
-  <section class="mt-8" aria-labelledby="risk-title">
-    <h2 id="risk-title" class="text-xl font-semibold">Proyectos en riesgo</h2>
-    <ul id="risk-list" class="mt-3 divide-y text-sm"></ul>
+  <section class="mt-6 rounded-2xl border border-navy-100 bg-white p-5 dark:border-white/10" aria-labelledby="risk-title">
+    <h2 id="risk-title" class="text-lg font-bold">Proyectos en riesgo</h2>
+    <ul id="risk-list" class="mt-3 divide-y divide-navy-100 text-sm dark:divide-white/10"></ul>
   </section>
 
-  <section class="mt-8 grid gap-4 lg:grid-cols-3" aria-label="Gráficas">
-    <div class="rounded border bg-white p-3">
-      <h2 class="text-sm font-semibold">Horas facturables y no facturables (h)</h2>
+  <section class="mt-6 grid gap-4 lg:grid-cols-3" aria-label="Gráficas">
+    <div class="rounded-2xl border border-navy-100 bg-white p-4 dark:border-white/10">
+      <h2 class="text-sm font-bold">Horas facturables y no facturables (h)</h2>
       <div class="mt-2 h-56"><canvas id="hours-chart" role="img" aria-label="Horas facturables y no facturables por tipo de cliente. Los valores están en las tarjetas K13."></canvas></div>
     </div>
-    <div class="rounded border bg-white p-3">
-      <h2 class="text-sm font-semibold">Velocidad de los últimos sprints (pts)</h2>
+    <div class="rounded-2xl border border-navy-100 bg-white p-4 dark:border-white/10">
+      <h2 class="text-sm font-bold">Velocidad de los últimos sprints (pts)</h2>
       <div class="mt-2 h-56"><canvas id="velocity-chart" role="img" aria-label="Puntos completados en los últimos sprints cerrados y su promedio."></canvas></div>
     </div>
-    <div class="rounded border bg-white p-3">
-      <h2 class="text-sm font-semibold">Avance y consumo por proyecto (%)</h2>
+    <div class="rounded-2xl border border-navy-100 bg-white p-4 dark:border-white/10">
+      <h2 class="text-sm font-bold">Avance y consumo por proyecto (%)</h2>
       <div class="mt-2 h-56"><canvas id="progress-chart" role="img" aria-label="Porcentaje de avance y de consumo de presupuesto de cada proyecto activo. Los valores están en la tabla de proyectos."></canvas></div>
     </div>
   </section>
 
-  <section class="mt-8" aria-labelledby="projects-title">
-    <h2 id="projects-title" class="text-xl font-semibold">Proyectos activos</h2>
+  <section class="mt-6 rounded-2xl border border-navy-100 bg-white p-5 dark:border-white/10" aria-labelledby="projects-title">
+    <h2 id="projects-title" class="text-lg font-bold">Proyectos activos</h2>
     <div class="mt-3 overflow-x-auto">
       <table id="projects-table" class="w-full text-left text-sm">
         <caption class="sr-only">Avance, índices y consumo por proyecto activo</caption>
@@ -99,5 +99,6 @@
   </section>
 </div>
 <script src="/vendor/chart.umd.min.js"></script>
+<script src="/js/lib/chart-theme.js"></script>
 <script src="/js/pages/dashboard.js" defer></script>
 <script src="/js/lib/live.js" defer></script>

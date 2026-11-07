@@ -19,10 +19,19 @@
   const money = (cents, currency) =>
     new Intl.NumberFormat('es-MX', { style: 'currency', currency }).format(cents / 100);
 
+  // Barra lateral de color + texto «Semáforo: …» (el color nunca es el único indicador).
   const STATUS = {
-    green: { label: 'Verde', classes: 'border-ok bg-green-50 text-green-900' },
-    amber: { label: 'Ámbar', classes: 'border-warn bg-amber-50 text-amber-900' },
-    red: { label: 'Rojo', classes: 'border-danger bg-red-50 text-red-900' },
+    green: {
+      label: 'Verde',
+      bar: 'bg-emerald-500',
+      text: 'text-emerald-800 dark:text-emerald-300',
+    },
+    amber: { label: 'Ámbar', bar: 'bg-amber-500', text: 'text-amber-800 dark:text-amber-300' },
+    red: { label: 'Rojo', bar: 'bg-rose-500', text: 'text-rose-700 dark:text-rose-300' },
+  };
+  const NO_STATUS = {
+    bar: 'bg-navy-300 dark:bg-navy-600',
+    text: 'text-navy-600 dark:text-navy-300',
   };
 
   const BY_STATUS = {
@@ -159,24 +168,27 @@
     cardsEl.replaceChildren();
     for (const card of cards(kpis, root.dataset.canSeeRevenue === 'true')) {
       const st = STATUS[card.status];
+      const look = st ?? NO_STATUS;
       const article = document.createElement('article');
-      article.className = `rounded border-l-4 bg-white p-3 shadow-sm ${st ? st.classes : 'border-slate-300'}`;
+      article.className =
+        'relative overflow-hidden rounded-xl border border-navy-100 bg-white p-4 pl-6 shadow-sm dark:border-white/10';
+      const bar = document.createElement('span');
+      bar.className = `absolute inset-y-0 left-0 w-1.5 ${look.bar}`;
+      bar.setAttribute('aria-hidden', 'true');
       const title = document.createElement('h3');
-      title.className = 'text-xs font-medium uppercase tracking-wide';
+      title.className =
+        'text-xs font-semibold uppercase tracking-wide text-navy-600 dark:text-navy-300';
       title.textContent = `${card.id} · ${card.title}`;
       const value = document.createElement('p');
-      value.className = 'mt-1 text-2xl font-bold';
+      value.className = 'mt-1 text-3xl font-bold tabular-nums';
       value.textContent = card.value;
       const detail = document.createElement('p');
-      detail.className = 'mt-1 text-xs';
+      detail.className = 'mt-1 text-xs text-navy-600 dark:text-navy-300';
       detail.textContent = card.detail;
-      article.append(title, value, detail);
-      if (st) {
-        const badge = document.createElement('p');
-        badge.className = 'mt-2 text-xs font-semibold';
-        badge.textContent = `Semáforo: ${st.label}`;
-        article.append(badge);
-      }
+      const badge = document.createElement('p');
+      badge.className = `mt-2 text-xs font-semibold ${look.text}`;
+      badge.textContent = st ? `Semáforo: ${st.label}` : 'Sin semáforo';
+      article.append(bar, title, value, detail, badge);
       cardsEl.append(article);
     }
   }
