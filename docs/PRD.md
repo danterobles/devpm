@@ -410,6 +410,15 @@ Los umbrales son valores iniciales y deben poder ajustarse en configuración (RF
   `/time/approvals` (la API `/api/v1/time-sheet` sigue respondiendo 403). Un `developer` sin vínculo conserva el 403.
 - El cambio es solo de presentación: no modifica rutas, permisos, fórmulas de KPIs ni la API.
 
+### 7.2 Decisiones de endurecimiento de seguridad (Etapa 14)
+
+- El límite de `LOGIN_MAX_ATTEMPTS` intentos fallidos / 15 min se aplica **por IP y, al doble, por cuenta**; el mensaje al usuario es el mismo.
+- Se registran en el log los inicios de sesión fallidos y los bloqueos (sin contraseñas).
+- Las contraseñas conservan el mínimo de 8 caracteres y no pueden pasar de 72 bytes UTF-8.
+- Las peticiones que modifican datos y que el navegador marca como `Sec-Fetch-Site: cross-site` se rechazan.
+- Los ID de sesión se guardan con hash; **al actualizar se cierran las sesiones abiertas** y cada persona vuelve a iniciar sesión.
+- Los respaldos se guardan con permisos restringidos (`0600`, carpeta `0700`).
+
 ## 8. Criterios de aceptación del MVP
 
 1. Un `pm` puede crear un cliente externo, un proyecto para ese cliente, asignar 3 miembros,

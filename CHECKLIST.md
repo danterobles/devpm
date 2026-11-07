@@ -26,6 +26,7 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 | 11 | Calidad, seguridad y despliegue | ✅ Completada |
 | 12 | Rediseño visual (diseño D) | ✅ Completada |
 | 13 | Gantt en modo oscuro | ✅ Completada |
+| 14 | Endurecimiento de seguridad | 🔄 En curso |
 
 ---
 
@@ -208,3 +209,15 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 - [x] Captura del Gantt en el manual: sin cambios (el manual usa el tema claro, que no varía)
 
 **Criterio de cierre:** el Gantt se ve integrado en ambos temas, `npm test` y `npm run lint` en verde. ✅
+
+## Etapa 14 — Endurecimiento de seguridad (revisión de la v0.2.1)
+
+- [ ] Registro en el log de inicios de sesión fallidos y bloqueos (`login.failed`, `login.blocked`)
+- [ ] Límite de intentos también por cuenta (el doble que por IP)
+- [ ] Contraseñas: máximo de 72 bytes UTF-8 con mensaje claro
+- [ ] `Sec-Fetch-Site: cross-site` rechazado en métodos que modifican datos
+- [ ] ID de sesión con hash SHA-256 en la tabla `sessions`
+- [ ] Respaldos con permisos `0600` y carpeta `0700`
+- [ ] Documentar riesgos aceptados (ARQUITECTURA §7.1) y la nota de actualización en README y CHANGELOG
+
+**Criterio de cierre:** pruebas de cada control, `npm test` y `npm run lint` en verde.
