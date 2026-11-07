@@ -9,6 +9,12 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 
 ## [Sin publicar]
 
+_Sin cambios todavía._
+
+## [0.3.0] - 2026-11-07
+
+Adopción: notificaciones, panel «Mi día» e importación por CSV. Agrega la migración 005; **corre `npm install` (nueva dependencia opcional `nodemailer`) y `npm run db:migrate` al actualizar**.
+
 ### Agregado
 
 - Notificaciones dentro de la aplicación (campana con contador, página `/notifications` y preferencias) y copia opcional por correo con `nodemailer` (`SMTP_*`, `APP_URL`).
