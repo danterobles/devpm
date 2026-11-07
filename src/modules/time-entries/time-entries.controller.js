@@ -98,7 +98,17 @@ export function createTimeEntriesController({ service }) {
   return {
     sheetApi: (req, res) =>
       res.json({ data: service.sheet(actor(req), parseWith(sheetQuerySchema, req.query)) }),
-    htmlSheet: (req, res) => sheetPage(req, res),
+    htmlSheet(req, res) {
+      try {
+        return sheetPage(req, res);
+      } catch (err) {
+        // Un admin/pm sin miembro vinculado no tiene hoja propia: se le lleva a las aprobaciones
+        // en lugar de mostrarle un 403 desde el menú. La API sigue respondiendo 403.
+        if (err.status === 403 && ['admin', 'pm'].includes(req.session.role) && !req.query.memberId)
+          return res.redirect('/time/approvals');
+        throw err;
+      }
+    },
     htmlCreate(req, res) {
       try {
         const input = parseWith(createEntrySchema, formToInput(req.body));

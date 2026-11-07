@@ -22,6 +22,7 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
 
 ### Corregido
 
+- El enlace «Tiempo» del menú daba 403 a un administrador o líder sin miembro vinculado: ahora lo lleva a las aprobaciones.
 - La pantalla de inicio de sesión se mostraba sin estilos: el layout se registraba después del router de autenticación.
 
 ## [0.1.0] - 2026-11-06

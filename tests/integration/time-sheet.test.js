@@ -241,3 +241,18 @@ test('alta, edición y baja desde la hoja (horas → minutos) y errores vuelven 
     403,
   );
 });
+
+test('vista /time: un admin o pm sin miembro vinculado va a las aprobaciones; un developer sin vínculo sigue con 403', async () => {
+  const { app, db } = setup();
+  user(db, { email: 'solo@test.local', password_hash: hash, role: 'developer' });
+  const admin = await loginAs(app, 'admin');
+  const res = await admin.get('/time');
+  assert.equal(res.status, 302);
+  assert.equal(res.headers.location, '/time/approvals');
+  assert.equal((await admin.get('/time/approvals')).status, 200);
+  assert.equal((await (await loginAs(app, 'pm')).get('/time')).headers.location, '/time/approvals');
+  assert.equal((await admin.get('/api/v1/time-sheet')).status, 403); // la API no cambia
+  const agent = request.agent(app);
+  await agent.post('/login').type('form').send({ email: 'solo@test.local', password: PASSWORD });
+  assert.equal((await agent.get('/time')).status, 403);
+});
