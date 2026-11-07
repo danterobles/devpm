@@ -344,7 +344,44 @@ Cambio de alcance del día (RF-82) = `total_points(d) − total_points(d−1)`.
 
 Índices: `ix_notifications_user_unread (user_id, read_at, id DESC)` y `ix_notifications_user_created (user_id, created_at DESC)`. Las notificaciones leídas se eliminan a los 90 días.
 
-### 3.17 Tablas de soporte
+### 3.17 `task_comments` — Conversación de una tarea (v0.4, migración `006_collaboration.sql`)
+
+| Columna | Tipo | Restricciones | Descripción |
+|---|---|---|---|
+| id | INTEGER | PK | |
+| task_id | INTEGER | NN, FK → tasks `ON DELETE CASCADE` | |
+| user_id | INTEGER | FK → users `ON DELETE SET NULL` | Autor |
+| body | TEXT | NN, CK `length(body) BETWEEN 1 AND 4000` | Texto plano |
+| created_at | TEXT | NN | |
+| edited_at | TEXT | | NULL = sin editar |
+
+### 3.18 `task_attachments` — Archivos adjuntos (v0.4)
+
+| Columna | Tipo | Restricciones | Descripción |
+|---|---|---|---|
+| id | INTEGER | PK | |
+| task_id | INTEGER | NN, FK → tasks `ON DELETE CASCADE` | |
+| uploaded_by | INTEGER | FK → users `ON DELETE SET NULL` | |
+| original_name | TEXT | NN | Solo para mostrar; nunca se usa como ruta |
+| stored_name | TEXT | NN, UQ | Nombre aleatorio en `UPLOAD_DIR` |
+| content_type | TEXT | NN | Verificado por la firma del archivo |
+| size_bytes | INTEGER | NN, CK `> 0 AND <= 5242880` | |
+| created_at | TEXT | NN | |
+
+### 3.19 `saved_filters` — Filtros guardados (v0.4)
+
+| Columna | Tipo | Restricciones | Descripción |
+|---|---|---|---|
+| id | INTEGER | PK | |
+| user_id | INTEGER | NN, FK → users `ON DELETE CASCADE` | Dueño |
+| scope | TEXT | NN, CK `projects`,`tasks`,`time` | Listado al que aplica |
+| name | TEXT | NN, máx. 60 | UQ `(user_id, scope, name)` |
+| query | TEXT | NN | Cadena de consulta ya validada con el esquema del listado |
+| created_at | TEXT | NN | |
+
+Índices previstos: `ix_task_comments_task (task_id, id)`, `ix_task_attachments_task (task_id)`, `ix_saved_filters_user (user_id, scope)`. Máximo 20 filtros por usuario (regla de negocio, no de esquema).
+
+### 3.20 Tablas de soporte
 
 | Tabla | Propósito |
 |---|---|

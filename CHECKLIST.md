@@ -30,6 +30,10 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 | 15 | Notificaciones (app y correo) | ✅ Completada |
 | 16 | Mi día (panel por rol) | ✅ Completada |
 | 17 | Importación por CSV | ✅ Completada |
+| 18 | Comentarios y menciones (v0.4) | ⏳ Planeada |
+| 19 | Adjuntos (v0.4) | ⏳ Planeada |
+| 20 | Búsqueda global y filtros guardados (v0.4) | ⏳ Planeada |
+| 21 | Manuales y versión 0.4.0 | ⏳ Planeada |
 
 ---
 
@@ -257,3 +261,52 @@ terminar cada tarea** (ver flujo en `CLAUDE.md`).
 - [x] Pruebas: errores por fila, duplicados, límites, permisos, bitácora y eventos
 
 **Criterio de cierre:** un CSV válido crea todos sus registros; uno con errores no crea ninguno.  ✅
+
+---
+
+# Versión 0.4.0 — Colaboración (plan; pendiente de confirmar las propuestas de PRD §5.17)
+
+Orden recomendado: 18 → 19 → 20 → 21. Cada etapa se cierra con `npm test` y `npm run lint` en verde y un commit por cambio lógico. Antes de empezar la 18, confirmar las cinco propuestas del PRD §5.17.
+
+## Etapa 18 — Comentarios y menciones (RF-130–RF-134)
+
+- [ ] Migración `006_collaboration.sql`: `task_comments`, `task_attachments` y `saved_filters` con sus índices (una sola migración para la v0.4)
+- [ ] Módulo `comments`: repository, service con permisos (RF-131, RF-132) y bitácora, schemas Zod y API
+- [ ] Menciones por correo completo y avisos al responsable y al líder con el notificador (RF-133); tipo de aviso `task_comment`/`task_mention` en PRD §5.12.1 y DATA §3.16
+- [ ] Conversación en la ficha de la tarea (formulario, editar, eliminar) escapada y accesible
+- [ ] Actualización en vivo: evento `comment.changed` en `live.js` y en la ficha (RF-134)
+- [ ] Pruebas: permisos por rol y por proyecto, edición/baja propia y de admin, menciones, XSS, avisos sin autoavisar, evento
+
+**Criterio de cierre:** una conversación completa en una tarea, con avisos a quien corresponde y sin fugas de permisos.
+
+## Etapa 19 — Adjuntos (RF-140–RF-144)
+
+- [ ] Config `UPLOAD_DIR` y `UPLOAD_MAX_MB`; carpeta con permisos `0700` y archivos `0600`; ignorada por git
+- [ ] Módulo `attachments`: límites (5 MB, 10 por tarea), lista de tipos y verificación de firma (RF-140, RF-143)
+- [ ] Subida con `express.raw` y `fetch`; descarga autenticada siempre como `attachment` con `nosniff` (RF-142)
+- [ ] Baja del archivo y de su registro en una sola operación (sin archivos huérfanos); limpieza al eliminar la tarea
+- [ ] Interfaz en la ficha de la tarea (lista, subir, descargar, eliminar) con avisos de error claros
+- [ ] `db:backup` incluye la carpeta de adjuntos y la restauración está documentada (RF-144)
+- [ ] Pruebas: tipos permitidos y rechazados (HTML, SVG, ejecutable, extensión falsa), tamaño, permisos, ruta no manipulable (`../`), nombre con caracteres especiales, descarga forzada
+- [ ] Revisión de seguridad de la etapa (ARQUITECTURA §7) y documentar el riesgo de no tener antivirus
+
+**Criterio de cierre:** se adjunta, descarga y elimina un archivo sin que pueda ejecutarse en el navegador ni salir de `UPLOAD_DIR`.
+
+## Etapa 20 — Búsqueda global y filtros guardados (RF-150–RF-153)
+
+- [ ] Módulo `search`: consultas de solo lectura por grupo con `LIKE` escapado y permisos (RF-150, RF-151)
+- [ ] Caja de búsqueda en el encabezado y página `/search` con grupos y «ver más»
+- [ ] Prueba de rendimiento de la búsqueda con el volumen de RNF-01 (`npm run test:perf`) y decisión sobre FTS5 (RF-153)
+- [ ] Módulo de filtros guardados: API y selector en los listados de proyectos, backlog y tiempo; máximo 20 por usuario (RF-152)
+- [ ] Pruebas: permisos de los resultados, escape de la consulta, límites, filtros ajenos inaccesibles
+
+**Criterio de cierre:** se encuentra cualquier proyecto, tarea, cliente o miembro por texto, sin ver más de lo permitido.
+
+## Etapa 21 — Manuales y versión 0.4.0
+
+- [ ] Actualizar los manuales en PDF con lo de las versiones 0.3 y 0.4: notificaciones, «Mi día», importación, comentarios, adjuntos, búsqueda y filtros guardados (usuario y administrador, `SMTP_*` y `UPLOAD_DIR`)
+- [ ] README: nuevas variables, restauración de adjuntos y guía de actualización
+- [ ] Recorrido de aceptación de la v0.4 (comentar con mención → aviso; adjuntar y descargar; buscar y guardar un filtro) y revisión de seguridad completa
+- [ ] CHANGELOG `[0.4.0]`, versión en `package.json`, etiqueta `v0.4.0` y publicación
+
+**Criterio de cierre:** 0.4.0 aceptada y etiquetada.

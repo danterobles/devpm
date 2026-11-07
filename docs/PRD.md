@@ -371,6 +371,43 @@ Empresas con relación comercial; su trabajo es facturable.
 - Las tareas entran al backlog del proyecto elegido; el responsable se identifica por el correo del miembro, que debe estar asignado al proyecto (RF-42).
 - El archivo se lee en el navegador y se envía como texto (sin dependencia de carga de archivos).
 
+### 5.15 Comentarios y menciones (v0.4 — propuesta)
+
+| ID | Requerimiento | Prioridad |
+|---|---|---|
+| RF-130 | Cada tarea tiene una conversación: comentarios en texto plano (hasta 4 000 caracteres, con saltos de línea), ordenados del más antiguo al más nuevo, con autor y fecha. | Alta |
+| RF-131 | Pueden comentar `admin`, `pm` y los `developer` asignados al proyecto de la tarea; el `viewer` solo lee. | Alta |
+| RF-132 | El autor edita o elimina su propio comentario; el `admin` elimina cualquiera. Los comentarios editados muestran «editado». Altas, ediciones y bajas quedan en la bitácora. | Alta |
+| RF-133 | Menciones: escribir `@correo` de un usuario activo (con el correo completo) le envía una notificación (v0.3). Al comentar también se avisa al responsable de la tarea y al líder del proyecto. Nadie recibe aviso de su propio comentario. | Alta |
+| RF-134 | La conversación se actualiza en vivo (SSE) en la ficha de la tarea. | Media |
+
+### 5.16 Adjuntos (v0.4 — propuesta)
+
+| ID | Requerimiento | Prioridad |
+|---|---|---|
+| RF-140 | Una tarea admite archivos adjuntos (hasta 5 MB cada uno y 10 por tarea) de una lista permitida: imágenes (PNG, JPEG, GIF, WebP), PDF, texto/CSV, Word, Excel y PowerPoint. | Alta |
+| RF-141 | Suben `admin`, `pm` y los `developer` asignados al proyecto; todos los usuarios que ven la tarea pueden descargar. Quien subió el archivo (o un `admin`) lo elimina. | Alta |
+| RF-142 | Los archivos se guardan fuera de `public/`, con nombre aleatorio; solo se sirven por una ruta autenticada, siempre como descarga (`Content-Disposition: attachment`) y con `X-Content-Type-Options: nosniff`. El nombre original se conserva solo como texto. | Alta |
+| RF-143 | Se valida la firma del archivo (no solo la extensión) y se rechazan los tipos fuera de la lista (p. ej. HTML, SVG, ejecutables). | Alta |
+| RF-144 | Los respaldos incluyen la carpeta de adjuntos (`npm run db:backup`). | Media |
+
+### 5.17 Búsqueda global y filtros guardados (v0.4 — propuesta)
+
+| ID | Requerimiento | Prioridad |
+|---|---|---|
+| RF-150 | Caja de búsqueda en el encabezado y página `/search?q=`: proyectos (código, nombre), tareas (título), clientes (nombre, razón social) y miembros del equipo (nombre, correo). Resultados agrupados, máximo 10 por grupo con enlace a «ver más». | Alta |
+| RF-151 | Los resultados respetan los permisos: el `viewer` y el `developer` no ven clientes externos con datos fiscales ni costos; la búsqueda nunca devuelve más de lo que ya muestran los listados. | Alta |
+| RF-152 | Filtros guardados por usuario para los listados de proyectos, tareas del backlog y tiempo: nombre, ámbito y filtros; hasta 20 por persona; se aplican con un clic. | Media |
+| RF-153 | La búsqueda responde en < 300 ms (p95) con el volumen de RNF-01; si no, se evalúa FTS5. | Media |
+
+**Propuestas por confirmar (el plan las toma como base):**
+
+1. **Comentarios** solo en texto plano (sin formato ni imágenes incrustadas), menciones solo con el correo completo.
+2. **Adjuntos** en disco (`data/uploads/`, `UPLOAD_DIR`), sin dependencias nuevas: subida con cuerpo binario (`express.raw`) y el nombre en un parámetro, que el navegador envía con `fetch`.
+3. Sin antivirus integrado: se documenta el riesgo y se limita por tipo, tamaño y descarga forzada.
+4. **Búsqueda** con `LIKE` escapado en esta versión; FTS5 solo si la prueba de rendimiento lo exige.
+5. Fuera de esta versión: hilos o respuestas anidadas, reacciones, adjuntos en proyectos o clientes, búsqueda dentro de adjuntos.
+
 ## 6. KPIs
 
 Todos los KPIs respetan los filtros del tablero. Horas = minutos / 60 (redondeo a 1 decimal en UI).
@@ -529,3 +566,5 @@ Las etapas detalladas y su estado viven en `CHECKLIST.md`.
 | F5 | Gantt y Burndown |
 | F6 | Tablero de KPIs en tiempo real |
 | F7 | Endurecimiento: seguridad, rendimiento, respaldo y despliegue |
+| F8 (v0.3) | Adopción: notificaciones, «Mi día» e importación por CSV |
+| F9 (v0.4) | Colaboración: comentarios y menciones, adjuntos, búsqueda global y filtros guardados |

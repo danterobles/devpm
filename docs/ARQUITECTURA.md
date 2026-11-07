@@ -239,6 +239,14 @@ PRAGMA synchronous = NORMAL;      -- seguro con WAL y más rápido
 - **`modules/import/`**: parser CSV propio (`lib/csv.js`, sin dependencia), esquemas por entidad y service que valida fila por fila y, al importar, usa los services existentes dentro de **una** transacción; los eventos se acumulan y se emiten al confirmar.
 - **Configuración** (opcional): `APP_URL` (enlaces de los correos), `SMTP_HOST`, `SMTP_PORT` (587), `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`, `SMTP_SECURE`.
 
+### 3.8 Colaboración (v0.4 — propuesta)
+
+- **`modules/comments/`**: repository (`task_comments`), service (crear, editar, eliminar con permisos y bitácora; menciones y avisos mediante el notificador de la v0.3), rutas anidadas en la tarea (`/api/v1/tasks/:id/comments`) y fragmento en la ficha de la tarea que se refresca con SSE (`comment.changed`).
+- **`modules/attachments/`**: repository (`task_attachments`), service (límites, lista de tipos, verificación de firma por *magic bytes*, nombre aleatorio) y rutas (`POST /api/v1/tasks/:id/attachments?name=…` con `express.raw({ limit })`, `GET /attachments/:id` autenticada y siempre como descarga, `DELETE`). Los archivos viven en `UPLOAD_DIR` (por defecto `data/uploads/`, ignorada por git, permisos `0700`/`0600`). `db:backup` copia también esa carpeta. Sin dependencias nuevas.
+- **`modules/search/`**: service y repository de solo lectura que reutilizan las reglas de visibilidad de cada listado; `LIKE` con escape (y FTS5 solo si la prueba de rendimiento lo exige). Filtros guardados en `saved_filters`.
+- **Seguridad**: los adjuntos nunca se sirven desde `public/`; la CSP no cambia; un archivo no se interpreta nunca como HTML (descarga forzada, `nosniff`, tipos permitidos por lista); las menciones y los comentarios se escapan como el resto del contenido.
+- **Configuración**: `UPLOAD_DIR` y `UPLOAD_MAX_MB` (5 por defecto).
+
 ## 4. Tiempo real (SSE)
 
 ### Flujo
