@@ -230,6 +230,15 @@ PRAGMA synchronous = NORMAL;      -- seguro con WAL y más rápido
 - **Accesibilidad**: etiquetas en formularios, foco visible, colores del semáforo acompañados
   de texto/icono, tablas con `<th scope>`.
 
+### 3.7 Notificaciones, Mi día e importación (v0.3)
+
+- **`modules/notifications/`**: repository (tabla `notifications`), service (`notify`, `list`, `unreadCount`, `markRead`, `markAllRead`, `prune`), schemas y rutas (`/notifications`, `/account/notifications`, `/api/v1/notifications/*`). Los services de tiempo y tareas reciben el notificador por inyección y lo invocan **después** de confirmar su transacción; `notify` inserta (con `INSERT OR IGNORE` sobre la clave de deduplicación), emite `notification.created` por el bus de eventos y envía el correo sin esperar su resultado.
+- **`lib/mailer.js`**: envoltorio de `nodemailer`. Sin `SMTP_HOST` queda deshabilitado (no hace nada). En pruebas se usa el transporte `jsonTransport` (sin red).
+- **`jobs/reminders.js`**: revisión diaria a las 09:00 de la zona de la aplicación (mismo `setTimeout` recalculado del job de Burndown) y al arrancar. La lógica vive en un service (`reminders.service.js`) que recibe la fecha por parámetro, para probarla sin esperar.
+- **`modules/home/`**: service y repository de solo lectura que arman el panel «Mi día» por rol.
+- **`modules/import/`**: parser CSV propio (`lib/csv.js`, sin dependencia), esquemas por entidad y service que valida fila por fila y, al importar, usa los services existentes dentro de **una** transacción; los eventos se acumulan y se emiten al confirmar.
+- **Configuración** (opcional): `APP_URL` (enlaces de los correos), `SMTP_HOST`, `SMTP_PORT` (587), `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`, `SMTP_SECURE`.
+
 ## 4. Tiempo real (SSE)
 
 ### Flujo
@@ -392,6 +401,7 @@ los services reciben el bus como dependencia opcional (`events`) y emiten solo t
 | `helmet` | cabeceras de seguridad | prod |
 | `express-rate-limit` | límite de intentos | prod |
 | `pino` | logs | prod |
+| `nodemailer` | correo de las notificaciones (RF-101). Única dependencia nueva de la v0.3: enviar por SMTP con TLS, autenticación y codificación correcta de cabeceras no es razonable de escribir a mano; sin `SMTP_HOST` no se usa | prod |
 | `chart.js`, `frappe-gantt` | gráficas (copiadas a `public/vendor`) | prod |
 | `tailwindcss`, `@tailwindcss/cli` | estilos | dev |
 | `supertest` | pruebas HTTP | dev |

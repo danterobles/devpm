@@ -314,6 +314,63 @@ Empresas con relación comercial; su trabajo es facturable.
 | RF-94 | Listado "Proyectos en riesgo" con la causa (SPI bajo, fecha vencida, sobreconsumo de horas). | Alta |
 | RF-95 | Indicador de conexión en vivo y hora de última actualización. | Media |
 
+### 5.12 Notificaciones (v0.3)
+
+| ID | Requerimiento | Prioridad |
+|---|---|---|
+| RF-100 | Notificaciones dentro de la aplicación: campana con contador de no leídas en el encabezado y página `/notifications` (listado paginado, marcar una o todas como leídas). Se actualizan en vivo (SSE). | Alta |
+| RF-101 | Copia por correo a quien lo tenga activado (por defecto sí). Solo existe si hay un servidor SMTP configurado; sin SMTP las notificaciones siguen funcionando dentro de la aplicación. | Alta |
+| RF-102 | Avisos generados por el sistema (tabla de §5.12.1). Nadie recibe aviso de una acción que hizo él mismo. | Alta |
+| RF-103 | Preferencia personal en `/account/notifications`: activar o desactivar el correo. | Media |
+| RF-104 | Sin duplicados: cada aviso periódico tiene una clave de deduplicación; las notificaciones leídas se eliminan a los 90 días. | Media |
+
+#### 5.12.1 Avisos
+
+| Tipo | Cuándo | Destinatario |
+|---|---|---|
+| `hours_midweek` | Miércoles 09:00 (zona de la aplicación): si las horas registradas de lunes a hoy son menos del 50 % de su capacidad semanal | El miembro (usuario vinculado) |
+| `hours_close` | Viernes 09:00: si tiene registros sin enviar (borrador o rechazados) o lleva menos del 80 % de su capacidad | El miembro |
+| `hours_to_review` | Al enviar horas (registro o semana) | El líder del proyecto |
+| `hours_approved`, `hours_rejected` | Al aprobar o rechazar un registro (el rechazo incluye el motivo) | El autor del registro |
+| `task_assigned` | Al crear o reasignar una tarea con responsable | El responsable |
+| `task_overdue` | Diario 09:00: tarea no terminada con fecha fin pasada (una vez por tarea) | El responsable |
+| `task_blocked` | Al pasar una tarea a «bloqueada» | El líder del proyecto |
+| `milestone_overdue` | Diario 09:00: hito pendiente con fecha pasada (una vez por hito) | El líder del proyecto |
+| `project_at_risk` | Diario 09:00: proyecto que cumple la regla de riesgo de §6 (a lo más una vez por semana y proyecto) | El líder del proyecto |
+
+**Decisiones:**
+
+- «Líder del proyecto» = el usuario activo vinculado al miembro líder (`projects.manager_id`); si no hay usuario vinculado, todos los administradores activos.
+- Los avisos periódicos se revisan a las 09:00 de la zona de la aplicación y también al arrancar (la deduplicación evita repetirlos), de modo que una caída del servicio no los pierde.
+- El correo es un mensaje de texto con título, detalle y enlace absoluto (`APP_URL`). Un fallo de envío se registra en el log y nunca interrumpe la operación.
+- Las preferencias por tipo de aviso no existen en esta versión: solo el interruptor de correo.
+
+### 5.13 Mi día (v0.3)
+
+| ID | Requerimiento | Prioridad |
+|---|---|---|
+| RF-110 | La página de inicio muestra un panel según el rol, actualizado en vivo. | Alta |
+| RF-111 | `developer`: sus tareas abiertas (vencidas primero), horas de la semana frente a su capacidad, registros por enviar y rechazados (con motivo). | Alta |
+| RF-112 | `pm` y `admin`: horas por aprobar, proyectos en riesgo (los que lidera el `pm`; todos para el `admin`), hitos vencidos o próximos (7 días) y tareas bloqueadas de sus proyectos. | Alta |
+| RF-113 | `viewer`: proyectos activos con su avance y acceso al tablero. | Media |
+| RF-114 | Todos ven sus últimas notificaciones sin leer. | Media |
+
+### 5.14 Importación por CSV (v0.3)
+
+| ID | Requerimiento | Prioridad |
+|---|---|---|
+| RF-120 | `admin` y `pm` importan **clientes**, **miembros del equipo** y **tareas de un proyecto** desde un CSV (UTF-8, con cabecera, separador coma o punto y coma). | Alta |
+| RF-121 | Flujo en dos pasos: **Validar** (vista previa con el error de cada fila) e **Importar**, que solo está disponible si todas las filas son válidas: todo o nada, en una sola transacción. | Alta |
+| RF-122 | Máximo 1 000 filas y 1 MB por archivo. Plantilla descargable por entidad. | Media |
+| RF-123 | Cada alta pasa por las mismas reglas que la pantalla (esquemas Zod y services), queda en la bitácora y emite sus eventos tras confirmar. | Alta |
+
+**Decisiones:**
+
+- Cabeceras en español, una por campo (plantillas): clientes `tipo, nombre, departamento, centro_costos, razon_social, rfc, tarifa_hora, moneda, direccion, contacto, correo_contacto, telefono_contacto, notas`; miembros `nombre, apellido, correo, puesto, nivel, horas_semana, costo_hora, fecha_ingreso`; tareas `titulo, tipo, prioridad, puntos, estimacion_horas, responsable_correo, fecha_inicio, fecha_fin, descripcion`.
+- Duplicados: un cliente con el mismo tipo y nombre, o un miembro con el mismo correo, se marcan como error de la fila (no se actualizan registros existentes).
+- Las tareas entran al backlog del proyecto elegido; el responsable se identifica por el correo del miembro, que debe estar asignado al proyecto (RF-42).
+- El archivo se lee en el navegador y se envía como texto (sin dependencia de carga de archivos).
+
 ## 6. KPIs
 
 Todos los KPIs respetan los filtros del tablero. Horas = minutos / 60 (redondeo a 1 decimal en UI).
@@ -447,7 +504,7 @@ Los umbrales son valores iniciales y deben poder ajustarse en configuración (RF
 - Integraciones con GitHub/GitLab/Jira (posible en v2).
 - Aplicación móvil nativa.
 - Multiempresa (multi-tenant).
-- Notificaciones por correo (posible en v2).
+- Preferencias de notificación por tipo de aviso y notificaciones push (posibles después de la v0.3).
 
 ## 10. Supuestos y riesgos
 

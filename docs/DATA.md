@@ -67,6 +67,7 @@ erDiagram
 | team_member_id | INTEGER | FK → team_members(id) `ON DELETE SET NULL`, UQ | Vinculación para registrar su tiempo (RF-04) |
 | is_active | INTEGER | NN, default 1 | |
 | last_login_at | TEXT | | |
+| email_notifications | INTEGER | NN, default 1, CK 0/1 | Recibir copia de las notificaciones por correo (RF-103; migración 005) |
 | created_at / updated_at | TEXT | NN | |
 
 ### 3.2 `clients` — Clientes internos y externos
@@ -327,7 +328,23 @@ Cambio de alcance del día (RF-82) = `total_points(d) − total_points(d−1)`.
 | changes | TEXT | JSON `{campo: [antes, después]}`, CK `json_valid(changes)` |
 | created_at | TEXT | NN |
 
-### 3.16 Tablas de soporte
+### 3.16 `notifications` — Avisos a los usuarios (migración `005_notifications.sql`)
+
+| Columna | Tipo | Restricciones | Descripción |
+|---|---|---|---|
+| id | INTEGER | PK | |
+| user_id | INTEGER | NN, FK → users `ON DELETE CASCADE` | Destinatario |
+| type | TEXT | NN | `hours_midweek`, `hours_close`, `hours_to_review`, `hours_approved`, `hours_rejected`, `task_assigned`, `task_overdue`, `task_blocked`, `milestone_overdue`, `project_at_risk` (PRD §5.12.1) |
+| title | TEXT | NN | |
+| body | TEXT | NN | Detalle en texto plano |
+| link | TEXT | | Ruta interna (p. ej. `/tasks/12`) |
+| dedupe_key | TEXT | | Evita repetir el aviso; UQ `(user_id, dedupe_key)` cuando no es nulo |
+| created_at | TEXT | NN | |
+| read_at | TEXT | | NULL = sin leer |
+
+Índices: `ix_notifications_user_unread (user_id, read_at, id DESC)` y `ix_notifications_user_created (user_id, created_at DESC)`. Las notificaciones leídas se eliminan a los 90 días.
+
+### 3.17 Tablas de soporte
 
 | Tabla | Propósito |
 |---|---|
