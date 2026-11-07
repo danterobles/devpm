@@ -20,7 +20,8 @@
     "format": "prettier --write .",
     "db:migrate": "node --env-file-if-exists=.env src/db/cli.js migrate",
     "db:seed": "node --env-file-if-exists=.env src/db/cli.js seed",
-    "db:reset": "node --env-file-if-exists=.env src/db/cli.js reset"
+    "db:reset": "node --env-file-if-exists=.env src/db/cli.js reset",
+    "test:perf": "node --test --test-reporter=spec \"tests/perf/*.perf.js\""
   },
   "dependencies": {
     "bcrypt": "^6.0.0",

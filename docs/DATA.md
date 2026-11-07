@@ -358,6 +358,7 @@ CREATE INDEX ix_task_history_task          ON task_status_history(task_id, chang
 CREATE INDEX ix_time_member_date           ON time_entries(team_member_id, work_date);
 CREATE INDEX ix_time_project_date          ON time_entries(project_id, work_date);
 CREATE INDEX ix_time_status                ON time_entries(status);
+CREATE INDEX ix_time_task                  ON time_entries(task_id) WHERE task_id IS NOT NULL;  -- migración 004 (avance por tarea en el Gantt)
 CREATE INDEX ix_time_off_member            ON time_off(team_member_id, start_date, end_date);
 CREATE INDEX ix_audit_entity               ON audit_log(entity, entity_id);
 ```

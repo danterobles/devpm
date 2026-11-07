@@ -54,6 +54,15 @@ Categorías permitidas por versión: `Agregado`, `Cambiado`, `Obsoleto`, `Elimin
   XSS por escapado, inyección SQL, errores sin trazas, hashes ausentes de la API y pérdida inmediata de
   acceso de un usuario desactivado. `npm audit --omit=dev`: 0 vulnerabilidades (las 4 moderadas
   restantes son de ESLint, solo desarrollo).
+- Pruebas de rendimiento RNF-01 (`npm run test:perf`, fuera de `npm test`): con 50 proyectos, 50
+  miembros y 100 000 registros de tiempo, las 21 páginas y endpoints principales miden p95 entre 1 y 66 ms
+  (límite 300 ms); y una revisión de `EXPLAIN QUERY PLAN` de las 124 consultas que ejecutan esos flujos
+  comprueba que ninguna recorre por completo una tabla de crecimiento ilimitado.
+
+### Corregido (Etapa 11)
+- Gantt del proyecto: p95 de 538 ms con 100 000 registros de tiempo porque `time_entries.task_id` no
+  tenía índice (el avance de cada tarea recorría todos los registros); la migración `004_time_task_index`
+  lo baja a ~1 ms.
 
 ### Corregido
 - CHECK de fechas: `col = date(col)` aceptaba formatos inválidos (daba NULL); ahora `col IS date(col)`.
